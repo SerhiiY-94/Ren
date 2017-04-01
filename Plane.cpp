@@ -1,5 +1,7 @@
 #include "Plane.h"
 
+#include <glm/geometric.hpp>
+
 bool Plane::operator==(const Plane &rhs) const {
     if (fabs(rhs.d - d) < epsilon) {
         if (fabs(rhs.n[0] - n[0]) < epsilon) if (fabs(rhs.n[1] - n[1]) < epsilon) if (fabs(rhs.n[2] - n[2]) < epsilon)

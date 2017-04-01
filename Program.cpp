@@ -137,7 +137,7 @@ R::ProgramRef R::CreateProgramSW(const char *name, void *vshader, void *fshader,
 
         SWint program = swCreateProgram();
         swUseProgram(program);
-        swInitProgram((vtx_shader_proc)vshader, (frag_shader_proc)fshader, nullptr, num_fvars);
+        swInitProgram((vtx_shader_proc)vshader, (frag_shader_proc)fshader, num_fvars);
 
         it->prog_id = (uint32_t)program;
         it->not_ready = 0;

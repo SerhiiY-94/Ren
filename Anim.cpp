@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>

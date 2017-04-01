@@ -1,7 +1,6 @@
 #ifndef POLYPLANE_H
 #define POLYPLANE_H
 
-#include <glm/gtx/norm.hpp>
 #include <glm/vec3.hpp>
 
 const float epsilon = 0.002f;

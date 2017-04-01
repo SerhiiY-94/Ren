@@ -112,29 +112,18 @@ namespace R {
 
 	typedef void (*material_load_callback) (const char *name);
 
-	MeshRef LoadMesh(const char *name, void *data,
-					 material_load_callback on_mat_load,
-					 program_load_callback on_program_load,
-					 texture_load_callback on_tex_load);
+	MeshRef LoadMesh(const char *name, void *data, material_load_callback on_mat_load);
 
     void ReleaseAllMeshes();
 
     // simple static mesh with normals
-	void InitMeshSimple(Mesh &mesh, void *data, material_load_callback 	on_mat_load,
-												program_load_callback 	on_program_load,
-												texture_load_callback 	on_tex_load);
+	void InitMeshSimple(Mesh &mesh, void *data, material_load_callback 	on_mat_load);
 
     // simple mesh with tex index per vertex
-	void InitMeshTerrain(Mesh &mesh, void *data,
-						 material_load_callback on_mat_load,
-						 program_load_callback on_program_load,
-						 texture_load_callback on_tex_load);
+	void InitMeshTerrain(Mesh &mesh, void *data, material_load_callback on_mat_load);
 
     // mesh with 4 bone weights per vertex
-	void InitMeshSkeletal(Mesh &mesh, void *data,
-						  material_load_callback on_mat_load,
-						  program_load_callback on_program_load,
-						  texture_load_callback on_tex_load);
+	void InitMeshSkeletal(Mesh &mesh, void *data, material_load_callback on_mat_load);
 
     // split skeletal mesh into chunks to fit uniforms limit in shaders
     void SplitMesh(Mesh &m, int bones_limit);

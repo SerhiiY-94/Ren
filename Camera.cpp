@@ -1,4 +1,7 @@
 #include "Camera.h"
+
+#include <cmath>
+
 #include "Matrices_old.h"
 
 Camera::Camera(const float center[3], const float target[3], const float up[3]) {

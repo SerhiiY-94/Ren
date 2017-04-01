@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <array>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -31,9 +32,7 @@ namespace R {
 	int max_gpu_bones		= 0;
 }
 
-R::MeshRef R::LoadMesh(const char *name, void *data, 	material_load_callback 	on_mat_load,
-														program_load_callback 	on_program_load,
-														texture_load_callback 	on_tex_load) {
+R::MeshRef R::LoadMesh(const char *name, void *data, material_load_callback on_mat_load) {
 	auto it = meshes.begin();
 	for (; it != meshes.end(); it++) {
 		if (strcmp(name, it->name) == 0) {
@@ -58,11 +57,11 @@ R::MeshRef R::LoadMesh(const char *name, void *data, 	material_load_callback 	on
 		memcpy(mesh_type_str, data, 12);
 
 		if (strcmp(mesh_type_str, "STATIC_MESH\0") == 0) {
-			InitMeshSimple(m, data, on_mat_load, on_program_load, on_tex_load);
+			InitMeshSimple(m, data, on_mat_load);
 		} else if (strcmp(mesh_type_str, "TERRAI_MESH\0") == 0) {
-			InitMeshTerrain(m, data, on_mat_load, on_program_load, on_tex_load);
+			InitMeshTerrain(m, data, on_mat_load);
 		} else if (strcmp(mesh_type_str, "SKELET_MESH\0") == 0) {
-			InitMeshSkeletal(m, data, on_mat_load, on_program_load, on_tex_load);
+			InitMeshSkeletal(m, data, on_mat_load);
 		}
 
 		MeshRef ref;
@@ -129,9 +128,7 @@ void R::ReleaseAllMeshes() {
 
 #define READ_ADVANCE(dest, p, size) memcpy(dest, p, size); p += size;
 
-void R::InitMeshSimple(Mesh &m, void *data,		material_load_callback 	on_mat_load,
-												program_load_callback 	on_program_load,
-												texture_load_callback 	on_tex_load) {
+void R::InitMeshSimple(Mesh &m, void *data, material_load_callback on_mat_load) {
 	char *p = (char *)data;
 
 	char mesh_type_str[12];
@@ -225,9 +222,7 @@ void R::InitMeshSimple(Mesh &m, void *data,		material_load_callback 	on_mat_load
 
 }
 
-void R::InitMeshTerrain(Mesh &m, void *data,	material_load_callback 	on_mat_load,
-												program_load_callback 	on_program_load,
-												texture_load_callback 	on_tex_load) {
+void R::InitMeshTerrain(Mesh &m, void *data, material_load_callback on_mat_load) {
 	char *p = (char *)data;
 
 	char mesh_type_str[12];
@@ -331,9 +326,7 @@ void R::InitMeshTerrain(Mesh &m, void *data,	material_load_callback 	on_mat_load
 
 }
 
-void R::InitMeshSkeletal(Mesh &m, void *data,	material_load_callback 	on_mat_load,
-                                                program_load_callback 	on_program_load,
-                                                texture_load_callback 	on_tex_load) {
+void R::InitMeshSkeletal(Mesh &m, void *data, material_load_callback on_mat_load) {
     char *p = (char *)data;
 
     char mesh_type_str[12];
