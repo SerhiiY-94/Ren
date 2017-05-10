@@ -109,12 +109,12 @@ public:
 			return index_;
 		}
 
-		bool operator< (const SparseArrayIterator& other) { return (index_ - other.index_) < 0; }
-		bool operator<=(const SparseArrayIterator& other) { return (index_ - other.index_) <= 0; }
-		bool operator> (const SparseArrayIterator& other) { return (index_ - other.index_) > 0; }
-		bool operator>=(const SparseArrayIterator& other) { return (index_ - other.index_) >= 0; }
-		bool operator==(const SparseArrayIterator& other) { return  index_ == other.index_; }
-		bool operator!=(const SparseArrayIterator& other) { return  index_ != other.index_; }
+		bool operator< (const SparseArrayIterator &rhs) { return (index_ - rhs.index_) < 0; }
+		bool operator<=(const SparseArrayIterator &rhs) { return (index_ - rhs.index_) <= 0; }
+		bool operator> (const SparseArrayIterator &rhs) { return (index_ - rhs.index_) > 0; }
+		bool operator>=(const SparseArrayIterator &rhs) { return (index_ - rhs.index_) >= 0; }
+		bool operator==(const SparseArrayIterator &rhs) { return  index_ == rhs.index_; }
+		bool operator!=(const SparseArrayIterator &rhs) { return  index_ != rhs.index_; }
 	};
 
 	typedef SparseArrayIterator iterator;

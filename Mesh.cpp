@@ -43,11 +43,11 @@ R::MeshRef R::LoadMesh(const char *name, void *data, material_load_callback on_m
 		it->counter++;
 
 		MeshRef ref;
-		ref.index = (int) std::distance(meshes.begin(), it);
+		ref.index = (int) it.index();
         ref.type = it->type;
 		ref.flags = it->flags;
 
-		return std::move(ref);
+		return ref;
 	} else {
 		Mesh m;
 		m.counter = 1;
@@ -69,7 +69,7 @@ R::MeshRef R::LoadMesh(const char *name, void *data, material_load_callback on_m
 		ref.flags = m.flags;
 		ref.index = (int)meshes.Add(m);
 
-		return std::move(ref);
+		return ref;
 	}
 }
 

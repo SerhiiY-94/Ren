@@ -7,11 +7,8 @@
 #include <array>
 #include <string>
 
+#include "GL.h"
 #include "SparseArray.h"
-
-#ifdef USE_GL_RENDER
-	#include "GL.h"
-#endif
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)

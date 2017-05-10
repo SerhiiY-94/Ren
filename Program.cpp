@@ -5,6 +5,7 @@
 #include <array>
 #include <limits>
 
+#include "RenderState.h"
 #include "SparseArray.h"
 
 #if defined(USE_GL_RENDER)
@@ -103,11 +104,11 @@ R::ProgramRef R::CreateProgramSW(const char *name, void *vshader, void *fshader,
         it->counter++;
 
         ProgramRef ref;
-        ref.index = (int) std::distance(programs.begin(), it);
+        ref.index = (int) it.index();
 
         if (status) *status = ProgFound;
 
-        return std::move(ref);
+        return ref;
     } else {
         if (it == programs.end()) {
             Program p;
@@ -132,11 +133,11 @@ R::ProgramRef R::CreateProgramSW(const char *name, void *vshader, void *fshader,
 
             if (status) *status = ProgSetToDefault;
 
-            return std::move(ref);
+            return ref;
         }
 
         SWint program = swCreateProgram();
-        swUseProgram(program);
+        R::UseProgram(program);
         swInitProgram((vtx_shader_proc)vshader, (frag_shader_proc)fshader, num_fvars);
 
         it->prog_id = (uint32_t)program;
@@ -147,7 +148,7 @@ R::ProgramRef R::CreateProgramSW(const char *name, void *vshader, void *fshader,
 
         if (status) *status = ProgCreatedFromData;
 
-        return std::move(ref);
+        return ref;
     }
 }
 
@@ -172,7 +173,7 @@ namespace {
 
 void R::RegisterUnifAttrs(ProgramRef &ref, const AttrUnifArg *unifs, const AttrUnifArg *attrs) {
     Program *p = R::GetProgram(ref);
-    swUseProgram(p->prog_id);
+    R::UseProgram(p->prog_id);
 
     char *p_names_buf = &(*name_buffers.Get((size_t)ref.index))[0];
 
@@ -187,7 +188,7 @@ void R::RegisterUnifAttrs(ProgramRef &ref, const AttrUnifArg *unifs, const AttrU
 
         p_names_buf += strlen(arg->name) + 1;
 
-        swRegisterUniform(arg->index, (SWenum)arg->type);
+        swRegisterUniformv(arg->index, (SWenum) arg->type, arg->size);
 
         arg++;
     }

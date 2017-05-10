@@ -53,7 +53,7 @@ R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, eTexLoadSta
 
 		if (load_status) *load_status = TexFound;
 
-		return std::move(ref);
+		return ref;
 	} else {
 		if (it == textures.end()) {
 			Texture2D t;
@@ -72,6 +72,8 @@ R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, eTexLoadSta
         } else {
             if (strstr(it->name, ".tga") != 0 || strstr(it->name, ".TGA") != 0) {
                 InitTex2DFromTGAFile(*it, data, f, r);
+            } else if (strstr(it->name, ".tex") != 0 || strstr(it->name, ".TEX") != 0) {
+                InitTex2DFromTEXFile(*it, data, f, r);
             } else {
 				InitTex2DFromRAWData(*it, data, w, h, format, f, r);
 			}
@@ -87,7 +89,7 @@ R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, eTexLoadSta
 #endif
 		ref.index	= (int)it.index();
 
-		return std::move(ref);
+		return ref;
 	}
 }
 
@@ -116,7 +118,7 @@ R::Texture2DRef R::LoadTextureCube(const char *name, const void *data[6], eTexLo
 
         if (load_status) *load_status = TexFound;
 
-        return std::move(ref);
+        return ref;
     } else {
         if (it == textures.end()) {
             Texture2D t;
@@ -151,7 +153,7 @@ R::Texture2DRef R::LoadTextureCube(const char *name, const void *data[6], eTexLo
 #endif
         ref.index	= (int)it.index();
 
-        return std::move(ref);
+        return ref;
     }
 }
 

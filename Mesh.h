@@ -15,16 +15,14 @@ namespace R {
 		int			offset;
 		int			num_indices;
 		MaterialRef mat;
-		int			flags;
+		uint32_t	flags;
 	};
-
-	static_assert(sizeof(TriStrip) == 16, "Fix struct padding!");
 
 	enum eMeshType { MeshUndefined, MeshSimple, MeshTerrain, MeshSkeletal };
 
 	struct Mesh {
 		int				type;
-		unsigned int	flags;
+		uint32_t		flags;
 #if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
 		uint32_t		attribs_buf_id;
 		uint32_t		indices_buf_id;
@@ -125,7 +123,7 @@ namespace R {
     // mesh with 4 bone weights per vertex
 	void InitMeshSkeletal(Mesh &mesh, void *data, material_load_callback on_mat_load);
 
-    // split skeletal mesh into chunks to fit uniforms limit in shaders
+    // split skeletal mesh into chunks to fit uniforms limit in shader
     void SplitMesh(Mesh &m, int bones_limit);
 }
 

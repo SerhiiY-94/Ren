@@ -6,7 +6,7 @@
 #include <memory>
 
 namespace R {
-    enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F };
+    enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, Compressed };
     enum eTexFilter { NoFilter, Bilinear, Trilinear };
     enum eTexRepeat { Repeat, ClampToEdge };
 
@@ -113,6 +113,7 @@ namespace R {
     std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
 
     void InitTex2DFromTGAFile(Texture2D &t, const void *data, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
+    void InitTex2DFromTEXFile(Texture2D &t, const void *data, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
     void InitTex2DFromRAWData(Texture2D &t, const void *data,
                               int w, int h, eTex2DFormat format, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
 

@@ -1,5 +1,5 @@
-#ifndef RENDER_STATE_GL_H
-#define RENDER_STATE_GL_H
+#ifndef RENDER_STATE_SW_H
+#define RENDER_STATE_SW_H
 
 #include <cstdint>
 
@@ -28,9 +28,13 @@ namespace R {
 		swClearColor(r, g, b, a);
 	}
 
-	inline void ClearColorAndDepth(float r = 0, float g = 0, float b = 0, float a = 1) {
-		swClearColor(r, g, b, a);
+	inline void ClearDepth() {
 		swClearDepth(1);
+	}
+
+	inline void ClearColorAndDepth(float r = 0, float g = 0, float b = 0, float a = 1) {
+		ClearColor(r, g, b, a);
+		ClearDepth();
 	}
 
 	inline void SetDepthTest(bool b) {
@@ -38,4 +42,4 @@ namespace R {
 	}
 }
 
-#endif // RENDER_STATE_GL_H
+#endif // RENDER_STATE_SW_H

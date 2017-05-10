@@ -119,7 +119,13 @@ namespace R {
 #elif defined(USE_SW_RENDER)
 	ProgramRef CreateProgramSW(const char *name, void *vshader, void *fshader, int num_fvars, eProgramLoadStatus *status = nullptr);
 
-    struct AttrUnifArg { const char *name; int index, type; }; // list should end with { nullptr, #, # }
+    struct AttrUnifArg {
+		const char *name; int index, type, size;
+
+        AttrUnifArg() : name(nullptr) {}
+		AttrUnifArg(const char *_name, int _index, int _type, int _size) : name(_name), index(_index), type(_type), size(_size) {}
+		AttrUnifArg(const char *_name, int _index, int _type) : name(_name), index(_index), type(_type), size(1) {}
+	}; // list should end with { nullptr, #, # }
     void RegisterUnifAttrs(ProgramRef &ref, const AttrUnifArg *unifs, const AttrUnifArg *attrs);
 #endif
 

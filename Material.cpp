@@ -33,7 +33,7 @@ R::MaterialRef R::LoadMaterial(const char *name, const char *mat_src, eMatLoadSt
 		MaterialRef ref;
 		ref.index = (int) it.index();
 
-		return std::move(ref);
+		return ref;
 	} else {
 		if (it == materials.end()) {
 			// TODO: point to standart mat
@@ -42,7 +42,7 @@ R::MaterialRef R::LoadMaterial(const char *name, const char *mat_src, eMatLoadSt
 			m.counter = 0;
 			m.flags = 0;
 
-			int index = (int)materials.Add(m);
+			size_t index = materials.Add(m);
 			it = materials.it_at(index);
 		}
 
@@ -52,11 +52,11 @@ R::MaterialRef R::LoadMaterial(const char *name, const char *mat_src, eMatLoadSt
 			it->not_ready = 1;
 
 			MaterialRef ref;
-			ref.index = (int)it.index();
+			ref.index = (int) it.index();
 
 			if (status) *status = MatSetToDefault;
 
-			return std::move(ref);
+			return ref;
 		}
 
 		// Parse material
@@ -143,7 +143,7 @@ R::MaterialRef R::LoadMaterial(const char *name, const char *mat_src, eMatLoadSt
 		MaterialRef ref;
 		ref.index = (int)it.index();
 
-		return std::move(ref);
+		return ref;
 	}
 }
 

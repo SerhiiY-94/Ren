@@ -11,7 +11,7 @@ namespace R {
 
     struct Material {
         int				counter;
-        int				flags;
+        uint32_t		flags;
         int				not_ready;
         char			name[32];
         ProgramRef		program;

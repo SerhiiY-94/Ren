@@ -187,7 +187,7 @@ void test_mesh() {
     {   // Load simple mesh
         MeshTest test;
 
-        R::MeshRef m_ref = R::LoadMesh("ivy", __ivy_mesh, OnMaterialNeeded, OnProgramNeeded, OnTextureNeeded);
+        R::MeshRef m_ref = R::LoadMesh("ivy", __ivy_mesh, OnMaterialNeeded);
         assert(m_ref.index == 0);
 
         R::Mesh *p_m = R::GetMesh(m_ref);
@@ -210,7 +210,7 @@ void test_mesh() {
         assert(p_m->strips[0].flags == R::MeshHasAlpha);
 
         {
-            R::MeshRef m_ref2 = R::LoadMesh("ivy", __ivy_mesh, OnMaterialNeeded, OnProgramNeeded, OnTextureNeeded);
+            R::MeshRef m_ref2 = R::LoadMesh("ivy", __ivy_mesh, OnMaterialNeeded);
             assert(m_ref2.index == 0);
 
             R::Mesh *p_m2 = R::GetMesh(m_ref);
@@ -230,7 +230,7 @@ void test_mesh() {
     {   // Load skeletal mesh
         MeshTest test;
 
-        R::MeshRef m_ref = R::LoadMesh("test", __skeletal_mesh, OnMaterialNeeded, OnProgramNeeded, OnTextureNeeded);
+        R::MeshRef m_ref = R::LoadMesh("test", __skeletal_mesh, OnMaterialNeeded);
         assert(m_ref.index == 0);
 
         R::Mesh *p_m = R::GetMesh(m_ref);
@@ -269,7 +269,7 @@ void test_mesh() {
         assert(p_m->skel.bones[1].dirty == 1);
 
         {
-            R::MeshRef m_ref2 = R::LoadMesh("test", __skeletal_mesh, OnMaterialNeeded, OnProgramNeeded, OnTextureNeeded);
+            R::MeshRef m_ref2 = R::LoadMesh("test", __skeletal_mesh, OnMaterialNeeded);
             assert(m_ref2.index == 0);
 
             R::Mesh *p_m2 = R::GetMesh(m_ref);

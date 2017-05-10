@@ -146,6 +146,7 @@ namespace R {
         }
 
         glm::vec3 bone_pos(const char *name);
+		glm::vec3 bone_pos(int i);
 
         void bone_matrix(const char *name, glm::mat4 &mat);
         void bone_matrix(int i, glm::mat4 &mat);

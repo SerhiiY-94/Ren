@@ -31,7 +31,7 @@ R::AnimSequenceRef R::LoadAnimSequence(const char *name, void *data) {
 		AnimSequenceRef ref;
 		ref.index = (int) it.index();
 
-		return std::move(ref);
+		return ref;
 	} else {
 		AnimSequence a;
 		a.counter = 1;
@@ -47,7 +47,7 @@ R::AnimSequenceRef R::LoadAnimSequence(const char *name, void *data) {
 		AnimSequenceRef ref;
 		ref.index = (int)anim_sequences.Add(a);
 
-		return std::move(ref);
+		return ref;
 	}
 }
 
@@ -192,13 +192,31 @@ void R::AnimSequence::InterpolateFrames(int fr_0, int fr_1, float t) {
 // skeleton
 
 glm::vec3 R::Skeleton::bone_pos(const char *name) {
-    UpdateBones();
     auto b = bone(name);
     glm::vec3 ret;
     const float *m = &(b->cur_comb_matrix)[0][0];
-    ret[0] = -(m[0] * m[12] + m[1] * m[13] + m[2] * m[14]);
+    /*ret[0] = -(m[0] * m[12] + m[1] * m[13] + m[2] * m[14]);
     ret[1] = -(m[4] * m[12] + m[5] * m[13] + m[6] * m[14]);
-    ret[2] = -(m[8] * m[12] + m[9] * m[13] + m[10] * m[14]);
+    ret[2] = -(m[8] * m[12] + m[9] * m[13] + m[10] * m[14]);*/
+
+    ret[0] = m[12];
+    ret[1] = m[13];
+    ret[2] = m[14];
+
+    return ret;
+}
+
+glm::vec3 R::Skeleton::bone_pos(int i) {
+    auto b = &bones[i];
+    glm::vec3 ret;
+    const float *m = &(b->cur_comb_matrix)[0][0];
+    /*ret[0] = -(m[0] * m[12] + m[1] * m[13] + m[2] * m[14]);
+    ret[1] = -(m[4] * m[12] + m[5] * m[13] + m[6] * m[14]);
+    ret[2] = -(m[8] * m[12] + m[9] * m[13] + m[10] * m[14]);*/
+
+    ret[0] = m[12];
+    ret[1] = m[13];
+    ret[2] = m[14];
 
     return ret;
 }
@@ -281,7 +299,7 @@ void R::Skeleton::ApplyAnim(int anim_id1, int anim_id2, float t) {
                 if (anims[anim_id2].anim_bones[i]->flags & AnimHasTranslate) {
                     pos = glm::mix(pos, anims[anim_id2].anim_bones[i]->cur_pos, t);
                 }
-                orient = glm::mix(orient, anims[anim_id2].anim_bones[i]->cur_rot, t);
+                orient = glm::slerp(orient, anims[anim_id2].anim_bones[i]->cur_rot, t);
             }
             m = glm::translate(m, pos);
             m *= glm::toMat4(orient);
