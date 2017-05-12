@@ -15,16 +15,18 @@ R::FrameBuf::FrameBuf(int _w, int _h, R::eTex2DFormat format, R::eTexFilter filt
     R::BindTexture(0, col_tex);
     glActiveTexture(GL_TEXTURE0);
 
-    if (format == R::RawRGB888) {
+    if (format == RawRGB888) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    } else if (format == R::RawRGBA8888) {
+    } else if (format == RawRGBA8888) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    } else if (format == R::RawR32F) {
+	} else if (format == RawR32F) {
 #if defined(EMSCRIPTEN)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
 #else
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, w, h, 0, GL_RED, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, w, h, 0, GL_RED, GL_FLOAT, NULL);
 #endif
+	} else if (format == RawRGB32F) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGB, GL_FLOAT, NULL);
     } else {
         throw std::invalid_argument("Wrong format!");
     }

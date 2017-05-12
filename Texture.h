@@ -6,7 +6,7 @@
 #include <memory>
 
 namespace R {
-    enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, Compressed };
+    enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, Compressed };
     enum eTexFilter { NoFilter, Bilinear, Trilinear };
     enum eTexRepeat { Repeat, ClampToEdge };
 
