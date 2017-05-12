@@ -47,7 +47,7 @@ R::FrameBuf::FrameBuf(int _w, int _h, R::eTex2DFormat format, R::eTexFilter filt
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, col_tex, 0);
 
-    R::PrintGLError("[Renderer]: create framebuffer 2");
+    R::CheckError("[Renderer]: create framebuffer 2");
 
     if (with_depth) {
         unsigned _depth_rb;
@@ -72,7 +72,7 @@ R::FrameBuf::FrameBuf(int _w, int _h, R::eTex2DFormat format, R::eTexFilter filt
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    R::PrintGLError("[Renderer]: create framebuffer 3");
+    R::CheckError("[Renderer]: create framebuffer 3");
     LOGI("Framebuffer created (%ix%i)", w, h);
 }
 

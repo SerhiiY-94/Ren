@@ -10,9 +10,9 @@
 #include "RenderThread.cpp"
 #include "Texture.cpp"
 
-extern "C" {
+/*extern "C" {
     #include "SW/_SW.c"
-}
+}*/
 
 #if defined(USE_GL_RENDER)
 	#include "FrameBufGL.cpp"

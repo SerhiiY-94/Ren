@@ -326,6 +326,8 @@ void R::InitTex2DFromTGAFile(Texture2D &t, const void *data, eTexFilter f, eTexR
     InitTex2DFromRAWData(t, image_data.get(), w, h, format, f, r);
 }
 
+void R::InitTex2DFromTEXFile(Texture2D &t, const void *data, eTexFilter f, eTexRepeat r) { assert(false); }
+
 void R::InitTexCubeFromTGAFile(Texture2D &t, const void *data[6], eTexFilter f) {
     std::unique_ptr<uint8_t[]> image_data[6];
     const void *_image_data[6] = {};

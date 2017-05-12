@@ -69,16 +69,16 @@ namespace R {
     }
 
 #ifndef NDEBUG
-	inline void PrintGLError(const char *op = "undefined") {
-		for (GLint error = glGetError(); error; error = glGetError()) {
-			fprintf(stderr, "after %s glError (0x%x)\n", op, error);
-		}
-	}
+    inline void CheckError(const char *op = "undefined") {
+        for (GLint error = glGetError(); error; error = glGetError()) {
+            fprintf(stderr, "after %s glError (0x%x)\n", op, error);
+        }
+    }
 #else
-	inline void PrintGLError(const char *op = "undefined") {}
+    inline void CheckError(const char *op = "undefined") {}
 #endif
 
-	int IsExtensionSupported(const char *ext);
+    int IsExtensionSupported(const char *ext);
 }
 
 #endif // RENDER_STATE_GL_H

@@ -40,6 +40,8 @@ namespace R {
 	inline void SetDepthTest(bool b) {
 		b ? swEnable(SW_DEPTH_TEST) : swDisable(SW_DEPTH_TEST);
 	}
+
+	inline void CheckError(const char *op = "undefined") {}
 }
 
 #endif // RENDER_STATE_SW_H
