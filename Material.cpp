@@ -116,7 +116,7 @@ R::MaterialRef R::LoadMaterial(const char *name, const char *mat_src, eMatLoadSt
 				std::string texture_name = std::string(p, q);
 
 				eTexLoadStatus st;
-				it->textures[num_textures] = LoadTexture2D(texture_name.c_str(), nullptr, &st, Trilinear, Repeat);
+				it->textures[num_textures] = LoadTexture2D(texture_name.c_str(), nullptr, 0, &st, Trilinear, Repeat);
 				if (st == TexCreatedDefault) {
 					on_tex_load(texture_name.c_str());
 				}

@@ -60,7 +60,7 @@ void R::ProcessSingleTask(TaskFunc func, void *arg) {
 #endif
 }
 
-void R::ProcessTasks() {
+bool R::ProcessTasks() {
 #ifndef __EMSCRIPTEN__
 	TaskList list;
 	while (task_lists.Pop(list)) {
@@ -68,6 +68,10 @@ void R::ProcessTasks() {
 			t.func(t.arg);
 		}
 		*(std::atomic_bool*)list.done_event.get() = true;
+		return true;
 	}
+	return false;
+#else
+    return false;
 #endif
 }

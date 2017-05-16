@@ -66,7 +66,7 @@ void test_texture() {
         TextureTest test;
 
         R::eTexLoadStatus status;
-        R::Texture2DRef t_ref = R::LoadTexture2D("checker.tga", nullptr, &status);
+        R::Texture2DRef t_ref = R::LoadTexture2D("checker.tga", nullptr, 0, &status);
         assert(status == R::TexCreatedDefault);
         assert(t_ref.index == 0);
 
@@ -83,7 +83,7 @@ void test_texture() {
         assert(p_t->not_ready == 1);
 
         {
-            R::Texture2DRef t_ref2 = R::LoadTexture2D("checker.tga", nullptr, &status);
+            R::Texture2DRef t_ref2 = R::LoadTexture2D("checker.tga", nullptr, 0, &status);
             assert(status == R::TexFound);
             assert(t_ref2.index == 0);
 
@@ -101,7 +101,7 @@ void test_texture() {
         assert(p_t->counter == 1);
 
         {
-            R::Texture2DRef t_ref3 = R::LoadTexture2D("checker.tga", test_tga_img, &status);
+            R::Texture2DRef t_ref3 = R::LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), &status);
             assert(status == R::TexCreatedFromData);
             assert(t_ref3.index == 0);
 #if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)

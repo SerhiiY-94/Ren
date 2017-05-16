@@ -28,11 +28,11 @@ namespace R {
 #endif
 }
 
-R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, eTexFilter f, eTexRepeat r) {
-	return R::LoadTexture2D(name, data, nullptr, 0, 0, Undefined, f, r);
+R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, int size, eTexFilter f, eTexRepeat r) {
+	return R::LoadTexture2D(name, data, size, nullptr, 0, 0, Undefined, f, r);
 }
 
-R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, eTexLoadStatus *load_status,
+R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, int size, eTexLoadStatus *load_status,
                                  int w, int h, eTex2DFormat format, eTexFilter f, eTexRepeat r) {
 	auto it = textures.begin();
 	for (; it != textures.end(); ++it) {
@@ -74,6 +74,8 @@ R::Texture2DRef R::LoadTexture2D(const char *name, const void *data, eTexLoadSta
                 InitTex2DFromTGAFile(*it, data, f, r);
             } else if (strstr(it->name, ".tex") != 0 || strstr(it->name, ".TEX") != 0) {
                 InitTex2DFromTEXFile(*it, data, f, r);
+            } else if (strstr(it->name, ".dds") != 0 || strstr(it->name, ".DDS") != 0) {
+                InitTex2DFromDDSFile(*it, data, size, f, r);
             } else {
 				InitTex2DFromRAWData(*it, data, w, h, format, f, r);
 			}
@@ -325,8 +327,6 @@ void R::InitTex2DFromTGAFile(Texture2D &t, const void *data, eTexFilter f, eTexR
 
     InitTex2DFromRAWData(t, image_data.get(), w, h, format, f, r);
 }
-
-void R::InitTex2DFromTEXFile(Texture2D &t, const void *data, eTexFilter f, eTexRepeat r) { assert(false); }
 
 void R::InitTexCubeFromTGAFile(Texture2D &t, const void *data[6], eTexFilter f) {
     std::unique_ptr<uint8_t[]> image_data[6];

@@ -63,7 +63,7 @@ void test_render_state() {
     {   // Bind tex and prog
         RenderStateTest test;
 
-        R::Texture2DRef t_ref = R::LoadTexture2D("checker.tga", test_tga_img, nullptr);
+        R::Texture2DRef t_ref = R::LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), nullptr);
         R::BindTexture(0, t_ref.tex_id);
         R::BindTexture(2, t_ref.tex_id);
         R::BindTexture(4, t_ref.tex_id);

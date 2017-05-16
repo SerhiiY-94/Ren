@@ -3,6 +3,8 @@
 #include <cassert>
 #include <vector>
 
+#include <SOIL2/SOIL2.h>
+
 #include "GL.h"
 
 #include "RenderStateGL.h"
@@ -49,6 +51,9 @@ void R::InitTex2DFromRAWData(Texture2D &t, const void *data,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     } else if (f == Trilinear) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else if (f == BilinearNoMipmap) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
@@ -115,11 +120,14 @@ void R::InitTexCubeFromRAWData(Texture2D &t, const void *data[6], int w, int h, 
     } else if (f == Trilinear) {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else if (f == BilinearNoMipmap) {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#ifndef GL_ES_VERSION_2_0
+#if !defined(GL_ES_VERSION_2_0) && !defined(__EMSCRIPTEN__)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 #endif
 
@@ -128,6 +136,26 @@ void R::InitTexCubeFromRAWData(Texture2D &t, const void *data[6], int w, int h, 
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     }
 }
+
+void R::InitTex2DFromDDSFile(Texture2D &t, const void *data, int size, eTexFilter f, eTexRepeat r) {
+    GLuint tex_id;
+    if (t.format == Undefined) {
+        glGenTextures(1, &tex_id);
+
+        t.tex_id = tex_id;
+    } else {
+        tex_id = (GLuint) t.tex_id;
+    }
+
+    t.format = Compressed;
+
+    int res = SOIL_load_OGL_texture_from_memory((unsigned char *)data, size, SOIL_LOAD_AUTO, tex_id, SOIL_FLAG_DDS_LOAD_DIRECT);
+    assert(res == tex_id);
+
+    ChangeFilter(t, f, r);
+}
+
+void R::InitTex2DFromTEXFile(Texture2D &t, const void *data, eTexFilter f, eTexRepeat r) { assert(false && "Used only for SW render!"); }
 
 void R::ChangeFilter(Texture2D &t, eTexFilter f, eTexRepeat r) {
     R::BindTexture(0, t.tex_id);
@@ -141,6 +169,9 @@ void R::ChangeFilter(Texture2D &t, eTexFilter f, eTexRepeat r) {
     } else if (f == Trilinear) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else if (f == BilinearNoMipmap) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
     if (r == Repeat) {
@@ -151,7 +182,7 @@ void R::ChangeFilter(Texture2D &t, eTexFilter f, eTexRepeat r) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
-    if (f == Trilinear || f == Bilinear) {
+    if (t.format != Compressed && (f == Trilinear || f == Bilinear)) {
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
         glGenerateMipmap(GL_TEXTURE_2D);
     }

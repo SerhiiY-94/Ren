@@ -7,7 +7,7 @@
 
 namespace R {
     enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, Compressed };
-    enum eTexFilter { NoFilter, Bilinear, Trilinear };
+    enum eTexFilter { NoFilter, Bilinear, Trilinear, BilinearNoMipmap };
     enum eTexRepeat { Repeat, ClampToEdge };
 
     struct Texture2D {
@@ -98,8 +98,8 @@ namespace R {
 
     enum eTexLoadStatus { TexFound, TexCreatedDefault, TexCreatedFromData };
 
-    Texture2DRef LoadTexture2D(const char *name, const void *data, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
-    Texture2DRef LoadTexture2D(const char *name, const void *data, eTexLoadStatus *load_status,
+    Texture2DRef LoadTexture2D(const char *name, const void *data, int size, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
+    Texture2DRef LoadTexture2D(const char *name, const void *data, int size, eTexLoadStatus *load_status,
                                int w = 0, int h = 0,
                                eTex2DFormat format = Undefined, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
 
@@ -113,6 +113,7 @@ namespace R {
     std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
 
     void InitTex2DFromTGAFile(Texture2D &t, const void *data, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
+    void InitTex2DFromDDSFile(Texture2D &t, const void *data, int size, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
     void InitTex2DFromTEXFile(Texture2D &t, const void *data, eTexFilter f = Trilinear, eTexRepeat r = Repeat);
     void InitTex2DFromRAWData(Texture2D &t, const void *data,
                               int w, int h, eTex2DFormat format, eTexFilter f = Trilinear, eTexRepeat r = Repeat);

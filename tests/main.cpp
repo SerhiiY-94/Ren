@@ -1,4 +1,6 @@
 
+#include <cstdio>
+
 void test_anim();
 void test_material();
 void test_mesh();
@@ -13,4 +15,5 @@ int main() {
     test_program();
     test_render_state();
     test_sparse_array();
+    puts("OK");
 }

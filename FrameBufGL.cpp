@@ -26,7 +26,11 @@ R::FrameBuf::FrameBuf(int _w, int _h, R::eTex2DFormat format, R::eTexFilter filt
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, w, h, 0, GL_RED, GL_FLOAT, NULL);
 #endif
 	} else if (format == RawRGB32F) {
+#if defined(EMSCRIPTEN)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
+#else
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGB, GL_FLOAT, NULL);
+#endif
     } else {
         throw std::invalid_argument("Wrong format!");
     }
@@ -34,7 +38,7 @@ R::FrameBuf::FrameBuf(int _w, int _h, R::eTex2DFormat format, R::eTexFilter filt
     if (filter == R::NoFilter) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    } else if (filter == R::Bilinear) {
+    } else if (filter == R::Bilinear || filter == R::BilinearNoMipmap) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
@@ -71,6 +75,8 @@ R::FrameBuf::FrameBuf(int _w, int _h, R::eTex2DFormat format, R::eTexFilter filt
 
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

@@ -37,7 +37,7 @@ namespace R {
 		}, f);
 	}
 
-	void ProcessTasks();
+	bool ProcessTasks();
 }
 
 #endif // RENDER_THREAD_H
