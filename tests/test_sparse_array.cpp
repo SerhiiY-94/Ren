@@ -3,7 +3,7 @@
 #include "../SparseArray.h"
 
 namespace {
-    std::vector<int> GenerateTestData(int size) {
+    std::vector<int> GenTestData(int size) {
         std::vector<int> vec(size);
         for (int i = 0; i < size; i++) {
             vec[i] = i;
@@ -62,7 +62,7 @@ void test_sparse_array() {
     }
 
     {   // Iteration test
-        auto data = GenerateTestData(100);
+        auto data = GenTestData(100);
         SparseArray<int> s1;
         s1.Resize(100);
         for (auto v : data) {

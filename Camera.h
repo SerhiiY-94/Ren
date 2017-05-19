@@ -1,58 +1,66 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
-#include "Plane.h"
+#include <glm/vec3.hpp>
 
-enum {
-	LEFT_PLANE, RIGHT_PLANE, TOP_PLANE, BOTTOM_PLANE, NEAR_PLANE, FAR_PLANE
-};
+namespace ren {
+    enum ePointPos { Front, Back, OnPlane };
 
-class Camera {
-protected:
-	float view_matrix_[16];
-	float projection_matrix_[16];
+	struct Plane {
+		glm::vec3	n;
+		float		d;
 
-	float world_position_[3];
+		int ClassifyPoint(const float point[3]) const;
+	};
 
-	Plane frustum_planes_[6];
-	bool is_orthographic_;
+	enum eCamPlane {
+		LeftPlane, RightPlane, TopPlane, BottomPlane, NearPlane, FarPlane
+	};
 
-public:
+	class Camera {
+	protected:
+		float view_matrix_[16];
+		float projection_matrix_[16];
 
-	Camera(const float center[3], const float target[3], const float up[3]);
-	~Camera();
+		float world_position_[3];
 
-	const float* const view_matrix() const {
-		return view_matrix_;
-	}
+		Plane frustum_planes_[6];
+		bool is_orthographic_;
 
-	const Plane* const frustum_planes() const {
-		return frustum_planes_;
-	}
+	public:
 
-	const float* projection_matrix() const {
-		return projection_matrix_;
-	}
+		Camera(const float center[3], const float target[3], const float up[3]);
+		~Camera();
 
-	const float* world_position() const {
-		return world_position_;
-	}
+		const float* const view_matrix() const {
+			return view_matrix_;
+		}
 
-	const bool is_orthographic() const {
-		return is_orthographic_;
-	}
+		const Plane* const frustum_planes() const {
+			return frustum_planes_;
+		}
 
-	void Perspective(float angle, float aspect, float near, float far);
-	void Orthographic(float left, float right, float top, float down, float near, float far);
+		const float* projection_matrix() const {
+			return projection_matrix_;
+		}
 
-	void SetupView(const float center[3], const float target[3], const float up[3]);
+		const float* world_position() const {
+			return world_position_;
+		}
 
-	void UpdatePlanes();
-	bool IsInFrustum(const float bbox[8][3]) const;
+		const bool is_orthographic() const {
+			return is_orthographic_;
+		}
 
-	void Move(float* v, float delta_time);
-	void Rotate(float* v, float delta_time);
+		void Perspective(float angle, float aspect, float near, float far);
+		void Orthographic(float left, float right, float top, float down, float near, float far);
 
-};
+		void SetupView(const float center[3], const float target[3], const float up[3]);
 
-#endif
+		void UpdatePlanes();
+		bool IsInFrustum(const float bbox[8][3]) const;
+
+		void Move(float* v, float delta_time);
+		void Rotate(float* v, float delta_time);
+
+	};
+}

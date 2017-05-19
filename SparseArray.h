@@ -14,6 +14,8 @@ protected:
 		T			val;
 
 		Item() : used(0), next_free(0) {}
+		Item(Item &&rhs) : used(rhs.used), next_free(rhs.next_free), val(std::move(rhs.val)) {}
+		Item &operator=(Item &&rhs) { used = rhs.used; next_free = rhs.next_free; val = std::move(rhs.val); return *this; }
 	};
 
 	std::vector<Item> array_;

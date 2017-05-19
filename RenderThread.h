@@ -1,10 +1,12 @@
-#ifndef RENDER_THREAD_H
-#define RENDER_THREAD_H
+#pragma once
 
 #include <memory>
+#include <mutex>
 #include <vector>
 
-namespace R {
+#include "RingBuffer.h"
+
+namespace ren {
 	typedef void(*TaskFunc)(void *arg);
 	struct Task {
 		TaskFunc	func;
@@ -19,25 +21,31 @@ namespace R {
 			this->reserve(size);
 		}
 
-		void Submit();
+		void Submit(class RenderThread *r);
 		void Wait();
 	};
 
-	void AddTaskList(TaskList &&list);
-	void AddSingleTask(TaskFunc func, void *arg);
-	void ProcessSingleTask(TaskFunc func, void *arg);
+	class RenderThread {
+	protected:
+		RingBuffer<TaskList> task_lists_;
+		std::mutex add_list_mtx_;
+	public:
+		RenderThread() : task_lists_(128) {}
 
-	template<typename T>
-	void ProcessSingleTask(T func) {
-		auto f = new T(func);
-		ProcessSingleTask([](void *arg){
-			auto ff = (T *)arg;
-			(*ff)();
-			delete ff;
-		}, f);
-	}
+		void AddTaskList(TaskList &&list);
+		void AddSingleTask(TaskFunc func, void *arg);
+		void ProcessSingleTask(TaskFunc func, void *arg);
 
-	bool ProcessTasks();
+		template<typename T>
+		void ProcessSingleTask(T func) {
+			auto f = new T(func);
+			ProcessSingleTask([](void *arg) {
+				auto ff = (T *)arg;
+				(*ff)();
+				delete ff;
+			}, f);
+		}
+
+		bool ProcessTasks();
+	};
 }
-
-#endif // RENDER_THREAD_H

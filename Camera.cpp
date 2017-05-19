@@ -2,15 +2,31 @@
 
 #include <cmath>
 
+#include <glm/geometric.hpp>
+
 #include "Matrices_old.h"
 
-Camera::Camera(const float center[3], const float target[3], const float up[3]) {
+namespace {
+    const float epsilon = 0.002f;
+}
+
+int ren::Plane::ClassifyPoint(const float point[3]) const {
+	float result = glm::dot(*(glm::vec3 *)point, n) + d;
+	if (result > epsilon) {
+        return Front;
+	} else if (result < -epsilon) {
+		return Back;
+	}
+	return OnPlane;
+}
+
+ren::Camera::Camera(const float center[3], const float target[3], const float up[3]) {
 	SetupView(center, target, up);
 }
 
-Camera::~Camera() {}
+ren::Camera::~Camera() {}
 
-void Camera::SetupView(const float center[3], const float target[3], const float up[3]) {
+void ren::Camera::SetupView(const float center[3], const float target[3], const float up[3]) {
 	matrixSetIdentityM(view_matrix_);
 
 	matrixLookAtM(view_matrix_, center[0], center[1], center[2], target[0], target[1], target[2], up[0], up[1], up[2]);
@@ -23,17 +39,17 @@ void Camera::SetupView(const float center[3], const float target[3], const float
 			+ view_matrix_[10] * view_matrix_[14]);
 }
 
-void Camera::Perspective(float angle, float aspect, float nearr, float farr) {
+void ren::Camera::Perspective(float angle, float aspect, float nearr, float farr) {
 	is_orthographic_ = false;
 	BuildPerspProjMat(projection_matrix_, angle, aspect, nearr, farr);
 }
 
-void Camera::Orthographic(float left, float right, float down, float top, float nearr, float farr) {
+void ren::Camera::Orthographic(float left, float right, float down, float top, float nearr, float farr) {
 	is_orthographic_ = true;
 	matrixFrustumM2(projection_matrix_, left, right, down, top, nearr, farr);
 }
 
-void Camera::Move(float* v, float delta_time) {
+void ren::Camera::Move(float* v, float delta_time) {
 	view_matrix_[12] -= v[0] * delta_time;
 	view_matrix_[13] -= v[1] * delta_time;
 	view_matrix_[14] -= v[2] * delta_time;
@@ -43,8 +59,7 @@ void Camera::Move(float* v, float delta_time) {
 	//world_position_[2] = -(view_matrix_[8]*view_matrix_[12] + view_matrix_[9]*view_matrix_[13] + view_matrix_[10]*view_matrix_[14]);
 }
 
-void Camera::Rotate(float* v, float delta_time) {
-
+void ren::Camera::Rotate(float* v, float delta_time) {
 	float front[3];
 	front[0] = -view_matrix_[2];
 	front[1] = -view_matrix_[6];
@@ -69,42 +84,41 @@ void Camera::Rotate(float* v, float delta_time) {
 			1.0, 0.0);
 }
 
-void Camera::UpdatePlanes() {
-
+void ren::Camera::UpdatePlanes() {
 	float combo_matrix[16];
 	matrixMultiplyMM(combo_matrix, projection_matrix_, view_matrix_);
 
-	frustum_planes_[LEFT_PLANE].n[0] = combo_matrix[4 * 0 + 3] + combo_matrix[4 * 0 + 0];
-	frustum_planes_[LEFT_PLANE].n[1] = combo_matrix[4 * 1 + 3] + combo_matrix[4 * 1 + 0];
-	frustum_planes_[LEFT_PLANE].n[2] = combo_matrix[4 * 2 + 3] + combo_matrix[4 * 2 + 0];
-	frustum_planes_[LEFT_PLANE].d = combo_matrix[4 * 3 + 3] + combo_matrix[4 * 3 + 0];
+	frustum_planes_[LeftPlane].n[0] = combo_matrix[4 * 0 + 3] + combo_matrix[4 * 0 + 0];
+    frustum_planes_[LeftPlane].n[1] = combo_matrix[4 * 1 + 3] + combo_matrix[4 * 1 + 0];
+    frustum_planes_[LeftPlane].n[2] = combo_matrix[4 * 2 + 3] + combo_matrix[4 * 2 + 0];
+    frustum_planes_[LeftPlane].d = combo_matrix[4 * 3 + 3] + combo_matrix[4 * 3 + 0];
 
-	frustum_planes_[RIGHT_PLANE].n[0] = combo_matrix[4 * 0 + 3] - combo_matrix[4 * 0 + 0];
-	frustum_planes_[RIGHT_PLANE].n[1] = combo_matrix[4 * 1 + 3] - combo_matrix[4 * 1 + 0];
-	frustum_planes_[RIGHT_PLANE].n[2] = combo_matrix[4 * 2 + 3] - combo_matrix[4 * 2 + 0];
-	frustum_planes_[RIGHT_PLANE].d = combo_matrix[4 * 3 + 3] - combo_matrix[4 * 3 + 0];
+	frustum_planes_[RightPlane].n[0] = combo_matrix[4 * 0 + 3] - combo_matrix[4 * 0 + 0];
+    frustum_planes_[RightPlane].n[1] = combo_matrix[4 * 1 + 3] - combo_matrix[4 * 1 + 0];
+    frustum_planes_[RightPlane].n[2] = combo_matrix[4 * 2 + 3] - combo_matrix[4 * 2 + 0];
+    frustum_planes_[RightPlane].d = combo_matrix[4 * 3 + 3] - combo_matrix[4 * 3 + 0];
 
-	frustum_planes_[TOP_PLANE].n[0] = combo_matrix[4 * 0 + 3] - combo_matrix[4 * 0 + 1];
-	frustum_planes_[TOP_PLANE].n[1] = combo_matrix[4 * 1 + 3] - combo_matrix[4 * 1 + 1];
-	frustum_planes_[TOP_PLANE].n[2] = combo_matrix[4 * 2 + 3] - combo_matrix[4 * 2 + 1];
-	frustum_planes_[TOP_PLANE].d = combo_matrix[4 * 3 + 3] - combo_matrix[4 * 3 + 1];
+	frustum_planes_[TopPlane].n[0] = combo_matrix[4 * 0 + 3] - combo_matrix[4 * 0 + 1];
+    frustum_planes_[TopPlane].n[1] = combo_matrix[4 * 1 + 3] - combo_matrix[4 * 1 + 1];
+    frustum_planes_[TopPlane].n[2] = combo_matrix[4 * 2 + 3] - combo_matrix[4 * 2 + 1];
+    frustum_planes_[TopPlane].d = combo_matrix[4 * 3 + 3] - combo_matrix[4 * 3 + 1];
 
-	frustum_planes_[BOTTOM_PLANE].n[0] = combo_matrix[4 * 0 + 3] + combo_matrix[4 * 0 + 1];
-	frustum_planes_[BOTTOM_PLANE].n[1] = combo_matrix[4 * 1 + 3] + combo_matrix[4 * 1 + 1];
-	frustum_planes_[BOTTOM_PLANE].n[2] = combo_matrix[4 * 2 + 3] + combo_matrix[4 * 2 + 1];
-	frustum_planes_[BOTTOM_PLANE].d = combo_matrix[4 * 3 + 3] + combo_matrix[4 * 3 + 1];
+	frustum_planes_[BottomPlane].n[0] = combo_matrix[4 * 0 + 3] + combo_matrix[4 * 0 + 1];
+    frustum_planes_[BottomPlane].n[1] = combo_matrix[4 * 1 + 3] + combo_matrix[4 * 1 + 1];
+    frustum_planes_[BottomPlane].n[2] = combo_matrix[4 * 2 + 3] + combo_matrix[4 * 2 + 1];
+    frustum_planes_[BottomPlane].d = combo_matrix[4 * 3 + 3] + combo_matrix[4 * 3 + 1];
 
-	frustum_planes_[NEAR_PLANE].n[0] = combo_matrix[4 * 0 + 3] + combo_matrix[4 * 0 + 2];
-	frustum_planes_[NEAR_PLANE].n[1] = combo_matrix[4 * 1 + 3] + combo_matrix[4 * 1 + 2];
-	frustum_planes_[NEAR_PLANE].n[2] = combo_matrix[4 * 2 + 3] + combo_matrix[4 * 2 + 2];
-	frustum_planes_[NEAR_PLANE].d = combo_matrix[4 * 3 + 3] + combo_matrix[4 * 3 + 2];
+	frustum_planes_[NearPlane].n[0] = combo_matrix[4 * 0 + 3] + combo_matrix[4 * 0 + 2];
+    frustum_planes_[NearPlane].n[1] = combo_matrix[4 * 1 + 3] + combo_matrix[4 * 1 + 2];
+    frustum_planes_[NearPlane].n[2] = combo_matrix[4 * 2 + 3] + combo_matrix[4 * 2 + 2];
+    frustum_planes_[NearPlane].d = combo_matrix[4 * 3 + 3] + combo_matrix[4 * 3 + 2];
 
-	frustum_planes_[FAR_PLANE].n[0] = combo_matrix[4 * 0 + 3] - combo_matrix[4 * 0 + 2];
-	frustum_planes_[FAR_PLANE].n[1] = combo_matrix[4 * 1 + 3] - combo_matrix[4 * 1 + 2];
-	frustum_planes_[FAR_PLANE].n[2] = combo_matrix[4 * 2 + 3] - combo_matrix[4 * 2 + 2];
-	frustum_planes_[FAR_PLANE].d = combo_matrix[4 * 3 + 3] - combo_matrix[4 * 3 + 2];
+	frustum_planes_[FarPlane].n[0] = combo_matrix[4 * 0 + 3] - combo_matrix[4 * 0 + 2];
+    frustum_planes_[FarPlane].n[1] = combo_matrix[4 * 1 + 3] - combo_matrix[4 * 1 + 2];
+    frustum_planes_[FarPlane].n[2] = combo_matrix[4 * 2 + 3] - combo_matrix[4 * 2 + 2];
+    frustum_planes_[FarPlane].d = combo_matrix[4 * 3 + 3] - combo_matrix[4 * 3 + 2];
 
-	for (int plane = LEFT_PLANE; plane <= FAR_PLANE; plane++) {
+    for (int plane = LeftPlane; plane <= FarPlane; plane++) {
 		float inv_l = 1.0f
 				/ (float) sqrt(
 						frustum_planes_[plane].n[0] * frustum_planes_[plane].n[0]
@@ -124,16 +138,16 @@ void Camera::UpdatePlanes() {
 			+ view_matrix_[10] * view_matrix_[14]);
 }
 
-bool Camera::IsInFrustum(const float bbox[8][3]) const {
+bool ren::Camera::IsInFrustum(const float bbox[8][3]) const {
 	int in_count;
 
-	for (int plane = LEFT_PLANE; plane <= FAR_PLANE; plane++) {
+    for (int plane = LeftPlane; plane <= FarPlane; plane++) {
 		in_count = 8;
 
 		for (int i = 0; i < 8; i++) {
 			//switch (Plane::ClassifyPoint(frustum_planes_[plane], &bbox[i][0])) {
 		    switch (frustum_planes_[plane].ClassifyPoint(&bbox[i][0])) {
-			case BACK:
+			case Back:
 				in_count--;
 				break;
 			}

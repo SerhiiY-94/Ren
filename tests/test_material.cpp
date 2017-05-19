@@ -2,11 +2,12 @@
 
 #include <SDL2/SDL.h>
 
+#include "../Context.h"
 #include "../Material.h"
 
 #if defined(USE_GL_RENDER)
 #include "../GL.h"
-class MaterialTest {
+class MaterialTest : public ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -47,72 +48,73 @@ public:
 };
 #endif
 
-static void OnProgramNeeded(const char *name, const char *arg1, const char *arg2) {
-
+static ren::ProgramRef OnProgramNeeded(const char *name, const char *arg1, const char *arg2) {
+    return {};
 }
 
-static void OnTextureNeeded(const char *name) {
-
+static ren::Texture2DRef OnTextureNeeded(const char *name) {
+    return {};
 }
 
 void test_material() {
-
     {   // Load material
         MaterialTest test;
 
-        const char *mat_src =   "gl_program: constant constant.vs constant.fs\n"
-                "sw_program: constant\n"
-                "flag: alpha_blend\n"
-                "texture: checker.tga\n"
-                "texture: checker.tga\n"
-                "texture: metal_01.tga\n"
-                "texture: checker.tga\n"
-                "param: 0 1 2 3\n"
-                "param: 0.5 1.2 11 15";
+        auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
+            ren::eProgLoadStatus status;
+            return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
+        };
 
-        R::eMatLoadStatus status;
-        R::MaterialRef m_ref = R::LoadMaterial("mat1", nullptr, &status, OnProgramNeeded, OnTextureNeeded);
-        assert(status == R::MatSetToDefault);
+        auto on_texture_needed = [&test](const char *name) {
+            ren::eTexLoadStatus status;
+            ren::Texture2DParams p;
+            return test.LoadTexture2D(name, nullptr, 0, p, &status);
+        };
+
+        const char *mat_src = "gl_program: constant constant.vs constant.fs\n"
+                              "sw_program: constant\n"
+                              "flag: alpha_blend\n"
+                              "texture: checker.tga\n"
+                              "texture: checker.tga\n"
+                              "texture: metal_01.tga\n"
+                              "texture: checker.tga\n"
+                              "param: 0 1 2 3\n"
+                              "param: 0.5 1.2 11 15";
+
+        ren::eMatLoadStatus status;
+        ren::MaterialRef m_ref = test.LoadMaterial("mat1", nullptr, &status, on_program_needed, on_texture_needed);
+        assert(status == ren::MatSetToDefault);
 
         {
-            R::Material *mat = R::GetMaterial(m_ref);
-
-            assert(mat->not_ready == 1);
-            assert(mat->counter == 1);
+            assert(m_ref->ready() == false);
         }
 
-        R::LoadMaterial("mat1", mat_src, &status, OnProgramNeeded, OnTextureNeeded);
+        test.LoadMaterial("mat1", mat_src, &status, on_program_needed, on_texture_needed);
 
-        assert(status == R::MatCreatedFromData);
-        assert(m_ref.flags() == R::AlphaBlend);
+        assert(status == ren::MatCreatedFromData);
+        assert(m_ref->flags() & ren::AlphaBlend);
+        assert(m_ref->ready() == true);
+        assert(std::string(m_ref->name()) == "mat1");
 
-        R::Material *mat = R::GetMaterial(m_ref);
+        ren::ProgramRef p = m_ref->program();
 
-        assert(mat->not_ready == 0);
-        assert(mat->counter == 1);
+        assert(std::string(p->name()) == "constant");
+        assert(p->ready() == false);
 
-        assert(std::string(mat->name) == "mat1");
+        ren::Texture2DRef t0 = m_ref->texture(0);
+        ren::Texture2DRef t1 = m_ref->texture(1);
+        ren::Texture2DRef t2 = m_ref->texture(2);
+        ren::Texture2DRef t3 = m_ref->texture(3);
 
-        R::Program *p = R::GetProgram(mat->program);
+        assert(t0 == t1);
+        assert(t0 == t3);
 
-        assert(std::string(p->name) == "constant");
+        assert(std::string(t0->name()) == "checker.tga");
+        assert(std::string(t1->name()) == "checker.tga");
+        assert(std::string(t2->name()) == "metal_01.tga");
+        assert(std::string(t3->name()) == "checker.tga");
 
-        assert(mat->flags == R::AlphaBlend);
-
-        R::Texture2D *t0 = R::GetTexture(mat->textures[0]);
-        R::Texture2D *t1 = R::GetTexture(mat->textures[1]);
-        R::Texture2D *t2 = R::GetTexture(mat->textures[2]);
-        R::Texture2D *t3 = R::GetTexture(mat->textures[3]);
-
-        assert(mat->textures[0].index == mat->textures[1].index);
-        assert(mat->textures[0].index == mat->textures[3].index);
-
-        assert(std::string(t0->name) == "checker.tga");
-        assert(std::string(t1->name) == "checker.tga");
-        assert(std::string(t2->name) == "metal_01.tga");
-        assert(std::string(t3->name) == "checker.tga");
-
-        assert(mat->params[0] == glm::vec4(0, 1, 2, 3));
-        assert(mat->params[1] == glm::vec4(0.5, 1.2, 11, 15));
+        assert(m_ref->param(0) == glm::vec4(0, 1, 2, 3));
+        assert(m_ref->param(1) == glm::vec4(0.5, 1.2, 11, 15));
     }
 }

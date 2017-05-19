@@ -1,11 +1,7 @@
 #include "test_common.h"
 
+#include "../Context.h"
 #include "../Mesh.h"
-#include "../RenderState.h"
-
-namespace R {
-    extern int max_gpu_bones;
-}
 
 #ifdef USE_GL_RENDER
 
@@ -13,7 +9,7 @@ namespace R {
 
 #include "../GL.h"
 
-class MeshTest {
+class MeshTest : public ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -23,7 +19,7 @@ public:
         window_ = SDL_CreateWindow("View", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 256, 256, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
         gl_ctx_ = SDL_GL_CreateContext(window_);
 
-        R::Init(256, 256);
+        ren::Context::Init(256, 256);
 #ifndef EMSCRIPTEN
         GLenum glew_err = glewInit();
         if (glew_err != GLEW_OK) {
@@ -33,8 +29,6 @@ public:
     }
 
     ~MeshTest() {
-        R::Deinit();
-
         SDL_GL_DeleteContext(gl_ctx_);
         SDL_DestroyWindow(window_);
 #ifndef EMSCRIPTEN
@@ -168,18 +162,6 @@ namespace {
             0x00, 0x00, 0xf3, 0x04, 0x35, 0x3f, 0xf4, 0x04, 0x35, 0x3f
     };
     unsigned int __skeletal_mesh_len = 802;
-
-    void OnMaterialNeeded(const char *name) {
-        //REQUIRE(std::string(name) == "textures/ivy_01.tga");
-    }
-
-    void OnProgramNeeded(const char *name, const char *arg1, const char *arg2) {
-
-    }
-
-    void OnTextureNeeded(const char *name) {
-
-    }
 }
 
 void test_mesh() {
@@ -187,102 +169,110 @@ void test_mesh() {
     {   // Load simple mesh
         MeshTest test;
 
-        R::MeshRef m_ref = R::LoadMesh("ivy", __ivy_mesh, OnMaterialNeeded);
-        assert(m_ref.index == 0);
+		auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
+			ren::eProgLoadStatus status;
+			return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
+		};
 
-        R::Mesh *p_m = R::GetMesh(m_ref);
-        assert(p_m->type == R::MeshSimple);
-        assert(p_m->counter == 1);
-        assert(std::string(p_m->name) == "ivy");
+		auto on_texture_needed = [&test](const char *name) {
+			ren::eTexLoadStatus status;
+			ren::Texture2DParams p;
+			return test.LoadTexture2D(name, nullptr, 0, p, &status);
+		};
 
-        assert(p_m->bbox_min == glm::vec3(-10.389862, -220.607803, -441.704651));
-        assert(p_m->bbox_max == glm::vec3(83.354584, 179.815552, 441.704651));
+		auto on_material_needed = [&](const char *name) {
+			ren::eMatLoadStatus status;
+			return test.LoadMaterial(name, nullptr, &status, on_program_needed, on_texture_needed);
+		};
 
-        assert(p_m->strips[0].offset != -1);
-        assert(p_m->strips[1].offset == -1);
+		ren::MeshRef m_ref = test.LoadMesh("ivy", __ivy_mesh, on_material_needed);
+		assert(m_ref->type() == ren::MeshSimple);
+		assert(std::string(m_ref->name()) == "ivy");
 
-        assert(p_m->attribs != nullptr);
-        assert(p_m->attribs_size == 192);
-        assert(p_m->indices != nullptr);
-        assert(p_m->indices_size == 20);
+		assert(m_ref->bbox_min() == glm::vec3(-10.389862, -220.607803, -441.704651));
+		assert(m_ref->bbox_max() == glm::vec3(83.354584, 179.815552, 441.704651));
 
-        assert(p_m->flags == R::MeshHasAlpha);
-        assert(p_m->strips[0].flags == R::MeshHasAlpha);
+		assert(m_ref->strip(0).offset != -1);
+		assert(m_ref->strip(1).offset == -1);
+
+		assert(m_ref->attribs() != nullptr);
+		assert(m_ref->attribs_size() == 192);
+		assert(m_ref->indices() != nullptr);
+		assert(m_ref->indices_size() == 20);
+
+		assert(m_ref->flags() == ren::MeshHasAlpha);
+		assert(m_ref->strip(0).flags == ren::MeshHasAlpha);
 
         {
-            R::MeshRef m_ref2 = R::LoadMesh("ivy", __ivy_mesh, OnMaterialNeeded);
-            assert(m_ref2.index == 0);
-
-            R::Mesh *p_m2 = R::GetMesh(m_ref);
-            assert(p_m2->counter == 2);
+			ren::MeshRef m_ref2 = test.LoadMesh("ivy", __ivy_mesh, on_material_needed);
+            assert(m_ref2);
         }
 
-        assert(p_m->counter == 1);
-
-        R::MaterialRef mat_ref = p_m->strips[0].mat;
-        assert(mat_ref.index == 0);
-
-        R::Material *p_mat = R::GetMaterial(mat_ref);
-        assert(p_mat->not_ready == 1);
-        assert(p_mat->counter == 2);
+		ren::MaterialRef mat_ref = m_ref->strip(0).mat;
+		assert(mat_ref->ready() == false);
     }
 
     {   // Load skeletal mesh
         MeshTest test;
 
-        R::MeshRef m_ref = R::LoadMesh("test", __skeletal_mesh, OnMaterialNeeded);
-        assert(m_ref.index == 0);
+		auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
+			ren::eProgLoadStatus status;
+			return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
+		};
 
-        R::Mesh *p_m = R::GetMesh(m_ref);
-        assert(p_m->type == R::MeshSkeletal);
-        assert(p_m->counter == 1);
-        assert(std::string(p_m->name) == "test");
+		auto on_texture_needed = [&test](const char *name) {
+			ren::eTexLoadStatus status;
+			ren::Texture2DParams p;
+			return test.LoadTexture2D(name, nullptr, 0, p, &status);
+		};
 
-        assert(p_m->bbox_min.x == Approx(0).epsilon(0.01));
-        assert(p_m->bbox_min.y == Approx(0).epsilon(0.01));
-        assert(p_m->bbox_min.z == Approx(-5).epsilon(0.01));
-        assert(p_m->bbox_max.x == Approx(0).epsilon(0.01));
-        assert(p_m->bbox_max.y == Approx(20).epsilon(0.01));
-        assert(p_m->bbox_max.z == Approx(5).epsilon(0.01));
+		auto on_material_needed = [&](const char *name) {
+			ren::eMatLoadStatus status;
+			return test.LoadMaterial(name, nullptr, &status, on_program_needed, on_texture_needed);
+		};
 
-        assert(p_m->strips[0].offset != -1);
-        assert(p_m->strips[1].offset == -1);
+		ren::MeshRef m_ref = test.LoadMesh("test", __skeletal_mesh, on_material_needed);
+		assert(m_ref);
+		assert(m_ref->type() == ren::MeshSkeletal);
+		assert(std::string(m_ref->name()) == "test");
 
-        assert(p_m->attribs != nullptr);
+		assert(m_ref->bbox_min().x == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_min().y == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_min().z == Approx(-5).epsilon(0.01));
+		assert(m_ref->bbox_max().x == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_max().y == Approx(20).epsilon(0.01));
+		assert(m_ref->bbox_max().z == Approx(5).epsilon(0.01));
+
+		assert(m_ref->strip(0).offset != -1);
+		assert(m_ref->strip(1).offset == -1);
+
+		assert(m_ref->attribs() != nullptr);
         // attribs have 16 floats for each vertex (3 pos, 3 normal, 2 uvs, 4 bone index-weight pairs)
-        assert(p_m->attribs_size == 4*16*6);
-        assert(p_m->indices != nullptr);
-        assert(p_m->indices_size == 22);
+		assert(m_ref->attribs_size() == 4 * 16 * 6);
+		assert(m_ref->indices() != nullptr);
+		assert(m_ref->indices_size() == 22);
 
-        assert(p_m->flags == 0);
-        assert(p_m->strips[0].flags == 0);
+		assert(m_ref->flags() == 0);
+		assert(m_ref->strip(0).flags == 0);
 
-        assert(p_m->skel.bones.size() == 2);
-        assert(std::string(p_m->skel.bones[0].name) == "Bone01");
-        assert(p_m->skel.bones[0].id == 0);
-        assert(p_m->skel.bones[0].parent_id == -1);
-        assert(p_m->skel.bones[0].dirty == 1);
+		assert(m_ref->skel()->bones.size() == 2);
+		assert(std::string(m_ref->skel()->bones[0].name) == "Bone01");
+		assert(m_ref->skel()->bones[0].id == 0);
+		assert(m_ref->skel()->bones[0].parent_id == -1);
+		assert(m_ref->skel()->bones[0].dirty == 1);
 
-        assert(std::string(p_m->skel.bones[1].name) == "Bone02");
-        assert(p_m->skel.bones[1].id == 1);
-        assert(p_m->skel.bones[1].parent_id == 0);
-        assert(p_m->skel.bones[1].dirty == 1);
+		assert(std::string(m_ref->skel()->bones[1].name) == "Bone02");
+		assert(m_ref->skel()->bones[1].id == 1);
+		assert(m_ref->skel()->bones[1].parent_id == 0);
+		assert(m_ref->skel()->bones[1].dirty == 1);
 
         {
-            R::MeshRef m_ref2 = R::LoadMesh("test", __skeletal_mesh, OnMaterialNeeded);
-            assert(m_ref2.index == 0);
-
-            R::Mesh *p_m2 = R::GetMesh(m_ref);
-            assert(p_m2->counter == 2);
+			ren::MeshRef m_ref2 = test.LoadMesh("test", __skeletal_mesh, on_material_needed);
+            assert(m_ref2);
         }
 
-        assert(p_m->counter == 1);
-
-        R::MaterialRef mat_ref = p_m->strips[0].mat;
-        assert(mat_ref.index == 0);
-
-        R::Material *p_mat = R::GetMaterial(mat_ref);
-        assert(p_mat->not_ready == 1);
-        assert(p_mat->counter == 2);
+		ren::MaterialRef mat_ref = m_ref->strip(0).mat;
+        assert(mat_ref);
+		assert(mat_ref->ready() == false);
     }
 }

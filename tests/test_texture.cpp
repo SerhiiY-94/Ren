@@ -2,13 +2,14 @@
 
 #include <SDL2/SDL.h>
 
+#include "../Context.h"
 #include "../Texture.h"
 
 #ifdef USE_GL_RENDER
 
 #include "../GL.h"
 
-class TextureTest {
+class TextureTest : public ren::Context {
 	SDL_Window *window_;
 	void *gl_ctx_;
 public:
@@ -51,11 +52,6 @@ public:
 };
 #endif
 
-
-static void OnTextureNeeded(const char *name) {
-
-}
-
 static unsigned char test_tga_img[] =	"\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x02\x00" \
 										"\x18\x00\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00" \
 										"\x00\x00\x00\x00\x00\x00\x54\x52\x55\x45\x56\x49\x53\x49\x4F\x4E" \
@@ -65,63 +61,30 @@ void test_texture() {
     {   // TGA load
         TextureTest test;
 
-        R::eTexLoadStatus status;
-        R::Texture2DRef t_ref = R::LoadTexture2D("checker.tga", nullptr, 0, &status);
-        assert(status == R::TexCreatedDefault);
-        assert(t_ref.index == 0);
+        ren::eTexLoadStatus status;
+		ren::Texture2DParams p;
+		ren::Texture2DRef t_ref = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
+        assert(status == ren::TexCreatedDefault);
 
-        R::Texture2D *p_t = R::GetTexture(t_ref);
-        assert(p_t != nullptr);
-        assert(std::string(p_t->name) == "checker.tga");
-        assert(p_t->counter == 1);
-#if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
-        assert(p_t->tex_id == t_ref.tex_id);
-#endif
-        assert(p_t->w == 1);
-        assert(p_t->h == 1);
-        assert(p_t->format == R::RawRGB888);
-        assert(p_t->not_ready == 1);
+		assert(std::string(t_ref->name()) == "checker.tga");
+		assert(t_ref->params().w == 1);
+		assert(t_ref->params().h == 1);
+		assert(t_ref->params().format == ren::RawRGB888);
+		assert(t_ref->ready() == false);
 
         {
-            R::Texture2DRef t_ref2 = R::LoadTexture2D("checker.tga", nullptr, 0, &status);
-            assert(status == R::TexFound);
-            assert(t_ref2.index == 0);
-
-            p_t = R::GetTexture(t_ref2);
-            assert(p_t != nullptr);
-            assert(p_t->counter == 2);
-#if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
-            assert(p_t->tex_id == t_ref2.tex_id);
-#endif
-            assert(p_t->not_ready == 1);
+            ren::Texture2DRef t_ref2 = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
+            assert(status == ren::TexFound);
+			assert(t_ref2->ready() == false);
         }
-
-        p_t = R::GetTexture(t_ref);
-        assert(p_t != nullptr);
-        assert(p_t->counter == 1);
 
         {
-            R::Texture2DRef t_ref3 = R::LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), &status);
-            assert(status == R::TexCreatedFromData);
-            assert(t_ref3.index == 0);
-#if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
-            assert(t_ref3.tex_id == t_ref.tex_id);
-#endif
-
-            p_t = R::GetTexture(t_ref3);
-            assert(p_t != nullptr);
-            assert(p_t->counter == 2);
-#if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
-            assert(p_t->tex_id == t_ref3.tex_id);
-#endif
-            assert(p_t->w == 2);
-            assert(p_t->h == 2);
-            assert(p_t->format == R::RawRGB888);
-            assert(p_t->not_ready == 0);
+            ren::Texture2DRef t_ref3 = test.LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), p, &status);
+            assert(status == ren::TexCreatedFromData);
+			assert(t_ref3->params().w == 2);
+			assert(t_ref3->params().h == 2);
+			assert(t_ref3->params().format == ren::RawRGB888);
+			assert(t_ref3->ready() == true);
         }
-
-        p_t = R::GetTexture(t_ref);
-        assert(p_t != nullptr);
-        assert(p_t->counter == 1);
     }
 }

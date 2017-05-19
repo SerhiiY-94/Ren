@@ -1,5 +1,4 @@
-#ifndef ANIM_H
-#define ANIM_H
+#pragma once
 
 #include <cstdint>
 #include <cstring>
@@ -10,119 +9,93 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-namespace R {
-	enum AnimBoneFlags { AnimHasTranslate = 1 };
+#include "Storage.h"
 
-	struct AnimBone {
-		char		name[64];
-		char		parent_name[64];
-		int			id;
-		int			offset;
-		uint32_t	flags;
-		glm::vec3	cur_pos;
-		glm::quat	cur_rot;
-	};
+namespace ren {
+    enum eAnimBoneFlags { AnimHasTranslate = 1 };
 
-	struct Bone;
+    struct AnimBone {
+        char		name[64];
+        char		parent_name[64];
+        int			id = -1;
+        int			offset = 0;
+        uint32_t	flags = 0;
+        glm::vec3	cur_pos;
+        glm::quat	cur_rot;
 
-	struct AnimSequence {
-		int			counter;
-		char		name[64];
-		int			fps;
-		int			len;
-		int			frame_size;
-		float		frame_dur;
-		float		anim_dur;
-		float		*frames;
-		AnimBone	*bones;
-		size_t		num_bones;
+        AnimBone() { name[0] = parent_name[0] = '\0'; }
+    };
 
-		AnimSequence() : counter(0), fps(0), len(0), frame_size(0), frame_dur(0),
-			anim_dur(0), frames(nullptr), bones(nullptr), num_bones(0) {
-			memset(name, 0, sizeof(name));
-		}
+    struct Bone;
 
-		std::vector<AnimBone *> LinkBones(std::vector<Bone> &bones);
-		void Update(float delta, float *time);
-		void InterpolateFrames(int fr_0, int fr_1, float t);
-	};
+    class AnimSequence : public RefCounter {
+        char		name_[64];
+        int			fps_ = 0;
+        int			len_ = 0;
+        int			frame_size_ = 0;
+        float		frame_dur_ = 0;
+        float		anim_dur_ = 0;
+        std::vector<float> frames_;
+        std::vector<AnimBone> bones_;
+        bool        ready_ = false;
 
-	AnimSequence *GetAnimSequence(const struct AnimSequenceRef &ref);
-	void ReleaseAnimSequence(AnimSequence &a);
-	void ReleaseAnimSequence(AnimSequenceRef &ref);
-
-	struct AnimSequenceRef {
-		int index;
-
-		AnimSequenceRef() : index(-1) {}
-		~AnimSequenceRef() {
-			this->Release();
-		}
-
-		AnimSequenceRef(const AnimSequenceRef &ref) {
-			index = ref.index;
-			if (index != -1) {
-				GetAnimSequence(ref)->counter++;
-			}
-		}
-		AnimSequenceRef(AnimSequenceRef &&ref) {
-			index = ref.index;
-			ref.index = -1;
-		}
-		AnimSequenceRef& operator=(const AnimSequenceRef &ref) {
-			this->Release();
-			index = ref.index;
-			if (index != -1) {
-				GetAnimSequence(ref)->counter++;
-			}
-			return *this;
-		}
-		AnimSequenceRef& operator=(AnimSequenceRef &&ref) {
-			this->Release();
-			index = ref.index;
-			ref.index = -1;
-			return *this;
-		}
-
-        AnimSequence *operator->() const {
-            return R::GetAnimSequence(*this);
+    public:
+        AnimSequence() {
+            name_[0] = '\0';
         }
 
-		void Release() {
-			ReleaseAnimSequence(*this);
-		}
-	};
+        AnimSequence(const char *name, void *data);
 
-	AnimSequenceRef LoadAnimSequence(const char *name, void *data);
+        const char *name() const { return name_; }
+        int fps() const { return fps_; }
+        int len() const { return len_; }
+        int frame_size() const { return frame_size_; }
+        float frame_dur() const { return frame_dur_; }
+        float anim_dur() const { return anim_dur_; }
+        size_t num_bones() const { return bones_.size(); }
+        bool ready() const { return ready_; }
 
-	void InitAnimSequence(AnimSequence &anim, void *data);
+        const float *frames() const { return &frames_[0]; }
+        const AnimBone *bone(int i) { return &bones_[i]; }
 
-	struct AnimLink {
-		float					anim_time;
-		AnimSequenceRef			anim;
-		std::vector<AnimBone *> anim_bones;
-	};
+        void Init(const char *name, void *data);
 
-	struct Bone {
-		char		name[64];
-		int			id;
-		int			parent_id;
-		int			dirty;
-		glm::mat4	cur_matrix;
-		glm::mat4	cur_comb_matrix;
-		glm::mat4	bind_matrix;
-		glm::mat4	inv_bind_matrix;
-		glm::vec3	head_pos;
-	};
+        std::vector<AnimBone *> LinkBones(std::vector<Bone> &bones);
+        void Update(float delta, float *time);
+        void InterpolateFrames(int fr_0, int fr_1, float t);
+    };
+
+    typedef StorageRef<AnimSequence> AnimSeqRef;
+    typedef Storage<AnimSequence> AnimSeqStorage;
+
+    struct AnimLink {
+        float					anim_time = 0;
+        AnimSeqRef			    anim;
+        std::vector<AnimBone *> anim_bones;
+    };
+
+    struct Bone {
+        char		name[64];
+        int			id = -1;
+        int			parent_id = -1;
+        bool		dirty = false;
+        glm::mat4	cur_matrix;
+        glm::mat4	cur_comb_matrix;
+        glm::mat4	bind_matrix;
+        glm::mat4	inv_bind_matrix;
+        glm::vec3	head_pos;
+
+        Bone() { name[0] = '\0'; }
+    };
 
     struct BoneGroup {
         std::vector<int> strip_ids;
         std::vector<int> bone_ids;
     };
 
-	struct Skeleton {
-		std::vector<Bone>       bones;
-		std::vector<AnimLink>   anims;
+    struct Skeleton {
+        std::vector<Bone>       bones;
+        std::vector<AnimLink>   anims;
         std::vector<glm::mat4>  matr_palette;
         std::vector<BoneGroup>  bone_groups;
 
@@ -146,12 +119,12 @@ namespace R {
         }
 
         glm::vec3 bone_pos(const char *name);
-		glm::vec3 bone_pos(int i);
+        glm::vec3 bone_pos(int i);
 
         void bone_matrix(const char *name, glm::mat4 &mat);
         void bone_matrix(int i, glm::mat4 &mat);
 
-        int AddAnimSequence(const char *name, void *data);
+        int AddAnimSequence(const AnimSeqRef &ref);
 
         void MarkChildren();
         void ApplyAnim(int id);
@@ -160,5 +133,3 @@ namespace R {
         void UpdateBones();
     };
 }
-
-#endif // ANIM_H

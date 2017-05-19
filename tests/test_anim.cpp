@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../Anim.h"
+#include "../Context.h"
 
 namespace {
     unsigned char __anim[] = {
@@ -55,85 +56,79 @@ namespace {
 
 void test_anim() {
     {   // Load anim
-        R::AnimSequenceRef anim_ref = R::LoadAnimSequence("anim", __anim);
+        ren::Context ctx;
+        ren::AnimSeqRef anim_ref = ctx.LoadAnimSequence("anim", __anim);
 
-        assert(anim_ref.index == 0);
+        assert(std::string(anim_ref->name()) == "ArmatureAction");
+        assert(anim_ref->fps() == 24);
+        assert(anim_ref->len() == 3);
+        assert(anim_ref->frame_size() == 11);
+        assert(anim_ref->frame_dur() == 1.0f / 24);
+        assert(anim_ref->anim_dur() == 3.0f / 24);
+        assert(anim_ref->num_bones() == 2);
 
-        R::AnimSequence *anim = R::GetAnimSequence(anim_ref);
+        assert(std::string(anim_ref->bone(0)->name) == "Bone01");
+        assert(std::string(anim_ref->bone(0)->parent_name) == "None");
+        assert(anim_ref->bone(0)->id == 0);
+        assert(anim_ref->bone(0)->offset == 0);
+        assert((anim_ref->bone(0)->flags & ren::AnimHasTranslate) == 1);
 
-        assert(anim != nullptr);
-        assert(std::string(anim->name) == "ArmatureAction");
-        assert(anim->fps == 24);
-        assert(anim->len == 3);
-        assert(anim->frame_size == 11 );
-        assert(anim->frame_dur == 1.0f/24);
-        assert(anim->anim_dur == 3.0f/24);
-        assert(anim->frames != nullptr);
-        assert(anim->bones != nullptr);
-        assert(anim->num_bones == 2);
-
-        assert(std::string(anim->bones[0].name) == "Bone01");
-        assert(std::string(anim->bones[0].parent_name) == "None");
-        assert(anim->bones[0].id == 0);
-        assert(anim->bones[0].offset == 0);
-        assert((anim->bones[0].flags & R::AnimHasTranslate) == 1);
-
-        assert(std::string(anim->bones[1].name) == "Bone02");
-        assert(std::string(anim->bones[1].parent_name) == "Bone01");
-        assert(anim->bones[1].id == 1);
-        assert(anim->bones[1].offset == 7); // 4 for rotation, 3 for translation from previous bone
-        assert((anim->bones[1].flags & R::AnimHasTranslate) == 0);
+        assert(std::string(anim_ref->bone(1)->name) == "Bone02");
+        assert(std::string(anim_ref->bone(1)->parent_name) == "Bone01");
+        assert(anim_ref->bone(1)->id == 1);
+        assert(anim_ref->bone(1)->offset == 7); // 4 for rotation, 3 for translation from previous bone
+        assert(anim_ref->bone(1)->flags != ren::AnimHasTranslate);
 
         //translation of Bone01 frame 0
-        assert(anim->frames[0] == 0);
-        assert(anim->frames[1] == 0);
-        assert(anim->frames[2] == 0);
+        assert(anim_ref->frames()[0] == 0);
+        assert(anim_ref->frames()[1] == 0);
+        assert(anim_ref->frames()[2] == 0);
 
         // rotation of Bone01 frame 0
-        assert(anim->frames[3] == 0);
-        assert(anim->frames[4] == 0);
-        assert(anim->frames[5] == Approx(0.7071067690849304).epsilon(0.0001));
-        assert(anim->frames[6] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[3] == 0);
+        assert(anim_ref->frames()[4] == 0);
+        assert(anim_ref->frames()[5] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[6] == Approx(0.7071067690849304).epsilon(0.0001));
 
         // rotation of Bone02 frame 0
-        assert(anim->frames[7] == 0);
-        assert(anim->frames[8] == 0);
-        assert(anim->frames[9] == Approx(0.7071067690849304).epsilon(0.0001));
-        assert(anim->frames[10] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[7] == 0);
+        assert(anim_ref->frames()[8] == 0);
+        assert(anim_ref->frames()[9] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[10] == Approx(0.7071067690849304).epsilon(0.0001));
 
         //translation of Bone01 frame 1
-        assert(anim->frames[11] == 0);
-        assert(anim->frames[12] == 5);
-        assert(anim->frames[13] == 0);
+        assert(anim_ref->frames()[11] == 0);
+        assert(anim_ref->frames()[12] == 5);
+        assert(anim_ref->frames()[13] == 0);
 
         // rotation of Bone01 frame 1
-        assert(anim->frames[14] == 0);
-        assert(anim->frames[15] == 0);
-        assert(anim->frames[16] == Approx(0.7071067690849304).epsilon(0.0001));
-        assert(anim->frames[17] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[14] == 0);
+        assert(anim_ref->frames()[15] == 0);
+        assert(anim_ref->frames()[16] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[17] == Approx(0.7071067690849304).epsilon(0.0001));
 
         // rotation of Bone02 frame 1
-        assert(anim->frames[18] == 0);
-        assert(anim->frames[19] == 0);
-        assert(anim->frames[20] == Approx(0.7071067690849304).epsilon(0.0001));
-        assert(anim->frames[21] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[18] == 0);
+        assert(anim_ref->frames()[19] == 0);
+        assert(anim_ref->frames()[20] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[21] == Approx(0.7071067690849304).epsilon(0.0001));
 
         //translation of Bone01 frame 2
-        assert(anim->frames[22] == 0);
-        assert(anim->frames[23] == 0);
-        assert(anim->frames[24] == 0);
+        assert(anim_ref->frames()[22] == 0);
+        assert(anim_ref->frames()[23] == 0);
+        assert(anim_ref->frames()[24] == 0);
 
         // rotation of Bone01 frame 2
-        assert(anim->frames[25] == 0);
-        assert(anim->frames[26] == 0);
-        assert(anim->frames[27] == Approx(0.7071067690849304).epsilon(0.0001));
-        assert(anim->frames[28] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[25] == 0);
+        assert(anim_ref->frames()[26] == 0);
+        assert(anim_ref->frames()[27] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[28] == Approx(0.7071067690849304).epsilon(0.0001));
 
         // rotation of Bone02 frame 2
-        assert(anim->frames[29] == 0);
-        assert(anim->frames[30] == 0);
-        assert(anim->frames[31] == Approx(-0.7071067690849304).epsilon(0.0001));
-        assert(anim->frames[32] == Approx(0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[29] == 0);
+        assert(anim_ref->frames()[30] == 0);
+        assert(anim_ref->frames()[31] == Approx(-0.7071067690849304).epsilon(0.0001));
+        assert(anim_ref->frames()[32] == Approx(0.7071067690849304).epsilon(0.0001));
     }
 
 }

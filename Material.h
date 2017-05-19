@@ -1,82 +1,49 @@
-#ifndef MATERIAL_H
-#define MATERIAL_H
+#pragma once
+
+#include <cstdint>
+
+#include <functional>
 
 #include <glm/vec4.hpp>
 
-#include "Texture.h"
 #include "Program.h"
+#include "Storage.h"
+#include "Texture.h"
 
-namespace R {
-    enum eMaterialFlags { AlphaBlend = 1, DoubleSided = 2 };
-
-    struct Material {
-        int				counter;
-        uint32_t		flags;
-        int				not_ready;
-        char			name[32];
-        ProgramRef		program;
-        Texture2DRef	textures[4];
-        glm::vec4		params[8];
-    };
-    
-	Material *GetMaterial(const struct MaterialRef &ref);
-	void ReleaseMaterial(MaterialRef &ref);
-
-    struct MaterialRef {
-        int index;
-
-		MaterialRef() : index(-1) {}
-		~MaterialRef() {
-			this->Release();
-		}
-
-		MaterialRef(const MaterialRef &ref) : index(ref.index) {
-			if (index != -1) {
-				GetMaterial(ref)->counter++;
-			}
-		}
-		MaterialRef(MaterialRef &&ref) : index(ref.index) {
-			ref.index = -1;
-		}
-		MaterialRef& operator=(const MaterialRef &ref) {
-			this->Release();
-			index = ref.index;
-			if (index != -1) {
-				GetMaterial(ref)->counter++;
-			}
-			return *this;
-		}
-		MaterialRef& operator=(MaterialRef &&ref) {
-			this->Release();
-			index = ref.index;
-			ref.index = -1;
-			return *this;
-		}
-
-		bool operator==(const MaterialRef &rhs) {
-			return index == rhs.index;
-		}
-
-		void Release() {
-			ReleaseMaterial(*this);
-		}
-
-		int flags() {
-			return GetMaterial(*this)->flags;
-		}
-    };
-
-    typedef void (*texture_load_callback) (const char *name);
-    typedef void (*program_load_callback) (const char *name, const char *arg1, const char *arg2);
+namespace ren {
+	enum eMaterialFlags { AlphaBlend = 1, DoubleSided = 2 };
 
 	enum eMatLoadStatus { MatFound, MatSetToDefault, MatCreatedFromData };
 
-	MaterialRef LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status,
-							 program_load_callback on_program_load,
-							 texture_load_callback on_tex_load);
+	typedef std::function<Texture2DRef(const char *name)> texture_load_callback;
+	typedef std::function<ProgramRef(const char *name, const char *arg1, const char *arg2)> program_load_callback;
 
-	int NumMaterialsNotReady();
-	void ReleaseAllMaterials();
+	class Material : public RefCounter {
+		uint32_t		flags_ = 0;
+		bool			ready_ = false;
+		char			name_[32];
+		ProgramRef		program_;
+		Texture2DRef	textures_[4];
+		glm::vec4		params_[8];
+
+		void InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
+																						const texture_load_callback &on_tex_load);
+	public:
+		Material() { name_[0] = '\0'; }
+		Material(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
+																				const texture_load_callback &on_tex_load);
+
+        uint32_t flags() const { return flags_; }
+		bool ready() const { return ready_; }
+		const char *name() const { return name_; }
+        const ProgramRef &program() const { return program_; }
+        const Texture2DRef &texture(int i) const { return textures_[i]; }
+        const glm::vec4 &param(int i) const { return params_[i]; }
+
+		void Init(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
+																				 const texture_load_callback &on_tex_load);
+	};
+
+	typedef StorageRef<Material> MaterialRef;
+	typedef Storage<Material> MaterialStorage;
 }
-
-#endif // MATERIAL_H

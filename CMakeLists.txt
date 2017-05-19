@@ -21,42 +21,36 @@ elseif(${RENDERER} STREQUAL "VK")
 endif()
 ENDIF(WIN32)
 
-set(SOURCE_FILES    Anim.h
-                    Anim.cpp
-                    Camera.h
-                    Camera.cpp
-                    FrameBuf.h
-                    Material.h
-                    Material.cpp
-                    Matrices_old.h
-                    Matrices_old.cpp
-                    Mesh.h
-                    Mesh.cpp
-                    Plane.h
-                    Plane.cpp
-                    Program.h
-                    Program.cpp
-                    RenderState.h
-                    RenderState.cpp
-                    RenderThread.h
-                    RenderThread.cpp
-                    RingBuffer.h
-                    SparseArray.h
-                    Texture.h
-					Texture.cpp)
+set(SOURCE_FILES Anim.h
+                 Anim.cpp
+				 Camera.h
+				 Camera.cpp
+                 Context.h
+				 Context.cpp
+                 Material.h
+                 Material.cpp
+                 Matrices_old.h
+                 Matrices_old.cpp
+				 Mesh.h
+				 Mesh.cpp
+				 Program.h
+				 RenderThread.h
+				 RenderThread.cpp
+                 RingBuffer.h
+                 SparseArray.h
+				 Storage.h
+				 Texture.h
+                 Utils.h
+                 Utils.cpp)
 
 if(${RENDERER} STREQUAL "GL")
-    set(SOURCE_FILES    ${SOURCE_FILES}
-                        FrameBufGL.cpp
-						GL.h
-                        ProgramGL.cpp
-                        RenderStateGL.h
-                        TextureGL.cpp)
-
-    set(SOIL_SRC    ../libs/SOIL2/etc1_utils.c 
-                    ../libs/SOIL2/image_DXT.c
-                    ../libs/SOIL2/image_helper.c
-                    ../libs/SOIL2/SOIL2.c)
+    set(SOURCE_FILES ${SOURCE_FILES}
+                     ContextGL.cpp
+					 GL.h
+                     ProgramGL.h
+				     ProgramGL.cpp
+                     TextureGL.h
+				     TextureGL.cpp)
 
     set(LIBS ${LIBS} glew SOIL2)
 elseif(${RENDERER} STREQUAL "SW")

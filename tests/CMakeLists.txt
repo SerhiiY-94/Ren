@@ -21,8 +21,8 @@ set(SOURCE_FILES main.cpp
                  test_common.h
                  test_material.cpp
                  test_mesh.cpp
-                 test_render_state.cpp
                  test_sparse_array.cpp
+                 test_storage.cpp
                  test_texture.cpp)
 
 if(${RENDERER} STREQUAL "GL")

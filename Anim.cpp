@@ -1,197 +1,142 @@
 #include "Anim.h"
 
-#include <vector>
-
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "SparseArray.h"
-
 #ifdef _MSC_VER
-#pragma warning(disable : 4996)
+    #pragma warning(push)
+    #pragma warning(disable : 4996)
 #endif
 
-namespace R {
-	SparseArray<AnimSequence> anim_sequences(128);
+ren::AnimSequence::AnimSequence(const char *name, void *data) {
+    Init(name, data);
 }
 
-R::AnimSequenceRef R::LoadAnimSequence(const char *name, void *data) {
-	auto it = anim_sequences.begin();
-	for (; it != anim_sequences.end(); it++) {
-		if (strcmp(name, it->name) == 0) {
-			break;
-		}
-	}
-	if (it != anim_sequences.end()) {
-		it->counter++;
-
-		AnimSequenceRef ref;
-		ref.index = (int) it.index();
-
-		return ref;
-	} else {
-		AnimSequence a;
-		a.counter = 1;
-		strcpy(a.name, name);
-
-		char anim_type_str[12];
-		memcpy(anim_type_str, data, 12);
-
-		if (strcmp(anim_type_str, "ANIM_SEQUEN\0") == 0) {
-			InitAnimSequence(a, data);
-		}
-
-		AnimSequenceRef ref;
-		ref.index = (int)anim_sequences.Add(a);
-
-		return ref;
-	}
-}
-
-R::AnimSequence *R::GetAnimSequence(const struct AnimSequenceRef &ref) {
-    assert(ref.index != -1);
-    return anim_sequences.Get((size_t)ref.index);
-}
-
-void R::ReleaseAnimSequence(AnimSequence &a) {
-	delete[] a.bones;
-	a.bones = nullptr;
-	a.num_bones = 0;
-	delete[] a.frames;
-	a.frames = nullptr;
-
-	a.name[0] = '\0';
-}
-
-void R::ReleaseAnimSequence(AnimSequenceRef &ref) {
-	if (ref.index == -1) {
-		return;
-	}
-	AnimSequence *a = anim_sequences.Get((size_t)ref.index);
-	if (!--a->counter) {
-		ReleaseAnimSequence(*a);
-		anim_sequences.Remove((size_t)ref.index);
-	}
-	ref.index = -1;
-}
+void ren::AnimSequence::Init(const char *name, void *data) {
+    strcpy(name_, name);
+    if (!data) {
+        ready_ = false;
+        return;
+    }
 
 #define READ_ADVANCE(dest, p, size) memcpy(dest, p, size); p += size;
 
-void R::InitAnimSequence(AnimSequence &a, void *data) {
-	char *p = (char *)data;
-	
-	char str[64];
-	READ_ADVANCE(str, p, 12);
-	assert(strcmp(str, "ANIM_SEQUEN\0") == 0);
+    char *p = (char *)data;
 
-	enum {	SKELETON_CHUNK,
-			ANIM_INFO_CHUNK,
-			FRAMES_CHUNK };
+    char str[64];
+    READ_ADVANCE(str, p, 12);
+    assert(strcmp(str, "ANIM_SEQUEN\0") == 0);
 
-	struct ChunkPos {
-		int offset;
-		int length;
-	};
+    enum {
+        SKELETON_CHUNK,
+        ANIM_INFO_CHUNK,
+        FRAMES_CHUNK
+    };
 
-	struct Header {
-		int num_chunks;
-		ChunkPos p[3];
-	} file_header;
+    struct ChunkPos {
+        int offset;
+        int length;
+    };
 
-	READ_ADVANCE(&file_header, p, sizeof(file_header));
-	
-	a.num_bones = (size_t) file_header.p[SKELETON_CHUNK].length / (64 + 64 + 4);
-	a.bones = new AnimBone[a.num_bones];
-	int offset = 0;
-	for (size_t i = 0; i < a.num_bones; i++) {
-		a.bones[i].id = (int)i;
-        a.bones[i].flags = 0;
-		READ_ADVANCE(a.bones[i].name, p, 64);
-		READ_ADVANCE(a.bones[i].parent_name, p, 64);
-		int has_translate_anim = 0;
-		READ_ADVANCE(&has_translate_anim, p, 4);
-		if (has_translate_anim) a.bones[i].flags |= AnimHasTranslate;
-		a.bones[i].offset = offset;
-		if (has_translate_anim) {
-			offset += 7;
-		} else {
-			offset += 4;
-		}
-	}
-	a.frame_size = offset;
-	READ_ADVANCE(a.name, p, 64);
-	READ_ADVANCE(&a.fps, p, 4);
-	READ_ADVANCE(&a.len, p, 4);
+    struct Header {
+        int num_chunks;
+        ChunkPos p[3];
+    } file_header;
 
-	a.frames = new float[file_header.p[FRAMES_CHUNK].length / 4];
-	READ_ADVANCE(a.frames, p, (size_t) file_header.p[FRAMES_CHUNK].length);
+    READ_ADVANCE(&file_header, p, sizeof(file_header));
 
-	a.frame_dur = 1.0f / a.fps;
-	a.anim_dur = a.len * a.frame_dur;
+    size_t num_bones = (size_t)file_header.p[SKELETON_CHUNK].length / (64 + 64 + 4);
+    bones_.resize(num_bones);
+    int offset = 0;
+    for (size_t i = 0; i < num_bones; i++) {
+        bones_[i].id = (int)i;
+        bones_[i].flags = 0;
+        READ_ADVANCE(bones_[i].name, p, 64);
+        READ_ADVANCE(bones_[i].parent_name, p, 64);
+        int has_translate_anim = 0;
+        READ_ADVANCE(&has_translate_anim, p, 4);
+        if (has_translate_anim) bones_[i].flags |= AnimHasTranslate;
+        bones_[i].offset = offset;
+        if (has_translate_anim) {
+            offset += 7;
+        } else {
+            offset += 4;
+        }
+    }
+    frame_size_ = offset;
+    READ_ADVANCE(name_, p, 64);
+    READ_ADVANCE(&fps_, p, 4);
+    READ_ADVANCE(&len_, p, 4);
+
+    frames_.resize(file_header.p[FRAMES_CHUNK].length / 4);
+    READ_ADVANCE(&frames_[0], p, (size_t)file_header.p[FRAMES_CHUNK].length);
+
+    frame_dur_ = 1.0f / fps_;
+    anim_dur_ = len_ * frame_dur_;
+
+    ready_ = true;
 }
 
-// AnimSequence
-
-std::vector<R::AnimBone *> R::AnimSequence::LinkBones(std::vector<Bone> &_bones) {
-	std::vector<AnimBone *> anim_bones;
-	anim_bones.reserve(_bones.size());
-	for (size_t i = 0; i < _bones.size(); i++) {
-		bool added = false;
-		for (size_t j = 0; j < this->num_bones; j++) {
-			if (strcmp(_bones[i].name, this->bones[j].name) == 0) {
-				if (_bones[i].parent_id != -1) {
-					assert(strcmp(_bones[_bones[i].parent_id].name, this->bones[j].parent_name) == 0);
-				}
-				anim_bones.push_back(&this->bones[j]);
-				added = true;
+std::vector<ren::AnimBone *> ren::AnimSequence::LinkBones(std::vector<Bone> &_bones) {
+    std::vector<AnimBone *> anim_bones;
+    anim_bones.reserve(_bones.size());
+    for (size_t i = 0; i < _bones.size(); i++) {
+        bool added = false;
+        for (size_t j = 0; j < this->bones_.size(); j++) {
+            if (strcmp(_bones[i].name, this->bones_[j].name) == 0) {
+                if (_bones[i].parent_id != -1) {
+                    assert(strcmp(_bones[_bones[i].parent_id].name, this->bones_[j].parent_name) == 0);
+                }
+                anim_bones.push_back(&this->bones_[j]);
+                added = true;
                 break;
-			}
-		}
-		if (!added) {
-			anim_bones.push_back(nullptr);
-		}
-	}
-	return anim_bones;
+            }
+        }
+        if (!added) {
+            anim_bones.push_back(nullptr);
+        }
+    }
+    return anim_bones;
 }
 
-void R::AnimSequence::Update(float delta, float *time) {
-	if (len < 2)return;
-	*time += delta;
+void ren::AnimSequence::Update(float delta, float *time) {
+    if (len_ < 2)return;
+    *time += delta;
 
-	while (*time > anim_dur)*time -= anim_dur;
-	while (*time < 0.0f)*time += anim_dur;
+    while (*time > anim_dur_)*time -= anim_dur_;
+    while (*time < 0.0f)*time += anim_dur_;
 
-	float frame = *time * (float)fps;
-	int fr_0 = (int)glm::floor(frame);
-	int fr_1 = (int)glm::ceil(frame);
+    float frame = *time * (float)fps_;
+    int fr_0 = (int)glm::floor(frame);
+    int fr_1 = (int)glm::ceil(frame);
 
-	fr_0 = fr_0 % len;
-	fr_1 = fr_1 % len;
-	float t = glm::mod(*time, frame_dur) / frame_dur;
-	InterpolateFrames(fr_0, fr_1, t);
+    fr_0 = fr_0 % len_;
+    fr_1 = fr_1 % len_;
+    float t = glm::mod(*time, frame_dur_) / frame_dur_;
+    InterpolateFrames(fr_0, fr_1, t);
 }
 
-void R::AnimSequence::InterpolateFrames(int fr_0, int fr_1, float t) {
-	for (size_t i = 0; i < num_bones; i++) {
-		int offset = bones[i].offset;
-		if (bones[i].flags & AnimHasTranslate) {
-			glm::vec3 p1 = glm::make_vec3(&frames[fr_0 * frame_size + offset]);
-			glm::vec3 p2 = glm::make_vec3(&frames[fr_1 * frame_size + offset]);
-			bones[i].cur_pos = glm::mix(p1, p2, t);
-			offset += 3;
-		}
-		glm::quat q1 = glm::make_quat(&frames[fr_0 * frame_size + offset]);
-		glm::quat q2 = glm::make_quat(&frames[fr_1 * frame_size + offset]);
-		bones[i].cur_rot = glm::mix(q1, q2, t);
-	}
+void ren::AnimSequence::InterpolateFrames(int fr_0, int fr_1, float t) {
+    for (size_t i = 0; i < bones_.size(); i++) {
+        int offset = bones_[i].offset;
+        if (bones_[i].flags & AnimHasTranslate) {
+            glm::vec3 p1 = glm::make_vec3(&frames_[fr_0 * frame_size_ + offset]);
+            glm::vec3 p2 = glm::make_vec3(&frames_[fr_1 * frame_size_ + offset]);
+            bones_[i].cur_pos = glm::mix(p1, p2, t);
+            offset += 3;
+        }
+        glm::quat q1 = glm::make_quat(&frames_[fr_0 * frame_size_ + offset]);
+        glm::quat q2 = glm::make_quat(&frames_[fr_1 * frame_size_ + offset]);
+        bones_[i].cur_rot = glm::mix(q1, q2, t);
+    }
 }
 
 // skeleton
 
-glm::vec3 R::Skeleton::bone_pos(const char *name) {
+glm::vec3 ren::Skeleton::bone_pos(const char *name) {
     auto b = bone(name);
     glm::vec3 ret;
     const float *m = &(b->cur_comb_matrix)[0][0];
@@ -206,7 +151,7 @@ glm::vec3 R::Skeleton::bone_pos(const char *name) {
     return ret;
 }
 
-glm::vec3 R::Skeleton::bone_pos(int i) {
+glm::vec3 ren::Skeleton::bone_pos(int i) {
     auto b = &bones[i];
     glm::vec3 ret;
     const float *m = &(b->cur_comb_matrix)[0][0];
@@ -221,19 +166,19 @@ glm::vec3 R::Skeleton::bone_pos(int i) {
     return ret;
 }
 
-void R::Skeleton::bone_matrix(const char *name, glm::mat4 &mat) {
+void ren::Skeleton::bone_matrix(const char *name, glm::mat4 &mat) {
     auto b = bone(name);
     UpdateBones();
     assert(b != bones.end());
     mat = b->cur_comb_matrix;
 }
 
-void R::Skeleton::bone_matrix(int i, glm::mat4 &mat) {
+void ren::Skeleton::bone_matrix(int i, glm::mat4 &mat) {
     UpdateBones();
     mat = bones[i].cur_comb_matrix;
 }
 
-void R::Skeleton::UpdateBones() {
+void ren::Skeleton::UpdateBones() {
     for (size_t i = 0; i < bones.size(); i++) {
         if (bones[i].dirty) {
             if (bones[i].parent_id != -1) {
@@ -247,16 +192,16 @@ void R::Skeleton::UpdateBones() {
     }
 }
 
-int R::Skeleton::AddAnimSequence(const char *name, void *data) {
+int ren::Skeleton::AddAnimSequence(const AnimSeqRef &ref) {
     anims.emplace_back();
     auto &a = anims.back();
-    a.anim = R::LoadAnimSequence(name, data);
+    a.anim = ref;
     a.anim_time = 0.0f;
     a.anim_bones = anims[anims.size() - 1].anim->LinkBones(bones);
     return int(anims.size() - 1);
 }
 
-void R::Skeleton::MarkChildren() {
+void ren::Skeleton::MarkChildren() {
     for (size_t i = 0; i < bones.size(); i++) {
         if (bones[i].parent_id != -1 && bones[bones[i].parent_id].dirty) {
             bones[i].dirty = true;
@@ -264,7 +209,7 @@ void R::Skeleton::MarkChildren() {
     }
 }
 
-void R::Skeleton::ApplyAnim(int id) {
+void ren::Skeleton::ApplyAnim(int id) {
     for (size_t i = 0; i < bones.size(); i++) {
         if (anims[id].anim_bones[i]) {
             glm::mat4 m(1.0f);
@@ -281,7 +226,7 @@ void R::Skeleton::ApplyAnim(int id) {
     MarkChildren();
 }
 
-void R::Skeleton::ApplyAnim(int anim_id1, int anim_id2, float t) {
+void ren::Skeleton::ApplyAnim(int anim_id1, int anim_id2, float t) {
     for (size_t i = 0; i < bones.size(); i++) {
         if (anims[anim_id1].anim_bones[i] || anims[anim_id2].anim_bones[i]) {
             glm::mat4 m(1.0f);
@@ -310,9 +255,13 @@ void R::Skeleton::ApplyAnim(int anim_id1, int anim_id2, float t) {
     MarkChildren();
 }
 
-void R::Skeleton::UpdateAnim(int anim_id, float delta, float *t) {
+void ren::Skeleton::UpdateAnim(int anim_id, float delta, float *t) {
     if (!t) {
         t = &anims[anim_id].anim_time;
     }
     anims[anim_id].anim->Update(delta, t);
 }
+
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif

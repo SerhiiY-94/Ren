@@ -3,9 +3,10 @@
 #include <SDL2/SDL.h>
 
 #include "../GL.h"
+#include "../Context.h"
 #include "../Material.h"
 
-class ProgramTest {
+class ProgramTest : public ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -65,41 +66,30 @@ void test_program() {
                 gl_FragColor = vec4(col, 1.0);\n \
             }";
 
-        R::eProgramLoadStatus status;
-        R::ProgramRef p = R::LoadProgramGLSL("constant", nullptr, nullptr, &status);
+        ren::eProgLoadStatus status;
+        ren::ProgramRef p = test.LoadProgramGLSL("constant", nullptr, nullptr, &status);
 
-        assert(p.index == 0);
-        assert(status == R::ProgSetToDefault);
+        assert(status == ren::ProgSetToDefault);
+        assert(std::string(p->name()) == "constant");
+        assert(p->prog_id() == 0); // not initialized
+        assert(p->ready() == false);
 
-        {
-            R::Program *pp = R::GetProgram(p);
+        test.LoadProgramGLSL("constant", vs_src, fs_src, &status);
 
-            assert(pp != nullptr);
-            assert(std::string(pp->name) == "constant");
-            assert(pp->prog_id == 0); // not initialized
-            assert(pp->counter == 1);
-            assert(pp->not_ready == 1);
-        }
+        assert(status == ren::ProgCreatedFromData);
 
-        R::LoadProgramGLSL("constant", vs_src, fs_src, &status);
+        assert(std::string(p->name()) == "constant");
 
-        assert(status == R::ProgCreatedFromData);
+        assert(p->ready() == true);
 
-        R::Program *pp = R::GetProgram(p);
+        assert(p->attribute(0).name == "aVertexPosition");
+        assert(p->attribute(0).loc != -1);
+        assert(p->attribute(1).name.empty());
+        assert(p->attribute(1).loc == -1);
 
-        assert(pp != nullptr);
-        assert(std::string(pp->name) == "constant");
-
-        assert(pp->not_ready != 1);
-
-        assert(std::string(pp->attributes[0].name) == "aVertexPosition");
-        assert(pp->attributes[0].loc != -1);
-        assert(pp->attributes[1].name == nullptr);
-        assert(pp->attributes[1].loc == -1);
-
-        assert(std::string(pp->uniforms[0].name) == "uMVPMatrix");
-        assert(pp->uniforms[0].loc != -1);
-        assert(std::string(pp->uniforms[1].name) == "col");
-        assert(pp->uniforms[1].loc != -1);
+        assert(p->uniform(0).name == "uMVPMatrix");
+        assert(p->uniform(0).loc != -1);
+        assert(p->uniform(1).name == "col");
+        assert(p->uniform(1).loc != -1);
     }
 }
