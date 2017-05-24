@@ -114,7 +114,17 @@ namespace ren {
 			return *storage_->Get(index_);
 		}
 
-		operator bool() {
+        T *get() {
+            assert(storage_);
+            return storage_->Get(index_);
+        }
+
+        const T *get() const {
+            assert(storage_);
+            return storage_->Get(index_);
+        }
+
+		operator bool() const {
 			return storage_ != nullptr;
 		}
 

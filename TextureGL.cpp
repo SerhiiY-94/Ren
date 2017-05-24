@@ -20,6 +20,10 @@ ren::Texture2D::Texture2D(const char *name, const void *data, int size, const Te
 	Init(name, data, size, p, load_status);
 }
 
+ren::Texture2D::Texture2D(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status) {
+    Init(name, data, size, p, load_status);
+}
+
 ren::Texture2D::~Texture2D() {
     if (params_.format != Undefined) {
         GLuint gl_tex = (GLuint) tex_id_;
@@ -73,6 +77,30 @@ void ren::Texture2D::Init(const char *name, const void *data, int size, const Te
 		ready_ = true;
 		if (load_status) *load_status = TexCreatedFromData;
 	}
+}
+
+void ren::Texture2D::Init(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status) {
+    strcpy(name_, name);
+
+    if (!data) {
+        const unsigned char cyan[3] = { 0, 255, 255 };
+        const void *data[6] = { cyan, cyan, cyan, cyan, cyan, cyan };
+        Texture2DParams _p;
+        _p.w = _p.h = 1;
+        _p.format = RawRGB888;
+        _p.filter = NoFilter;
+        _p.repeat = Repeat;
+        InitFromRAWData(data, _p);
+        // mark it as not ready
+        ready_ = false;
+        if (load_status) *load_status = TexCreatedDefault;
+    } else {
+        if (strstr(name, ".tga") != 0 || strstr(name, ".TGA") != 0) {
+            InitFromTGAFile(data, p);
+        } else {
+            InitFromRAWData(data, p);
+        }
+    }
 }
 
 void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p) {
@@ -162,6 +190,96 @@ void ren::Texture2D::InitFromDDSFile(const void *data, int size, const Texture2D
 	assert(res == tex_id);
 
 	ChangeFilter(p.filter, p.repeat);
+}
+
+void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams &p) {
+    assert(p.w > 0 && p.h > 0);
+    GLuint tex_id;
+    if (params_.format == Undefined) {
+        glGenTextures(1, &tex_id);
+        tex_id_ = tex_id;
+    }
+    else {
+        tex_id = (GLuint)tex_id_;
+    }
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex_id);
+
+    params_ = p;
+
+    int w = p.w, h = p.h;
+
+    int not_ready = !ready_;
+
+    for (int i = 0; i < 6; i++) {
+        if (!data[i]) {
+            if (!ready_ || not_ready & (1 << i)) {
+                continue;
+            }
+            not_ready |= (1 << i);
+        }
+        else {
+            not_ready &= ~(1 << i);
+        }
+        if (params_.format == RawRGBA8888) {
+            glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data[i]);
+        }
+        else if (params_.format == RawRGB888) {
+            glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data[i]);
+        }
+        else if (params_.format == RawLUM8) {
+            glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_LUMINANCE, w, h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data[i]);
+        }
+    }
+
+    ready_ = !not_ready;
+
+    auto f = params_.filter;
+    if (f == NoFilter) {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    } else if (f == Bilinear) {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else if (f == Trilinear) {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else if (f == BilinearNoMipmap) {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#if !defined(GL_ES_VERSION_2_0) && !defined(__EMSCRIPTEN__)
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+#endif
+
+    if (f == Trilinear || f == Bilinear) {
+        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    }
+}
+
+void ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams &p) {
+    std::unique_ptr<uint8_t[]> image_data[6];
+    const void *_image_data[6] = {};
+    int w = 0, h = 0;
+    eTex2DFormat format = Undefined;
+    for (int i = 0; i < 6; i++) {
+        if (data[i]) {
+            image_data[i] = ReadTGAFile(data[i], w, h, format);
+            _image_data[i] = image_data[i].get();
+        }
+    }
+
+    Texture2DParams _p = p;
+    _p.w = w;
+    _p.h = h;
+    _p.format = format;
+
+    InitFromRAWData(_image_data, _p);
 }
 
 void ren::Texture2D::ChangeFilter(eTexFilter f, eTexRepeat r) {

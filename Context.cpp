@@ -106,8 +106,8 @@ void ren::Context::ReleasePrograms() {
     programs_.Clear();
 }
 
-ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data, int size, const Texture2DParams &p,
-											  eTexLoadStatus *load_status) {
+ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data, int size, 
+                                              const Texture2DParams &p, eTexLoadStatus *load_status) {
 	Texture2DRef ref;
 	for (auto it = textures_.begin(); it != textures_.end(); ++it) {
 		if (strcmp(it->name(), name) == 0) {
@@ -127,6 +127,29 @@ ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data
 	}
 
 	return ref;
+}
+
+ren::Texture2DRef ren::Context::LoadTextureCube(const char *name, const void *data[6], const int size[6], 
+                                                const Texture2DParams &p, eTexLoadStatus *load_status) {
+    Texture2DRef ref;
+    for (auto it = textures_.begin(); it != textures_.end(); ++it) {
+        if (strcmp(it->name(), name) == 0) {
+            ref = { &textures_, it.index() };
+            break;
+        }
+    }
+
+    if (!ref) {
+        ref = textures_.Add(name, data, size, p, load_status);
+    } else {
+        if (ref->ready()) {
+            if (load_status) *load_status = TexFound;
+        } else if (!ref->ready() && data) {
+            ref->Init(name, data, size, p, load_status);
+        }
+    }
+
+    return ref;
 }
 
 int ren::Context::NumTexturesNotReady() {

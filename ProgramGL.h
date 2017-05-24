@@ -59,11 +59,11 @@ namespace ren {
 		bool ready() const { return ready_; }
 		const char *name() const { return name_; }
 
-        const Attribute &attribute(int i) {
+        const Attribute &attribute(int i) const {
             return attributes_[i];
         }
 
-        const Attribute &attribute(const char *name) {
+        const Attribute &attribute(const char *name) const {
             for (int i = 0; i < MAX_NUM_ATTRIBUTES; i++) {
                 if (attributes_[i].name == name) {
                     return attributes_[i];
@@ -72,11 +72,11 @@ namespace ren {
             return attributes_[0];
         }
 
-        const Uniform &uniform(int i) {
+        const Uniform &uniform(int i) const {
             return uniforms_[i];
         }
 
-        const Uniform &uniform(const char *name) {
+        const Uniform &uniform(const char *name) const {
             for (int i = 0; i < MAX_NUM_UNIFORMS; i++) {
                 if (uniforms_[i].name == name) {
                     return uniforms_[i];

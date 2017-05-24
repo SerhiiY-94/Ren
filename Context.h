@@ -47,6 +47,7 @@ namespace ren {
 
         /*** Texture ***/
 		Texture2DRef LoadTexture2D(const char *name, const void *data, int size, const Texture2DParams &p, eTexLoadStatus *load_status);
+        Texture2DRef LoadTextureCube(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status);
 		int NumTexturesNotReady();
 		void ReleaseTextures();
 
@@ -63,6 +64,6 @@ namespace ren {
 	};
 
 #if defined(USE_GL_RENDER)
-    void CheckError(const char *op = "undefined");
+    void CheckError(const char *op);
 #endif
 }

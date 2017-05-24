@@ -27,6 +27,7 @@ set(SOURCE_FILES Anim.h
 				 Camera.cpp
                  Context.h
 				 Context.cpp
+                 Fwd.h
                  Material.h
                  Material.cpp
                  Matrices_old.h

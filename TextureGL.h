@@ -33,12 +33,16 @@ namespace ren {
 		void InitFromRAWData(const void *data, const Texture2DParams &p);
 		void InitFromTGAFile(const void *data, const Texture2DParams &p);
 		void InitFromDDSFile(const void *data, int size, const Texture2DParams &p);
+
+        void InitFromRAWData(const void *data[6], const Texture2DParams &p);
+        void InitFromTGAFile(const void *data[6], const Texture2DParams &p);
 	public:
 		Texture2D() { name_[0] = '\0'; }
 		Texture2D(const char *name, uint32_t tex_id, const Texture2DParams &params) : tex_id_(tex_id), params_(params), ready_(0) {
 			strcpy(name_, name);
 		}
 		Texture2D(const char *name, const void *data, int size, const Texture2DParams &params, eTexLoadStatus *load_status);
+        Texture2D(const char *name, const void *data[6], const int size[6], const Texture2DParams &params, eTexLoadStatus *load_status);
         Texture2D(const Texture2D &rhs) = delete;
         Texture2D(Texture2D &&rhs) { *this = std::move(rhs); }
 		~Texture2D();
@@ -47,6 +51,7 @@ namespace ren {
         Texture2D &operator=(Texture2D &&rhs);
 
 		void Init(const char *name, const void *data, int size, const Texture2DParams &params, eTexLoadStatus *load_status);
+        void Init(const char *name, const void *data[6], const int size[6], const Texture2DParams &params, eTexLoadStatus *load_status);
 
 		uint32_t tex_id() const { return tex_id_; }
 		const Texture2DParams &params() const { return params_; }
