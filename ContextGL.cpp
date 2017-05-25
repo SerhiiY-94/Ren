@@ -36,8 +36,9 @@ void ren::Context::Init(int w, int h) {
 	}
 
 	// how many uniform vec4 vectors can be used
-	GLint i;
+	GLint i = 0;
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &i);
+    if (i == 0) i = 256;
 	max_uniform_vec4 = i;
 	printf("\tMax uniforms\t: %i\n", max_uniform_vec4);
 
