@@ -9,13 +9,13 @@
 #include "Utils.cpp"
 
 extern "C" {
-    #include "SW/_SW.c"
+#include "SW/_SW.c"
 }
 
 #if defined(USE_GL_RENDER)
-    #include "ContextGL.cpp"
-    #include "ProgramGL.cpp"
-    #include "TextureGL.cpp"
+#include "ContextGL.cpp"
+#include "ProgramGL.cpp"
+#include "TextureGL.cpp"
 #elif defined(USE_SW_RENDER)
-    #include "TextureSW.cpp"
+#include "TextureSW.cpp"
 #endif

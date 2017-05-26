@@ -8,60 +8,60 @@
 #include "Texture.h"
 
 namespace ren {
-	class Context : public RenderThread {
-	protected:
-		int w_ = 0, h_ = 0;
+    class Context : public RenderThread {
+    protected:
+        int w_ = 0, h_ = 0;
 
-		MeshStorage		 meshes_;
-		MaterialStorage	 materials_;
-		ProgramStorage	 programs_;
-		Texture2DStorage textures_;
+        MeshStorage		 meshes_;
+        MaterialStorage	 materials_;
+        ProgramStorage	 programs_;
+        Texture2DStorage textures_;
         AnimSeqStorage   anims_;
 
 #if defined(USE_GL_RENDER)
-		std::string glsl_defines_;
+        std::string glsl_defines_;
 #endif
-	public:
-		void Init(int w, int h);
+    public:
+        void Init(int w, int h);
 
         int w() const { return w_; }
         int h() const { return h_; }
 
-		void Resize(int w, int h);
+        void Resize(int w, int h);
 
-		/*** Mesh ***/
-		MeshRef LoadMesh(const char *name, void *data, material_load_callback on_mat_load);
+        /*** Mesh ***/
+        MeshRef LoadMesh(const char *name, void *data, material_load_callback on_mat_load);
 
         /*** Material ***/
-		MaterialRef LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-																								const texture_load_callback &on_tex_load);
+        MaterialRef LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
+                                 const texture_load_callback &on_tex_load);
         int NumMaterialsNotReady();
         void ReleaseMaterials();
 
         /*** Program ***/
 #if defined(USE_GL_RENDER)
-		ProgramRef LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status);
+        ProgramRef LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status);
 #endif
         int NumProgramsNotReady();
         void ReleasePrograms();
 
         /*** Texture ***/
-		Texture2DRef LoadTexture2D(const char *name, const void *data, int size, const Texture2DParams &p, eTexLoadStatus *load_status);
+        Texture2DRef LoadTexture2D(const char *name, const void *data, int size, const Texture2DParams &p, eTexLoadStatus *load_status);
         Texture2DRef LoadTextureCube(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status);
-		int NumTexturesNotReady();
-		void ReleaseTextures();
+        int NumTexturesNotReady();
+        void ReleaseTextures();
 
         /*** Anims ***/
         AnimSeqRef LoadAnimSequence(const char *name, void *data);
-		int NumAnimsNotReady();
-		void ReleaseAnims();
+        int NumAnimsNotReady();
+        void ReleaseAnims();
 
 #if defined(USE_GL_RENDER)
-		float anisotropy = 0;
-		int max_uniform_vec4 = 0;
-		bool IsExtensionSupported(const char *ext);
+        float anisotropy = 0;
+        int max_uniform_vec4 = 0;
+        bool IsExtensionSupported(const char *ext);
 #endif
-	};
+    };
 
 #if defined(USE_GL_RENDER)
     void CheckError(const char *op);

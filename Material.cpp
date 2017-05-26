@@ -3,102 +3,102 @@
 #include <cstdlib>
 
 #ifdef _MSC_VER
-    #pragma warning(push)
-    #pragma warning(disable : 4996)
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #endif
 
 ren::Material::Material(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-																					   const texture_load_callback &on_tex_load) {
-	Init(name, mat_src, status, on_prog_load, on_tex_load);
+                        const texture_load_callback &on_tex_load) {
+    Init(name, mat_src, status, on_prog_load, on_tex_load);
 }
 
 void ren::Material::Init(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-																						const texture_load_callback &on_tex_load) {
+                         const texture_load_callback &on_tex_load) {
     strcpy(name_, name);
     InitFromTXT(name, mat_src, status, on_prog_load, on_tex_load);
 }
 
 void ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-																							   const texture_load_callback &on_tex_load) {
-	if (!mat_src) {
-		if (status) *status = MatSetToDefault;
-		return;
-	}
+                                const texture_load_callback &on_tex_load) {
+    if (!mat_src) {
+        if (status) *status = MatSetToDefault;
+        return;
+    }
 
-	// Parse material
-	const char *delims = " \r\n";
-	const char *p = mat_src;
-	const char *q = strpbrk(p + 1, delims);
+    // Parse material
+    const char *delims = " \r\n";
+    const char *p = mat_src;
+    const char *q = strpbrk(p + 1, delims);
 
-	int num_textures = 0;
-	int num_params = 0;
+    int num_textures = 0;
+    int num_params = 0;
 
-	for (; p != NULL && q != NULL; q = strpbrk(p, delims)) {
-		if (p == q) {
-			p = q + 1;
-			continue;
-		}
-		std::string item(p, q);
+    for (; p != NULL && q != NULL; q = strpbrk(p, delims)) {
+        if (p == q) {
+            p = q + 1;
+            continue;
+        }
+        std::string item(p, q);
 
-		if (item == "gl_program:") {
+        if (item == "gl_program:") {
 #ifdef USE_GL_RENDER
-			p = q + 1; q = strpbrk(p, delims);
-			std::string program_name = std::string(p, q);
-			p = q + 1; q = strpbrk(p, delims);
-			std::string v_shader_name = std::string(p, q);
-			p = q + 1; q = strpbrk(p, delims);
-			std::string f_shader_name = std::string(p, q);
+            p = q + 1; q = strpbrk(p, delims);
+            std::string program_name = std::string(p, q);
+            p = q + 1; q = strpbrk(p, delims);
+            std::string v_shader_name = std::string(p, q);
+            p = q + 1; q = strpbrk(p, delims);
+            std::string f_shader_name = std::string(p, q);
 
-			program_ = on_prog_load(program_name.c_str(), v_shader_name.c_str(), f_shader_name.c_str());
+            program_ = on_prog_load(program_name.c_str(), v_shader_name.c_str(), f_shader_name.c_str());
 #endif
-		} else if (item == "sw_program:") {
+        } else if (item == "sw_program:") {
 #ifdef USE_SW_RENDER
-			p = q + 1; q = strpbrk(p, delims);
-			std::string program_name = std::string(p, q);
+            p = q + 1; q = strpbrk(p, delims);
+            std::string program_name = std::string(p, q);
 
-			eProgramLoadStatus st;
-			it->program = CreateProgramSW(program_name.c_str(), nullptr, nullptr, 0, &st);
-			if (st == ProgSetToDefault) {
-				on_program_load(program_name.c_str(), nullptr, nullptr);
-			}
+            eProgramLoadStatus st;
+            it->program = CreateProgramSW(program_name.c_str(), nullptr, nullptr, 0, &st);
+            if (st == ProgSetToDefault) {
+                on_program_load(program_name.c_str(), nullptr, nullptr);
+            }
 #endif
-		} else if (item == "flag:") {
-			p = q + 1; q = strpbrk(p, delims);
-			std::string flag = std::string(p, q);
+        } else if (item == "flag:") {
+            p = q + 1; q = strpbrk(p, delims);
+            std::string flag = std::string(p, q);
 
-			if (flag == "alpha_blend") {
-				flags_ |= AlphaBlend;
-			} else if (flag == "doublesided") {
-				flags_ |= DoubleSided;
-			} else {
-				fprintf(stderr, "Unknown flag %s", flag.c_str());
-			}
-		} else if (item == "texture:") {
-			p = q + 1; q = strpbrk(p, delims);
-			std::string texture_name = std::string(p, q);
+            if (flag == "alpha_blend") {
+                flags_ |= AlphaBlend;
+            } else if (flag == "doublesided") {
+                flags_ |= DoubleSided;
+            } else {
+                fprintf(stderr, "Unknown flag %s", flag.c_str());
+            }
+        } else if (item == "texture:") {
+            p = q + 1; q = strpbrk(p, delims);
+            std::string texture_name = std::string(p, q);
 
-			textures_[num_textures] = on_tex_load(texture_name.c_str());
-			num_textures++;
-		} else if (item == "param:") {
-			glm::vec4 &par = params_[num_params++];
-			p = q + 1; q = strpbrk(p, delims);
-			par[0] = (float)atof(p);
-			p = q + 1; q = strpbrk(p, delims);
-			par[1] = (float)atof(p);
-			p = q + 1; q = strpbrk(p, delims);
-			par[2] = (float)atof(p);
-			p = q + 1; q = strpbrk(p, delims);
-			par[3] = (float)atof(p);
-		}
+            textures_[num_textures] = on_tex_load(texture_name.c_str());
+            num_textures++;
+        } else if (item == "param:") {
+            glm::vec4 &par = params_[num_params++];
+            p = q + 1; q = strpbrk(p, delims);
+            par[0] = (float)atof(p);
+            p = q + 1; q = strpbrk(p, delims);
+            par[1] = (float)atof(p);
+            p = q + 1; q = strpbrk(p, delims);
+            par[2] = (float)atof(p);
+            p = q + 1; q = strpbrk(p, delims);
+            par[3] = (float)atof(p);
+        }
 
-		if (!q) break;
-		p = q + 1;
-	}
+        if (!q) break;
+        p = q + 1;
+    }
 
-	ready_ = true;
-	if (status) *status = MatCreatedFromData;
+    ready_ = true;
+    if (status) *status = MatCreatedFromData;
 }
 
 #ifdef _MSC_VER
-    #pragma warning(pop)
+#pragma warning(pop)
 #endif

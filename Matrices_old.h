@@ -19,15 +19,15 @@ void matrixSetTranslateM(float *m, float x, float y, float z);
 void matrixRotateM(float *m, float a, float x, float y, float z);
 
 void matrixLookAtM(float *m,
-                float eyeX, float eyeY, float eyeZ,
-                float cenX, float cenY, float cenZ,
-                float  upX, float  upY, float  upZ);
+                   float eyeX, float eyeY, float eyeZ,
+                   float cenX, float cenY, float cenZ,
+                   float  upX, float  upY, float  upZ);
 
 void matrixLookAtM2(float *m,
-                float eyeX, float eyeY, float eyeZ,
-                float cenX, float cenY, float cenZ,
-                float  upX, float  upY, float  upZ,
-				float* out_side, float* out_up);
+                    float eyeX, float eyeY, float eyeZ,
+                    float cenX, float cenY, float cenZ,
+                    float  upX, float  upY, float  upZ,
+                    float* out_side, float* out_up);
 
 void matrixFrustumM(float *m, float left, float right, float bottom, float top, float near, float far);
 
@@ -35,9 +35,9 @@ void matrixFrustumM2(float *m, float left, float right, float bottom, float top,
 
 void BuildPerspProjMat(float *m, float fov, float aspect, float znear, float zfar);
 
-void MatVecMult( const float* vec3, const float* matr, float* res );
+void MatVecMult(const float* vec3, const float* matr, float* res);
 
-void InvMat( float* mat, float* res );
+void InvMat(float* mat, float* res);
 
 bool gluInvertMatrix(const float m[16], float invOut[16]);
 

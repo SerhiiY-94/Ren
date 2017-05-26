@@ -7,45 +7,45 @@
 #include "RingBuffer.h"
 
 namespace ren {
-	typedef void(*TaskFunc)(void *arg);
-	struct Task {
-		TaskFunc	func;
-		void		*arg;
-	};
+    typedef void(*TaskFunc)(void *arg);
+    struct Task {
+        TaskFunc	func;
+        void		*arg;
+    };
 
-	struct TaskList : public std::vector<Task> {
-		std::shared_ptr<void> done_event;
+    struct TaskList : public std::vector<Task> {
+        std::shared_ptr<void> done_event;
 
-		TaskList();
-		TaskList(size_t size) : TaskList() {
-			this->reserve(size);
-		}
+        TaskList();
+        TaskList(size_t size) : TaskList() {
+            this->reserve(size);
+        }
 
-		void Submit(class RenderThread *r);
-		void Wait();
-	};
+        void Submit(class RenderThread *r);
+        void Wait();
+    };
 
-	class RenderThread {
-	protected:
-		RingBuffer<TaskList> task_lists_;
-		std::mutex add_list_mtx_;
-	public:
-		RenderThread() : task_lists_(128) {}
+    class RenderThread {
+    protected:
+        RingBuffer<TaskList> task_lists_;
+        std::mutex add_list_mtx_;
+    public:
+        RenderThread() : task_lists_(128) {}
 
-		void AddTaskList(TaskList &&list);
-		void AddSingleTask(TaskFunc func, void *arg);
-		void ProcessSingleTask(TaskFunc func, void *arg);
+        void AddTaskList(TaskList &&list);
+        void AddSingleTask(TaskFunc func, void *arg);
+        void ProcessSingleTask(TaskFunc func, void *arg);
 
-		template<typename T>
-		void ProcessSingleTask(T func) {
-			auto f = new T(func);
-			ProcessSingleTask([](void *arg) {
-				auto ff = (T *)arg;
-				(*ff)();
-				delete ff;
-			}, f);
-		}
+        template<typename T>
+        void ProcessSingleTask(T func) {
+            auto f = new T(func);
+            ProcessSingleTask([](void *arg) {
+                auto ff = (T *)arg;
+                (*ff)();
+                delete ff;
+            }, f);
+        }
 
-		bool ProcessTasks();
-	};
+        bool ProcessTasks();
+    };
 }

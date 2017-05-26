@@ -7,8 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #ifdef _MSC_VER
-    #pragma warning(push)
-    #pragma warning(disable : 4996)
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #endif
 
 ren::AnimSequence::AnimSequence(const char *name, void *data) {
@@ -263,5 +263,5 @@ void ren::Skeleton::UpdateAnim(int anim_id, float delta, float *t) {
 }
 
 #ifdef _MSC_VER
-    #pragma warning(pop)
+#pragma warning(pop)
 #endif
