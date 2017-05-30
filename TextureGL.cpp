@@ -49,7 +49,7 @@ ren::Texture2D &ren::Texture2D::operator=(ren::Texture2D &&rhs) {
     rhs.params_ = {};
     ready_ = rhs.ready_;
     rhs.ready_ = false;
-    ready_ = rhs.cubemap_ready_;
+    cubemap_ready_ = rhs.cubemap_ready_;
     rhs.cubemap_ready_ = 0;
     strcpy(name_, rhs.name_);
     rhs.name_[0] = '\0';
