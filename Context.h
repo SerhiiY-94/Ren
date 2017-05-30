@@ -41,6 +41,9 @@ namespace ren {
         /*** Program ***/
 #if defined(USE_GL_RENDER)
         ProgramRef LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status);
+#elif defined(USE_SW_RENDER)
+        ProgramRef LoadProgramSW(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
+                                 const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *load_status);
 #endif
         int NumProgramsNotReady();
         void ReleasePrograms();
@@ -48,6 +51,7 @@ namespace ren {
         /*** Texture ***/
         Texture2DRef LoadTexture2D(const char *name, const void *data, int size, const Texture2DParams &p, eTexLoadStatus *load_status);
         Texture2DRef LoadTextureCube(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status);
+
         int NumTexturesNotReady();
         void ReleaseTextures();
 
@@ -60,6 +64,8 @@ namespace ren {
         float anisotropy = 0;
         int max_uniform_vec4 = 0;
         bool IsExtensionSupported(const char *ext);
+#elif defined(USE_SW_RENDER)
+        int max_uniform_vec4 = 0;
 #endif
     };
 

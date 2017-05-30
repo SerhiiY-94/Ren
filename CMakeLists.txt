@@ -55,9 +55,12 @@ if(${RENDERER} STREQUAL "GL")
 
     set(LIBS ${LIBS} glew SOIL2)
 elseif(${RENDERER} STREQUAL "SW")
-    set(SOURCE_FILES    ${SOURCE_FILES}
-                        RenderStateSW.h
-                        TextureSW.cpp)
+    set(SOURCE_FILES ${SOURCE_FILES}
+                     ContextSW.cpp
+                     ProgramSW.h
+                     ProgramSW.cpp
+                     TextureSW.h
+                     TextureSW.cpp)
 elseif(${RENDERER} STREQUAL "VK")
     set(SOURCE_FILES    ${SOURCE_FILES}
                         RenderStateVK.cpp
@@ -74,6 +77,6 @@ list(APPEND ALL_SOURCE_FILES _ren.cpp)
 source_group("src" FILES _ren.cpp)
 
 add_library(ren STATIC ${ALL_SOURCE_FILES})
-target_link_libraries(ren ${LIBS} SW)
+target_link_libraries(ren ${LIBS})
 
 add_subdirectory(tests)

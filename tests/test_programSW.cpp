@@ -2,14 +2,16 @@
 
 #include <string>
 
+#include "../Context.h"
 #include "../Program.h"
 #include "../SW/SW.h"
 
-class ProgramTest {
+class ProgramTest : public ren::Context {
     SWcontext *ctx;
 public:
     ProgramTest() {
         ctx = swCreateContext(1, 1);
+        ren::Context::Init(1, 1);
     }
 
     ~ProgramTest() {
@@ -25,47 +27,45 @@ void test_program() {
     {   // Create program
         ProgramTest test;
 
-        R::eProgramLoadStatus status;
-        R::ProgramRef p = R::CreateProgramSW("constant", nullptr, nullptr, 0, &status);
+        ren::eProgLoadStatus status;
+        ren::Attribute _attrs[] = {{}};
+        ren::Uniform _unifs[] = {{}};
+        ren::ProgramRef p = test.LoadProgramSW("constant", nullptr, nullptr, 0, _attrs, _unifs, &status);
 
-        assert(p.index == 0);
-        assert(status == R::ProgSetToDefault);
+        assert(p);
+        assert(status == ren::ProgSetToDefault);
 
         {
-            R::Program *pp = R::GetProgram(p);
+            ren::Program *pp = p.get();
 
             assert(pp != nullptr);
-            assert(std::string(pp->name) == "constant");
-            assert(pp->counter == 1);
-            assert(pp->prog_id == 0); // default value
-            assert(pp->not_ready == 1);
+            assert(std::string(pp->name()) == "constant");
+            assert(pp->prog_id() == 0); // default value
+            assert(!pp->ready());
         }
 
-        R::CreateProgramSW("constant", (void*)vshader, (void*)fshader, 0, &status);
+        ren::Uniform unifs[] = {{"unif1", 0, SW_FLOAT, 1}, {"unif2", 1, SW_VEC3, 1}, {}};
+        ren::Attribute attrs[] = {{"attr1", 0, -1, 1}, {"attr2", 1, -1, 1}, {}};
 
-        assert(status == R::ProgCreatedFromData);
+        test.LoadProgramSW("constant", (void*)vshader, (void*)fshader, 0, attrs, unifs, &status);
 
-        R::Program *pp = R::GetProgram(p);
+        assert(status == ren::ProgCreatedFromData);
 
-        R::AttrUnifArg unifs[] = {{"unif1", 0, SW_FLOAT}, {"unif2", 1, SW_VEC3}, {nullptr, 0, 0}};
-        R::AttrUnifArg attrs[] = {{"attr1", 0, -1}, {"attr2", 1, -1}, {nullptr, 0, 0}};
-        R::RegisterUnifAttrs(p, unifs, attrs);
+        ren::Program *pp = p.get();
 
         assert(pp != nullptr);
-        assert(std::string(pp->name) == "constant");
+        assert(std::string(pp->name()) == "constant");
 
-        assert(std::string(pp->uniforms[0].name) == "unif1");
-        assert(pp->uniforms[0].loc == 0);
-        assert(std::string(pp->uniforms[1].name) == "unif2");
-        assert(pp->uniforms[1].loc == 1);
+        assert(std::string(pp->uniform(0).name) == "unif1");
+        assert(pp->uniform(0).loc == 0);
+        assert(std::string(pp->uniform(1).name) == "unif2");
+        assert(pp->uniform(1).loc == 1);
 
-        assert(std::string(pp->attributes[0].name) == "attr1");
-        assert(pp->attributes[0].loc == 0);
-        assert(std::string(pp->attributes[1].name) == "attr2");
-        assert(pp->attributes[1].loc == 1);
+        assert(std::string(pp->attribute(0).name) == "attr1");
+        assert(pp->attribute(0).loc == 0);
+        assert(std::string(pp->attribute(1).name) == "attr2");
+        assert(pp->attribute(1).loc == 1);
 
-        assert_nothrow(R::RegisterUnifAttrs(p, nullptr, nullptr));
-
-        assert(pp->not_ready != 1);
+        assert(pp->ready());
     }
 }

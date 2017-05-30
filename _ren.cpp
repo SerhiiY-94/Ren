@@ -17,5 +17,7 @@ extern "C" {
 #include "ProgramGL.cpp"
 #include "TextureGL.cpp"
 #elif defined(USE_SW_RENDER)
+#include "ContextSW.cpp"
+#include "ProgramSW.cpp"
 #include "TextureSW.cpp"
 #endif

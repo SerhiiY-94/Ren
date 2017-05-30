@@ -40,7 +40,7 @@ ren::MaterialRef ren::Context::LoadMaterial(const char *name, const char *mat_sr
 }
 
 int ren::Context::NumMaterialsNotReady() {
-	return std::count_if(materials_.begin(), materials_.end(), [](const Material &m) { return !m.ready(); });
+	return (int)std::count_if(materials_.begin(), materials_.end(), [](const Material &m) { return !m.ready(); });
 }
 
 void ren::Context::ReleaseMaterials() {
@@ -53,45 +53,8 @@ void ren::Context::ReleaseMaterials() {
     materials_.Clear();
 }
 
-#if defined(USE_GL_RENDER)
-ren::ProgramRef ren::Context::LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status) {
-	ProgramRef ref;
-	for (auto it = programs_.begin(); it != programs_.end(); ++it) {
-		if (strcmp(it->name(), name) == 0) {
-			ref = { &programs_, it.index() };
-			break;
-		}
-	}
-
-    std::string vs_source_str = glsl_defines_ + (vs_source ? vs_source : ""),
-                fs_source_str = glsl_defines_ + (fs_source ? fs_source : "");
-
-    if (vs_source) {
-        vs_source_str = glsl_defines_ + vs_source;
-        vs_source = vs_source_str.c_str();
-    }
-
-    if (fs_source) {
-        fs_source_str = glsl_defines_ + fs_source;
-        fs_source = fs_source_str.c_str();
-    }
-
-	if (!ref) {
-		ref = programs_.Add(name, vs_source, fs_source, load_status);
-	} else {
-		if (ref->ready()) {
-			if (load_status) *load_status = ProgFound;
-		} else if (!ref->ready() && vs_source && fs_source) {
-			ref->Init(name, vs_source, fs_source, load_status);
-		}
-	}
-
-	return ref;
-}
-#endif
-
 int ren::Context::NumProgramsNotReady() {
-	return std::count_if(programs_.begin(), programs_.end(), [](const Program &p) { return !p.ready(); });
+	return (int)std::count_if(programs_.begin(), programs_.end(), [](const Program &p) { return !p.ready(); });
 }
 
 void ren::Context::ReleasePrograms() {
@@ -153,7 +116,7 @@ ren::Texture2DRef ren::Context::LoadTextureCube(const char *name, const void *da
 }
 
 int ren::Context::NumTexturesNotReady() {
-	return std::count_if(textures_.begin(), textures_.end(), [](const Texture2D &t) { return !t.ready(); });
+	return (int)std::count_if(textures_.begin(), textures_.end(), [](const Texture2D &t) { return !t.ready(); });
 }
 
 void ren::Context::ReleaseTextures() {
@@ -188,7 +151,7 @@ ren::AnimSeqRef ren::Context::LoadAnimSequence(const char *name, void *data) {
 }
 
 int ren::Context::NumAnimsNotReady() {
-	return std::count_if(anims_.begin(), anims_.end(), [](const AnimSequence &a) { return !a.ready(); });
+	return (int)std::count_if(anims_.begin(), anims_.end(), [](const AnimSequence &a) { return !a.ready(); });
 }
 
 void ren::Context::ReleaseAnims() {

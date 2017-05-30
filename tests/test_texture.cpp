@@ -38,12 +38,13 @@ public:
 
 #include "../SW/SW.h"
 
-class TextureTest {
+class TextureTest : public ren::Context {
     SWcontext *ctx;
 public:
     TextureTest() {
         ctx = swCreateContext(1, 1);
         swMakeCurrent(ctx);
+        ren::Context::Init(1, 1);
     }
 
     ~TextureTest() {
@@ -70,12 +71,12 @@ void test_texture() {
 		assert(t_ref->params().w == 1);
 		assert(t_ref->params().h == 1);
 		assert(t_ref->params().format == ren::RawRGB888);
-		assert(t_ref->ready() == false);
+		assert(!t_ref->ready());
 
         {
             ren::Texture2DRef t_ref2 = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
             assert(status == ren::TexFound);
-			assert(t_ref2->ready() == false);
+			assert(!t_ref2->ready());
         }
 
         {
@@ -84,7 +85,7 @@ void test_texture() {
 			assert(t_ref3->params().w == 2);
 			assert(t_ref3->params().h == 2);
 			assert(t_ref3->params().format == ren::RawRGB888);
-			assert(t_ref3->ready() == true);
+			assert(t_ref3->ready());
         }
     }
 }

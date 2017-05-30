@@ -16,11 +16,13 @@ namespace ren {
     void CheckError(const char *op);
 }
 
-ren::Texture2D::Texture2D(const char *name, const void *data, int size, const Texture2DParams &p, eTexLoadStatus *load_status) {
+ren::Texture2D::Texture2D(const char *name, const void *data, int size,
+                          const Texture2DParams &p, eTexLoadStatus *load_status) {
     Init(name, data, size, p, load_status);
 }
 
-ren::Texture2D::Texture2D(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status) {
+ren::Texture2D::Texture2D(const char *name, const void *data[6], const int size[6],
+                          const Texture2DParams &p, eTexLoadStatus *load_status) {
     Init(name, data, size, p, load_status);
 }
 
@@ -54,7 +56,8 @@ ren::Texture2D &ren::Texture2D::operator=(ren::Texture2D &&rhs) {
     return *this;
 }
 
-void ren::Texture2D::Init(const char *name, const void *data, int size, const Texture2DParams &p, eTexLoadStatus *load_status) {
+void ren::Texture2D::Init(const char *name, const void *data, int size,
+                          const Texture2DParams &p, eTexLoadStatus *load_status) {
     strcpy(name_, name);
 
     if (!data) {
@@ -81,7 +84,8 @@ void ren::Texture2D::Init(const char *name, const void *data, int size, const Te
     }
 }
 
-void ren::Texture2D::Init(const char *name, const void *data[6], const int size[6], const Texture2DParams &p, eTexLoadStatus *load_status) {
+void ren::Texture2D::Init(const char *name, const void *data[6], const int size[6],
+                          const Texture2DParams &p, eTexLoadStatus *load_status) {
     strcpy(name_, name);
 
     if (!data) {
@@ -220,10 +224,11 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
 
     for (int i = 0; i < 6; i++) {
         if (!data[i]) {
-            if (!(cubemap_ready_ & (1 << i))) {
+            /*if (!(cubemap_ready_ & (1 << i))) {
                 continue;
             }
-            cubemap_ready_ &= ~(1 << i);
+            cubemap_ready_ &= ~(1 << i);*/
+            continue;
         } else {
             cubemap_ready_ |= (1 << i);
         }

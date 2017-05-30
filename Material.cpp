@@ -56,11 +56,7 @@ void ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadS
             p = q + 1; q = strpbrk(p, delims);
             std::string program_name = std::string(p, q);
 
-            eProgramLoadStatus st;
-            it->program = CreateProgramSW(program_name.c_str(), nullptr, nullptr, 0, &st);
-            if (st == ProgSetToDefault) {
-                on_program_load(program_name.c_str(), nullptr, nullptr);
-            }
+            program_ = on_prog_load(program_name.c_str(), nullptr, nullptr);
 #endif
         } else if (item == "flag:") {
             p = q + 1; q = strpbrk(p, delims);

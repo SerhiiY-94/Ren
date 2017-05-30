@@ -178,13 +178,13 @@ void ren::Mesh::InitMeshSimple(void *data, material_load_callback on_mat_load) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
     indices_buf_id_ = gl_buf;
 #elif defined(USE_SW_RENDER)
-    m.attribs_buf_id = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_ARRAY_BUFFER, m.attribs_buf_id);
-    swBufferData(SW_ARRAY_BUFFER, (SWuint)m.attribs_size, m.attribs);
+    attribs_buf_id_ = (uint32_t)swCreateBuffer();
+    swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
+    swBufferData(SW_ARRAY_BUFFER, (SWuint)attribs_size_, attribs_.get());
 
-    m.indices_buf_id = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_INDEX_BUFFER, m.indices_buf_id);
-    swBufferData(SW_INDEX_BUFFER, (SWuint)m.indices_size, m.indices);
+    indices_buf_id_ = (uint32_t)swCreateBuffer();
+    swBindBuffer(SW_INDEX_BUFFER, indices_buf_id_);
+    swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
 #endif
 }
 
@@ -283,13 +283,13 @@ void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
     indices_buf_id_ = gl_buf;
 #elif defined(USE_SW_RENDER)
-    m.attribs_buf_id = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_ARRAY_BUFFER, m.attribs_buf_id);
-    swBufferData(SW_ARRAY_BUFFER, (SWuint)m.attribs_size, m.attribs);
+    attribs_buf_id_ = (uint32_t)swCreateBuffer();
+    swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
+    swBufferData(SW_ARRAY_BUFFER, (SWuint)attribs_size_, attribs_.get());
 
-    m.indices_buf_id = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_INDEX_BUFFER, m.indices_buf_id);
-    swBufferData(SW_INDEX_BUFFER, (SWuint)m.indices_size, m.indices);
+    indices_buf_id_ = (uint32_t)swCreateBuffer();
+    swBindBuffer(SW_INDEX_BUFFER, indices_buf_id_);
+    swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
 #endif
 }
 
@@ -427,13 +427,13 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
     indices_buf_id_ = gl_buf;
 #elif defined(USE_SW_RENDER)
-    m.attribs_buf_id = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_ARRAY_BUFFER, m.attribs_buf_id);
-    swBufferData(SW_ARRAY_BUFFER, (SWuint)m.attribs_size, m.attribs);
+    attribs_buf_id_ = (uint32_t)swCreateBuffer();
+    swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
+    swBufferData(SW_ARRAY_BUFFER, (SWuint)attribs_size_, attribs_.get());
 
-    m.indices_buf_id = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_INDEX_BUFFER, m.indices_buf_id);
-    swBufferData(SW_INDEX_BUFFER, (SWuint)m.indices_size, m.indices);
+    indices_buf_id_ = (uint32_t)swCreateBuffer();
+    swBindBuffer(SW_INDEX_BUFFER, indices_buf_id_);
+    swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
 #endif
 }
 

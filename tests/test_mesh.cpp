@@ -38,13 +38,13 @@ public:
 };
 #else
 #include "../SW/SW.h"
-class MeshTest {
+class MeshTest : public ren::Context {
     SWcontext *ctx;
 public:
     MeshTest() {
         ctx = swCreateContext(1, 1);
         swMakeCurrent(ctx);
-        R::Init(256, 256);
+        ren::Context::Init(256, 256);
     }
 
     ~MeshTest() {
@@ -171,7 +171,13 @@ void test_mesh() {
 
 		auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
 			ren::eProgLoadStatus status;
+#if defined(USE_GL_RENDER)
 			return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
+#elif defined(USE_SW_RENDER)
+            ren::Attribute attrs[] = {{}};
+            ren::Uniform unifs[] = {{}};
+      		return test.LoadProgramSW(name, nullptr, nullptr, 0, attrs, unifs, &status);
+#endif
 		};
 
 		auto on_texture_needed = [&test](const char *name) {
@@ -209,7 +215,7 @@ void test_mesh() {
         }
 
 		ren::MaterialRef mat_ref = m_ref->strip(0).mat;
-		assert(mat_ref->ready() == false);
+		assert(!mat_ref->ready());
     }
 
     {   // Load skeletal mesh
@@ -217,7 +223,13 @@ void test_mesh() {
 
 		auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
 			ren::eProgLoadStatus status;
+#if defined(USE_GL_RENDER)
 			return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
+#elif defined(USE_SW_RENDER)
+            ren::Attribute _attrs[] = {{}};
+            ren::Uniform _unifs[] = {{}};
+            return test.LoadProgramSW(name, nullptr, nullptr, 0, _attrs, _unifs, &status);
+#endif
 		};
 
 		auto on_texture_needed = [&test](const char *name) {
@@ -273,6 +285,6 @@ void test_mesh() {
 
 		ren::MaterialRef mat_ref = m_ref->strip(0).mat;
         assert(mat_ref);
-		assert(mat_ref->ready() == false);
+		assert(!mat_ref->ready());
     }
 }

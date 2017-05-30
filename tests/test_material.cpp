@@ -34,12 +34,13 @@ public:
 };
 #elif defined(USE_SW_RENDER)
 #include "../SW/SW.h"
-class MaterialTest {
+class MaterialTest : public ren::Context {
     SWcontext *ctx;
 public:
     MaterialTest() {
         ctx = swCreateContext(1, 1);
         swMakeCurrent(ctx);
+        ren::Context::Init(1, 1);
     }
 
     ~MaterialTest() {
@@ -62,7 +63,13 @@ void test_material() {
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
             ren::eProgLoadStatus status;
+#if defined(USE_GL_RENDER)
             return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
+#elif defined(USE_SW_RENDER)
+            ren::Attribute _attrs[] = {{}};
+            ren::Uniform _unifs[] = {{}};
+            return test.LoadProgramSW(name, nullptr, nullptr, 0, _attrs, _unifs, &status);
+#endif
         };
 
         auto on_texture_needed = [&test](const char *name) {

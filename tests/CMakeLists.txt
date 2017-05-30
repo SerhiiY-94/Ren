@@ -31,7 +31,6 @@ if(${RENDERER} STREQUAL "GL")
 elseif(${RENDERER} STREQUAL "SW")
     set(SOURCE_FILES ${SOURCE_FILES}
                      test_programSW.cpp)
-    set(LIBS ${LIBS} SW)
 elseif(${RENDERER} STREQUAL "VK")
 
 endif()

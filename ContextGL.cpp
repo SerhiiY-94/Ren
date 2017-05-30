@@ -59,6 +59,41 @@ void ren::Context::Resize(int w, int h) {
     glViewport(0, 0, w_, h_);
 }
 
+ren::ProgramRef ren::Context::LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status) {
+    ProgramRef ref;
+    for (auto it = programs_.begin(); it != programs_.end(); ++it) {
+        if (strcmp(it->name(), name) == 0) {
+            ref = { &programs_, it.index() };
+            break;
+        }
+    }
+
+    std::string vs_source_str = glsl_defines_ + (vs_source ? vs_source : ""),
+                fs_source_str = glsl_defines_ + (fs_source ? fs_source : "");
+
+    if (vs_source) {
+        vs_source_str = glsl_defines_ + vs_source;
+        vs_source = vs_source_str.c_str();
+    }
+
+    if (fs_source) {
+        fs_source_str = glsl_defines_ + fs_source;
+        fs_source = fs_source_str.c_str();
+    }
+
+    if (!ref) {
+        ref = programs_.Add(name, vs_source, fs_source, load_status);
+    } else {
+        if (ref->ready()) {
+            if (load_status) *load_status = ProgFound;
+        } else if (!ref->ready() && vs_source && fs_source) {
+            ref->Init(name, vs_source, fs_source, load_status);
+        }
+    }
+
+    return ref;
+}
+
 bool ren::Context::IsExtensionSupported(const char *ext) {
     const GLubyte *extensions = NULL;
     const GLubyte *start;
