@@ -3,7 +3,6 @@ project(ren)
 
 if(WIN32)
     if(SDL_STATIC)
-        set(LIBS opengl32)
     else(SDL_STATIC)
         if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
             set(LIBS opengl32 SDL2 SDL2_mixer)
@@ -53,7 +52,15 @@ if(${RENDERER} STREQUAL "GL")
                      TextureGL.h
 				     TextureGL.cpp)
 
-    set(LIBS ${LIBS} glew SOIL2)
+    if(WIN32)
+        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+            set(LIBS ${LIBS} SOIL2 glew opengl32)
+        else()
+            set(LIBS ${LIBS} SOIL2 glew)
+        endif()
+    else(WIN32)
+        set(LIBS ${LIBS} SOIL2 glew)
+    ENDIF(WIN32)
 elseif(${RENDERER} STREQUAL "SW")
     set(SOURCE_FILES ${SOURCE_FILES}
                      ContextSW.cpp
