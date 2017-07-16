@@ -13,7 +13,7 @@ protected:
         unsigned	next_free : 31;
         T			val;
 
-        Item() : used(0), next_free(0) {}
+        Item() : used(0), next_free(0), val{} {}
         Item(Item &&rhs) : used(rhs.used), next_free(rhs.next_free), val(std::move(rhs.val)) {}
         Item &operator=(Item &&rhs) { used = rhs.used; next_free = rhs.next_free; val = std::move(rhs.val); return *this; }
     };
@@ -111,12 +111,12 @@ public:
             return index_;
         }
 
-        bool operator< (const SparseArrayIterator &rhs) { return (index_ - rhs.index_) < 0; }
-        bool operator<=(const SparseArrayIterator &rhs) { return (index_ - rhs.index_) <= 0; }
-        bool operator> (const SparseArrayIterator &rhs) { return (index_ - rhs.index_) > 0; }
-        bool operator>=(const SparseArrayIterator &rhs) { return (index_ - rhs.index_) >= 0; }
-        bool operator==(const SparseArrayIterator &rhs) { return  index_ == rhs.index_; }
-        bool operator!=(const SparseArrayIterator &rhs) { return  index_ != rhs.index_; }
+        bool operator< (const SparseArrayIterator &rhs) { return index_ < rhs.index_; }
+        bool operator<=(const SparseArrayIterator &rhs) { return index_ <= rhs.index_; }
+        bool operator> (const SparseArrayIterator &rhs) { return index_ > rhs.index_; }
+        bool operator>=(const SparseArrayIterator &rhs) { return index_ >= rhs.index_; }
+        bool operator==(const SparseArrayIterator &rhs) { return index_ == rhs.index_; }
+        bool operator!=(const SparseArrayIterator &rhs) { return index_ != rhs.index_; }
     };
 
     typedef SparseArrayIterator iterator;

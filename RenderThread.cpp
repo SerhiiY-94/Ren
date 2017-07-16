@@ -55,7 +55,7 @@ void ren::RenderThread::ProcessSingleTask(TaskFunc func, void *arg) {
 bool ren::RenderThread::ProcessTasks() {
 #ifndef __EMSCRIPTEN__
     TaskList list;
-    while (task_lists_.Pop(list)) {
+    if (task_lists_.Pop(list)) {
         for (auto &t : list) {
             t.func(t.arg);
         }

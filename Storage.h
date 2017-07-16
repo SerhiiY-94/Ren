@@ -24,14 +24,14 @@ namespace ren {
         bool release() { return --counter_ == 0; }
 
         RefCounter() : counter_(0) {}
-        /*RefCounter(const RefCounter&) : counter_(0) {}
+        RefCounter(const RefCounter&) : counter_(0) {}
         RefCounter &operator=(const RefCounter&) { return *this; }
-        ~RefCounter() {}*/
+        //~RefCounter() {}
 
-        RefCounter(const RefCounter &) = delete;
-        RefCounter(RefCounter &&rhs) = default;
-        RefCounter &operator=(const RefCounter &) = delete;
-        RefCounter &operator=(RefCounter &&rhs) = default;
+        //RefCounter(const RefCounter &) = delete;
+        RefCounter(RefCounter &&rhs) : counter_(rhs.counter_) { rhs.counter_ = 0; }
+        //RefCounter &operator=(const RefCounter &) = delete;
+        RefCounter &operator=(RefCounter &&rhs) { counter_ = rhs.counter_; rhs.counter_ = 0; return *this; }
     private:
         mutable unsigned counter_;
     };

@@ -26,7 +26,7 @@ void ren::AnimSequence::Init(const char *name, void *data) {
 
     char *p = (char *)data;
 
-    char str[64];
+    char str[12];
     READ_ADVANCE(str, p, 12);
     assert(strcmp(str, "ANIM_SEQUEN\0") == 0);
 
