@@ -42,7 +42,10 @@ ren::Program &ren::Program::operator=(Program &&rhs) {
 void ren::Program::Init(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
                         const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *status) {
     strcpy(name_, name);
-    if (!vs_shader || !fs_shader || !attrs || !unifs) return;
+    if (!vs_shader || !fs_shader || !attrs || !unifs) {
+        if (status) *status = ProgSetToDefault;
+        return;
+    }
 
     InitFromFuncs(name, vs_shader, fs_shader, num_fvars, status);
 
