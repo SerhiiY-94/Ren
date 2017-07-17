@@ -4,7 +4,7 @@
 
 #include <functional>
 
-#include <glm/vec4.hpp>
+#include <math/math.hpp>
 
 #include "Program.h"
 #include "Storage.h"
@@ -24,7 +24,7 @@ namespace ren {
         char			name_[32];
         ProgramRef		program_;
         Texture2DRef	textures_[4];
-        glm::vec4		params_[8];
+        math::vec4		params_[8];
 
         void InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
                          const texture_load_callback &on_tex_load);
@@ -38,12 +38,15 @@ namespace ren {
         const char *name() const { return name_; }
         const ProgramRef &program() const { return program_; }
         const Texture2DRef &texture(int i) const { return textures_[i]; }
-        const glm::vec4 &param(int i) const { return params_[i]; }
+        const math::vec4 &param(int i) const { return params_[i]; }
 
         void Init(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
                   const texture_load_callback &on_tex_load);
     };
 
-    typedef StorageRef<Material> MaterialRef;
-    typedef Storage<Material> MaterialStorage;
+    template <typename val_t>
+    using aligned_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec4::alignment>>;
+
+    typedef StorageRef<Material, aligned_container> MaterialRef;
+    typedef Storage<Material, aligned_container> MaterialStorage;
 }

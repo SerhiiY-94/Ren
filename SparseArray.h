@@ -5,7 +5,10 @@
 #include <iterator>
 #include <vector>
 
-template <class T>
+template <typename val_t>
+using default_container = std::vector<val_t>;
+
+template <class T, template<typename val_t> class container = default_container>
 class SparseArray {
 protected:
     struct Item {
@@ -18,7 +21,7 @@ protected:
         Item &operator=(Item &&rhs) { used = rhs.used; next_free = rhs.next_free; val = std::move(rhs.val); return *this; }
     };
 
-    std::vector<Item> array_;
+    container<Item> array_;
     size_t first_free_;
     size_t size_;
 public:
@@ -84,12 +87,12 @@ public:
     }
 
     class SparseArrayIterator : public std::iterator<std::bidirectional_iterator_tag, T> {
-        friend class SparseArray<T>;
+        friend class SparseArray<T, container>;
 
-        SparseArray<T> *container_;
+        SparseArray<T, container> *container_;
         size_t index_;
 
-        SparseArrayIterator(SparseArray<T> *c, size_t index) : container_(c), index_(index) {}
+        SparseArrayIterator(SparseArray<T, container> *c, size_t index) : container_(c), index_(index) {}
     public:
         T &operator*() {
             return *container_->Get(index_);

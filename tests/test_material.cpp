@@ -121,7 +121,7 @@ void test_material() {
         assert(std::string(t2->name()) == "metal_01.tga");
         assert(std::string(t3->name()) == "checker.tga");
 
-        assert(m_ref->param(0) == glm::vec4(0, 1, 2, 3));
-        assert(m_ref->param(1) == glm::vec4(0.5, 1.2, 11, 15));
+        assert(m_ref->param(0) == math::vec4(0, 1, 2, 3));
+        assert(m_ref->param(1) == math::vec4(0.5, 1.2, 11, 15));
     }
 }

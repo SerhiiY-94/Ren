@@ -3,22 +3,22 @@
 #include "SparseArray.h"
 
 namespace ren {
-    template<typename T>
+    template<typename T, template<typename val_t> class container = default_container>
     class StorageRef;
 
-    template<typename T>
-    class Storage : public SparseArray<T> {
+    template<typename T, template<typename val_t> class container = default_container>
+    class Storage : public SparseArray<T, container> {
     public:
         template<class... Args>
-        StorageRef<T> Add(Args &&... args) {
-            size_t index = SparseArray<T>::Add(args...);
+        StorageRef<T, container> Add(Args &&... args) {
+            size_t index = SparseArray<T, container>::Add(args...);
             return { this, index };
         }
     };
 
     class RefCounter {
     protected:
-        template<class T> friend class StorageRef;
+        template<class T, template<typename val_t> class container> friend class StorageRef;
 
         void add_ref() { ++counter_; }
         bool release() { return --counter_ == 0; }
@@ -36,13 +36,13 @@ namespace ren {
         mutable unsigned counter_;
     };
 
-    template <class T>
+    template <class T, template<typename val_t> class container>
     class StorageRef {
-        Storage<T> *storage_;
+        Storage<T, container> *storage_;
         size_t index_;
     public:
         StorageRef() : storage_(nullptr), index_(0) {}
-        StorageRef(Storage<T> *storage, size_t index) : storage_(storage), index_(index) {
+        StorageRef(Storage<T, container> *storage, size_t index) : storage_(storage), index_(index) {
             if (storage_) {
                 T *p = storage_->Get(index_);
                 p->add_ref();

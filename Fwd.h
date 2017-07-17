@@ -1,9 +1,10 @@
 #pragma once
 
-namespace ren {
-    template <class T>
-    class StorageRef;
+#include <math/math.hpp>
 
+#include "Storage.h"
+
+namespace ren {
     class Anim;
     class Camera;
     class Material;
@@ -11,8 +12,11 @@ namespace ren {
     class Program;
     class Texture2D;
 
+    template <typename val_t>
+    using aligned_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec4::alignment>>;
+
     typedef StorageRef<Anim> AnimRef;
-    typedef StorageRef<Material> MaterialRef;
+    typedef StorageRef<Material, aligned_container> MaterialRef;
     typedef StorageRef<Mesh> MeshRef;
     typedef StorageRef<Program> ProgramRef;
     typedef StorageRef<Texture2D> Texture2DRef;
