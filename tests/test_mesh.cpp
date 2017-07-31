@@ -20,12 +20,6 @@ public:
         gl_ctx_ = SDL_GL_CreateContext(window_);
 
         ren::Context::Init(256, 256);
-#ifndef EMSCRIPTEN
-        GLenum glew_err = glewInit();
-        if (glew_err != GLEW_OK) {
-            fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(glew_err));
-        }
-#endif
     }
 
     ~MeshTest() {

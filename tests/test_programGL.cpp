@@ -15,12 +15,8 @@ public:
 
         window_ = SDL_CreateWindow("View", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 256, 256, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
         gl_ctx_ = SDL_GL_CreateContext(window_);
-#ifndef EMSCRIPTEN
-        GLenum glew_err = glewInit();
-        if (glew_err != GLEW_OK) {
-            fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(glew_err));
-        }
-#endif
+
+        Context::Init(256, 256);
     }
 
     ~ProgramTest() {

@@ -16,12 +16,8 @@ public:
 
         window_ = SDL_CreateWindow("View", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 256, 256, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
         gl_ctx_ = SDL_GL_CreateContext(window_);
-#ifndef EMSCRIPTEN
-        GLenum glew_err = glewInit();
-        if (glew_err != GLEW_OK) {
-            fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(glew_err));
-        }
-#endif
+
+        Context::Init(256, 256);
     }
 
     ~MaterialTest() {
@@ -122,6 +118,6 @@ void test_material() {
         assert(std::string(t3->name()) == "checker.tga");
 
         assert(m_ref->param(0) == math::vec4(0, 1, 2, 3));
-        assert(m_ref->param(1) == math::vec4(0.5, 1.2, 11, 15));
+        assert(m_ref->param(1) == math::vec4(0.5f, 1.2f, 11, 15));
     }
 }

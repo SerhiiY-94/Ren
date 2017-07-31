@@ -13,6 +13,7 @@ extern "C" {
 }
 
 #if defined(USE_GL_RENDER)
+#include "GLExt.cpp"
 #include "ContextGL.cpp"
 #include "ProgramGL.cpp"
 #include "TextureGL.cpp"

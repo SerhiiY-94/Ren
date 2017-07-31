@@ -23,7 +23,8 @@ set(SOURCE_FILES main.cpp
                  test_mesh.cpp
                  test_sparse_array.cpp
                  test_storage.cpp
-                 test_texture.cpp)
+                 test_texture.cpp
+				 )
 
 if(${RENDERER} STREQUAL "GL")
     set(SOURCE_FILES ${SOURCE_FILES}

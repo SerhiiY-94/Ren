@@ -47,6 +47,7 @@ if(${RENDERER} STREQUAL "GL")
     set(SOURCE_FILES ${SOURCE_FILES}
                      ContextGL.cpp
 					 GL.h
+					 GLExt.cpp
                      ProgramGL.h
 				     ProgramGL.cpp
                      TextureGL.h
@@ -54,12 +55,12 @@ if(${RENDERER} STREQUAL "GL")
 
     if(WIN32)
         if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-            set(LIBS ${LIBS} SOIL2 glew opengl32)
+            set(LIBS ${LIBS} SOIL2 opengl32)
         else()
-            set(LIBS ${LIBS} SOIL2 glew opengl32)
+            set(LIBS ${LIBS} SOIL2 opengl32)
         endif()
     else(WIN32)
-        set(LIBS ${LIBS} SOIL2 glew)
+        set(LIBS ${LIBS} SOIL2)
     ENDIF(WIN32)
 elseif(${RENDERER} STREQUAL "SW")
     set(SOURCE_FILES ${SOURCE_FILES}

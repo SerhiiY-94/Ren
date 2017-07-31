@@ -8,6 +8,8 @@
 #endif
 
 void ren::Context::Init(int w, int h) {
+    InitGLExtentions();
+
     w_ = w;
     h_ = h;
 
