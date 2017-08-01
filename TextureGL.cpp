@@ -118,6 +118,7 @@ void ren::Texture2D::Init(const char *name, const void *data[6], const int size[
 
 void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p) {
     GLuint tex_id;
+    
     if (params_.format == Undefined) {
         glGenTextures(1, &tex_id);
         tex_id_ = tex_id;
@@ -137,7 +138,7 @@ void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
     } else if (p.format == RawLUM8) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, p.w, p.h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
     }
-
+    
     float anisotropy = 0.0f;
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
     if (anisotropy > 0) {

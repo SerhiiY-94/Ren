@@ -15,20 +15,20 @@ void ren::Context::Init(int w, int h) {
 
     printf("===========================================\n");
     printf("Device info:\n");
-
+    
     // print device info
 #if !defined(EMSCRIPTEN) && !defined(__ANDROID__)
     GLint gl_version;
     glGetIntegerv(GL_MAJOR_VERSION, &gl_version);
     printf("\tOpenGL version\t: %i\n", int(gl_version));
 #endif
-
+    
     printf("\tVendor\t\t: %s\n", glGetString(GL_VENDOR));
     printf("\tRenderer\t: %s\n", glGetString(GL_RENDERER));
     printf("\tGLSL version\t: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     printf("Capabilities:\n");
-
+    
     // determine if anisotropy supported
     if (IsExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
         GLfloat f;
@@ -36,14 +36,15 @@ void ren::Context::Init(int w, int h) {
         anisotropy = f;
         printf("\tAnisotropy\t: %f\n", anisotropy);
     }
-
+    
     // how many uniform vec4 vectors can be used
     GLint i = 0;
-    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &i);
+    glGetIntegerv(/*GL_MAX_VERTEX_UNIFORM_VECTORS*/ GL_MAX_VERTEX_UNIFORM_COMPONENTS, &i);
+    i /= 4;
     if (i == 0) i = 256;
     max_uniform_vec4 = i;
     printf("\tMax uniforms\t: %i\n", max_uniform_vec4);
-
+    
     // how many bones(mat4) can be used at time
     Mesh::max_gpu_bones = max_uniform_vec4 / 8;
     printf("\tBones per pass\t: %i\n", Mesh::max_gpu_bones);
@@ -52,7 +53,7 @@ void ren::Context::Init(int w, int h) {
     glsl_defines_ += "#define MAX_GPU_BONES ";
     glsl_defines_ += buff;
     glsl_defines_ += "\r\n";
-
+    
     printf("===========================================\n\n");
 }
 
