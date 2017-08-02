@@ -1,12 +1,12 @@
 #pragma once
 
-#include <glm/vec3.hpp>
+#include <math/vec3.hpp>
 
 namespace ren {
     enum ePointPos { Front, Back, OnPlane };
 
     struct Plane {
-        glm::vec3	n;
+        math::vec3	n;
         float		d;
 
         int ClassifyPoint(const float point[3]) const;

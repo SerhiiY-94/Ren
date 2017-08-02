@@ -5,9 +5,7 @@
 
 #include <vector>
 
-#include <glm/mat4x4.hpp>
-#include <glm/vec3.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include <math/math.hpp>
 
 #include "Storage.h"
 
@@ -20,10 +18,12 @@ namespace ren {
         int			id = -1;
         int			offset = 0;
         uint32_t	flags = 0;
-        glm::vec3	cur_pos;
-        glm::quat	cur_rot;
+        math::vec3	cur_pos;
+        math::quat	cur_rot;
 
         AnimBone() { name[0] = parent_name[0] = '\0'; }
+
+        static const size_t alignment = math::quat::alignment;
     };
 
     struct Bone;
@@ -36,7 +36,7 @@ namespace ren {
         float		frame_dur_ = 0;
         float		anim_dur_ = 0;
         std::vector<float> frames_;
-        std::vector<AnimBone> bones_;
+        math::aligned_vector<AnimBone> bones_;
         bool        ready_ = false;
 
     public:
@@ -60,7 +60,7 @@ namespace ren {
 
         void Init(const char *name, void *data);
 
-        std::vector<AnimBone *> LinkBones(std::vector<Bone> &bones);
+        std::vector<AnimBone *> LinkBones(math::aligned_vector<Bone, math::mat4::alignment> &bones);
         void Update(float delta, float *time);
         void InterpolateFrames(int fr_0, int fr_1, float t);
     };
@@ -79,13 +79,15 @@ namespace ren {
         int			id = -1;
         int			parent_id = -1;
         bool		dirty = false;
-        glm::mat4	cur_matrix;
-        glm::mat4	cur_comb_matrix;
-        glm::mat4	bind_matrix;
-        glm::mat4	inv_bind_matrix;
-        glm::vec3	head_pos;
+        math::mat4	cur_matrix;
+        math::mat4	cur_comb_matrix;
+        math::mat4	bind_matrix;
+        math::mat4	inv_bind_matrix;
+        math::vec3	head_pos;
 
         Bone() { name[0] = '\0'; }
+
+        static const size_t alignment = math::mat4::alignment;
     };
 
     struct BoneGroup {
@@ -94,12 +96,12 @@ namespace ren {
     };
 
     struct Skeleton {
-        std::vector<Bone>       bones;
-        std::vector<AnimLink>   anims;
-        std::vector<glm::mat4>  matr_palette;
-        std::vector<BoneGroup>  bone_groups;
+        math::aligned_vector<Bone>          bones;
+        std::vector<AnimLink>               anims;
+        math::aligned_vector<math::mat4>    matr_palette;
+        std::vector<BoneGroup>              bone_groups;
 
-        std::vector<Bone>::iterator bone(const char *name) {
+        math::aligned_vector<Bone>::iterator bone(const char *name) {
             auto b = bones.begin();
             for (; b != bones.end(); ++b) {
                 if (strcmp(b->name, name) == 0) {
@@ -118,11 +120,11 @@ namespace ren {
             }
         }
 
-        glm::vec3 bone_pos(const char *name);
-        glm::vec3 bone_pos(int i);
+        math::vec3 bone_pos(const char *name);
+        math::vec3 bone_pos(int i);
 
-        void bone_matrix(const char *name, glm::mat4 &mat);
-        void bone_matrix(int i, glm::mat4 &mat);
+        void bone_matrix(const char *name, math::mat4 &mat);
+        void bone_matrix(int i, math::mat4 &mat);
 
         int AddAnimSequence(const AnimSeqRef &ref);
 

@@ -32,7 +32,7 @@ namespace ren {
         std::shared_ptr<void> indices_;
         size_t			indices_size_ = 0;
         std::array<TriStrip, 16>    strips_;
-        glm::vec3 		bbox_min_, bbox_max_;
+        math::vec3 		bbox_min_, bbox_max_;
         char 			name_[32];
 
         Skeleton        skel_;
@@ -69,8 +69,8 @@ namespace ren {
         const void *indices() const { return indices_.get(); }
         size_t indices_size() const { return indices_size_; }
         const TriStrip &strip(int i) const { return strips_[i]; }
-        const glm::vec3 &bbox_min() const { return bbox_min_; }
-        const glm::vec3 &bbox_max() const { return bbox_max_; }
+        const math::vec3 &bbox_min() const { return bbox_min_; }
+        const math::vec3 &bbox_max() const { return bbox_max_; }
         const char *name() const { return &name_[0]; }
 
         Skeleton *skel() { return &skel_; }
@@ -80,6 +80,9 @@ namespace ren {
         static int max_gpu_bones;
     };
 
-    typedef StorageRef<Mesh> MeshRef;
-    typedef Storage<Mesh> MeshStorage;
+    template <typename val_t>
+    using mesh_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec3::alignment>>;
+
+    typedef StorageRef<Mesh, mesh_container> MeshRef;
+    typedef Storage<Mesh, mesh_container> MeshStorage;
 }

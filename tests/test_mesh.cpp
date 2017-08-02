@@ -189,8 +189,8 @@ void test_mesh() {
 		assert(m_ref->type() == ren::MeshSimple);
 		assert(std::string(m_ref->name()) == "ivy");
 
-		assert(m_ref->bbox_min() == glm::vec3(-10.389862, -220.607803, -441.704651));
-		assert(m_ref->bbox_max() == glm::vec3(83.354584, 179.815552, 441.704651));
+		assert(m_ref->bbox_min() == math::vec3(-10.389862f, -220.607803f, -441.704651f));
+		assert(m_ref->bbox_max() == math::vec3(83.354584f, 179.815552f, 441.704651f));
 
 		assert(m_ref->strip(0).offset != -1);
 		assert(m_ref->strip(1).offset == -1);
@@ -242,12 +242,12 @@ void test_mesh() {
 		assert(m_ref->type() == ren::MeshSkeletal);
 		assert(std::string(m_ref->name()) == "test");
 
-		assert(m_ref->bbox_min().x == Approx(0).epsilon(0.01));
-		assert(m_ref->bbox_min().y == Approx(0).epsilon(0.01));
-		assert(m_ref->bbox_min().z == Approx(-5).epsilon(0.01));
-		assert(m_ref->bbox_max().x == Approx(0).epsilon(0.01));
-		assert(m_ref->bbox_max().y == Approx(20).epsilon(0.01));
-		assert(m_ref->bbox_max().z == Approx(5).epsilon(0.01));
+		assert(m_ref->bbox_min().x() == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_min().y() == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_min().z() == Approx(-5).epsilon(0.01));
+		assert(m_ref->bbox_max().x() == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_max().y() == Approx(20).epsilon(0.01));
+		assert(m_ref->bbox_max().z() == Approx(5).epsilon(0.01));
 
 		assert(m_ref->strip(0).offset != -1);
 		assert(m_ref->strip(1).offset == -1);

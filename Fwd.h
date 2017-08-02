@@ -15,9 +15,12 @@ namespace ren {
     template <typename val_t>
     using aligned_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec4::alignment>>;
 
+    template <typename val_t>
+    using mesh_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec3::alignment>>;
+
     typedef StorageRef<Anim> AnimRef;
     typedef StorageRef<Material, aligned_container> MaterialRef;
-    typedef StorageRef<Mesh> MeshRef;
+    typedef StorageRef<Mesh, mesh_container> MeshRef;
     typedef StorageRef<Program> ProgramRef;
     typedef StorageRef<Texture2D> Texture2DRef;
 

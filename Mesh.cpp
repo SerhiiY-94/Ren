@@ -2,12 +2,6 @@
 
 #include <ctime>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#define GLM_FORCE_RADIANS
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #if defined(USE_GL_RENDER)
 #include "GL.h"
 #elif defined(USE_SW_RENDER)
@@ -125,8 +119,11 @@ void ren::Mesh::InitMeshSimple(void *data, material_load_callback on_mat_load) {
     // Skip name, cant remember why i put it there
     p += 32;
 
-    READ_ADVANCE(&bbox_min_[0], p, sizeof(glm::vec3));
-    READ_ADVANCE(&bbox_max_[0], p, sizeof(glm::vec3));
+    float temp_f[3];
+    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    bbox_min_ = math::make_vec3(temp_f);
+    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    bbox_max_ = math::make_vec3(temp_f);
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -220,8 +217,11 @@ void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) 
     // Skip name, cant remember why i put it there
     p += 32;
 
-    READ_ADVANCE(&bbox_min_[0], p, sizeof(glm::vec3));
-    READ_ADVANCE(&bbox_max_[0], p, sizeof(glm::vec3));
+    float temp_f[3];
+    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    bbox_min_ = math::make_vec3(temp_f);
+    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    bbox_max_ = math::make_vec3(temp_f);
 
     attribs_size_ = file_header.p[VTX_ATTR_CHUNK].length + file_header.p[VTX_NDX_CHUNK].length * sizeof(float);
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -326,8 +326,11 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
     // Skip name, cant remember why i put it there
     p += 32;
 
-    READ_ADVANCE(&bbox_min_[0], p, sizeof(glm::vec3));
-    READ_ADVANCE(&bbox_max_[0], p, sizeof(glm::vec3));
+    float temp_f[3];
+    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    bbox_min_ = math::make_vec3(temp_f);
+    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    bbox_max_ = math::make_vec3(temp_f);
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -372,25 +375,28 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
     int num_bones = file_header.p[BONES_CHUNK].length / (64 + 8 + 12 + 16);
     bones.resize((size_t)num_bones);
     for (int i = 0; i < num_bones; i++) {
-        glm::vec3 temp_v;
-        glm::quat temp_q;
+        float temp_f[4];
+        math::vec3 temp_v;
+        math::quat temp_q;
         READ_ADVANCE(bones[i].name, p, 64);
         const char *cc = bones[i].name;
         READ_ADVANCE(&bones[i].id, p, sizeof(int));
         READ_ADVANCE(&bones[i].parent_id, p, sizeof(int));
 
-        READ_ADVANCE(&temp_v[0], p, sizeof(glm::vec3));
-        bones[i].bind_matrix = glm::translate(bones[i].bind_matrix, temp_v);
-        READ_ADVANCE(&temp_q[0], p, sizeof(glm::quat));
-        bones[i].bind_matrix *= glm::toMat4(temp_q);
-        bones[i].inv_bind_matrix = glm::inverse(bones[i].bind_matrix);
+        READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+        temp_v = math::make_vec3(&temp_f[0]);
+        bones[i].bind_matrix = math::translate(bones[i].bind_matrix, temp_v);
+        READ_ADVANCE(&temp_f[0], p, sizeof(math::quat));
+        temp_q = math::make_quat(&temp_f[0]);
+        bones[i].bind_matrix *= math::to_mat4(temp_q);
+        bones[i].inv_bind_matrix = math::inverse(bones[i].bind_matrix);
 
         if (bones[i].parent_id != -1) {
             bones[i].cur_matrix = bones[bones[i].parent_id].inv_bind_matrix * bones[i].bind_matrix;
-            bones[i].head_pos = glm::vec3(bones[bones[i].parent_id].inv_bind_matrix * bones[i].bind_matrix[3]);
+            bones[i].head_pos = math::vec3(bones[bones[i].parent_id].inv_bind_matrix * bones[i].bind_matrix[3]);
         } else {
             bones[i].cur_matrix = bones[i].bind_matrix;
-            bones[i].head_pos = glm::vec3(bones[i].bind_matrix[3]);
+            bones[i].head_pos = math::vec3(bones[i].bind_matrix[3]);
         }
         bones[i].cur_comb_matrix = bones[i].cur_matrix;
         bones[i].dirty = true;

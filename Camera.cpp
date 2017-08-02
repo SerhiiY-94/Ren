@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include <glm/geometric.hpp>
+#include <math/math.hpp>
 
 #include "Matrices_old.h"
 
@@ -11,7 +11,7 @@ namespace {
 }
 
 int ren::Plane::ClassifyPoint(const float point[3]) const {
-    float result = glm::dot(*(glm::vec3 *)point, n) + d;
+    float result = math::dot(math::make_vec3(point), n) + d;
     if (result > epsilon) {
         return Front;
     } else if (result < -epsilon) {
