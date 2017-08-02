@@ -222,7 +222,7 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
     params_ = p;
 
     int w = p.w, h = p.h;
-
+    
     for (int i = 0; i < 6; i++) {
         if (!data[i]) {
             /*if (!(cubemap_ready_ & (1 << i))) {
@@ -242,16 +242,16 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
             glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_LUMINANCE, w, h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data[i]);
         }
     }
-
+    
     auto f = params_.filter;
     if (f == NoFilter) {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     } else if (f == Bilinear) {
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (cubemap_ready_ == 0b00111111) ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     } else if (f == Trilinear) {
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (cubemap_ready_ == 0b00111111) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     } else if (f == BilinearNoMipmap) {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -263,8 +263,8 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
 #if !defined(GL_ES_VERSION_2_0) && !defined(__EMSCRIPTEN__)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 #endif
-
-    if (f == Trilinear || f == Bilinear) {
+    
+    if ((f == Trilinear || f == Bilinear) && (cubemap_ready_ == 0b00111111)) {
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     }
