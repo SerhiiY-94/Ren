@@ -4,8 +4,7 @@
 
 #include <functional>
 
-#include <math/math.hpp>
-
+#include "Fwd.h"
 #include "Program.h"
 #include "Storage.h"
 #include "Texture.h"
@@ -30,8 +29,9 @@ namespace ren {
                          const texture_load_callback &on_tex_load);
     public:
         Material() { name_[0] = '\0'; }
-        Material(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-                 const texture_load_callback &on_tex_load);
+        Material(const char *name, const char *mat_src, eMatLoadStatus *status, 
+            const program_load_callback &on_prog_load,
+            const texture_load_callback &on_tex_load);
 
         uint32_t flags() const { return flags_; }
         bool ready() const { return ready_; }
@@ -40,13 +40,11 @@ namespace ren {
         const Texture2DRef &texture(int i) const { return textures_[i]; }
         const math::vec4 &param(int i) const { return params_[i]; }
 
-        void Init(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-                  const texture_load_callback &on_tex_load);
+        void Init(const char *name, const char *mat_src, eMatLoadStatus *status, 
+            const program_load_callback &on_prog_load,
+            const texture_load_callback &on_tex_load);
     };
 
-    template <typename val_t>
-    using aligned_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec4::alignment>>;
-
-    typedef StorageRef<Material, aligned_container> MaterialRef;
-    typedef Storage<Material, aligned_container> MaterialStorage;
+    //typedef StorageRef<Material, mat_container> MaterialRef;
+    typedef Storage<Material, mat_container> MaterialStorage;
 }

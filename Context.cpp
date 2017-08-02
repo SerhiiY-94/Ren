@@ -6,7 +6,7 @@ ren::MeshRef ren::Context::LoadMesh(const char *name, void *data, material_load_
 	MeshRef ref;
 	for (auto it = meshes_.begin(); it != meshes_.end(); ++it) {
 		if (strcmp(it->name(), name) == 0) {
-			ref = { &meshes_, it.index() };
+            ref = { &meshes_, it.index() };
 		}
 	}
 
@@ -22,7 +22,7 @@ ren::MaterialRef ren::Context::LoadMaterial(const char *name, const char *mat_sr
 	MaterialRef ref;
 	for (auto it = materials_.begin(); it != materials_.end(); ++it) {
 		if (strcmp(it->name(), name) == 0) {
-			ref = { &materials_, it.index() };
+            ref = { &materials_, it.index() };
 		}
 	}
 
@@ -74,7 +74,7 @@ ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data
 	Texture2DRef ref;
 	for (auto it = textures_.begin(); it != textures_.end(); ++it) {
 		if (strcmp(it->name(), name) == 0) {
-			ref = { &textures_, it.index() };
+            ref = { &textures_, it.index() };
 			break;
 		}
 	}

@@ -248,10 +248,10 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     } else if (f == Bilinear) {
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (cubemap_ready_ == 0b00111111) ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (cubemap_ready_ == 0x3F) ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     } else if (f == Trilinear) {
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (cubemap_ready_ == 0b00111111) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (cubemap_ready_ == 0x3F) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     } else if (f == BilinearNoMipmap) {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -264,7 +264,7 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 #endif
     
-    if ((f == Trilinear || f == Bilinear) && (cubemap_ready_ == 0b00111111)) {
+    if ((f == Trilinear || f == Bilinear) && (cubemap_ready_ == 0x3F)) {
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     }

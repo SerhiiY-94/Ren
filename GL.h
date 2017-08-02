@@ -7,7 +7,7 @@
 //#include <GL/glew.h>
 
 #if defined(WIN32)
-//#include <Windows.h>
+#include <cstddef>
 
 #define DECLSPEC_IMPORT __declspec(dllimport)
 

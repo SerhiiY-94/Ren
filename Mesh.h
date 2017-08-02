@@ -80,9 +80,6 @@ namespace ren {
         static int max_gpu_bones;
     };
 
-    template <typename val_t>
-    using mesh_container = std::vector<val_t, math::aligned_allocator<val_t, math::vec3::alignment>>;
-
     typedef StorageRef<Mesh, mesh_container> MeshRef;
     typedef Storage<Mesh, mesh_container> MeshStorage;
 }

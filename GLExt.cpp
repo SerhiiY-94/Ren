@@ -1,5 +1,9 @@
 #include "GL.h"
 
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 GLuint (APIENTRY *glCreateProgram)(void);
 void (APIENTRY *glDeleteProgram)(GLuint program);
 void (APIENTRY *glUseProgram)(GLuint program);
