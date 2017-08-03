@@ -60,6 +60,7 @@ ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
     indices_size_ = rhs.indices_size_;
     rhs.indices_size_ = 0;
     strips_ = std::move(rhs.strips_);
+	rhs.strips_[0].offset = -1;
     bbox_min_ = rhs.bbox_min_;
     rhs.bbox_min_ = {};
     bbox_max_ = rhs.bbox_max_;
