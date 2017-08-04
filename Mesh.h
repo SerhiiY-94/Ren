@@ -14,6 +14,19 @@ namespace ren {
         int			num_indices;
         MaterialRef mat;
         uint32_t	flags;
+
+		TriStrip() {}
+		TriStrip(TriStrip &&rhs) { (*this) = std::move(rhs); }
+		TriStrip &operator=(TriStrip &&rhs) {
+			offset = rhs.offset;
+			rhs.offset = -1;
+			num_indices = rhs.num_indices;
+			rhs.num_indices = 0;
+			mat = std::move(rhs.mat);
+			flags = rhs.flags;
+			rhs.flags = 0;
+			return *this;
+		}
     };
 
     enum eMeshType { MeshUndefined, MeshSimple, MeshTerrain, MeshSkeletal };

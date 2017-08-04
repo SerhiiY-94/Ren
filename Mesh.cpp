@@ -59,8 +59,14 @@ ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
     indices_ = std::move(rhs.indices_);
     indices_size_ = rhs.indices_size_;
     rhs.indices_size_ = 0;
-    strips_ = std::move(rhs.strips_);
-	rhs.strips_[0].offset = -1;
+
+	// this does not work properly in vs2013
+    //strips_ = std::move(rhs.strips_);
+	
+	for (size_t i = 0; i < strips_.size(); i++) {
+		strips_[i] = std::move(rhs.strips_[i]);
+	}
+
     bbox_min_ = rhs.bbox_min_;
     rhs.bbox_min_ = {};
     bbox_max_ = rhs.bbox_max_;
