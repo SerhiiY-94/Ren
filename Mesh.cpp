@@ -32,7 +32,7 @@ ren::Mesh::~Mesh() {
 }
 
 ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
-    if (this == &rhs) return *this;
+    RefCounter::operator=(std::move(rhs));
 
 #if defined(USE_GL_RENDER)
     if (type_ != MeshUndefined) {
@@ -74,6 +74,7 @@ ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
     strcpy(name_, rhs.name_);
     rhs.name_[0] = '\0';
     skel_ = std::move(rhs.skel_);
+
     return *this;
 }
 

@@ -23,7 +23,7 @@ ren::Program::~Program() {
 }
 
 ren::Program &ren::Program::operator=(Program &&rhs) {
-    if (this == &rhs) return *this;
+    RefCounter::operator=(std::move(rhs));
 
     if (prog_id_) {
         GLuint prog = (GLuint)prog_id_;

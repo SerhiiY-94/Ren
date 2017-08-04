@@ -22,6 +22,8 @@ namespace ren {
         std::string glsl_defines_;
 #endif
     public:
+        ~Context();
+
         void Init(int w, int h);
 
         int w() const { return w_; }

@@ -13,6 +13,7 @@ ren::Material::Material(const char *name, const char *mat_src, eMatLoadStatus *s
 }
 
 ren::Material &ren::Material::operator=(Material &&rhs) {
+    RefCounter::operator=(std::move(rhs));
 	flags_ = rhs.flags_;
 	ready_ = rhs.ready_;
 	strcpy(name_, rhs.name_);
