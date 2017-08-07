@@ -1,7 +1,11 @@
 #include "GL.h"
 
-#ifdef WIN32
-#include <Windows.h>
+#include <cassert>
+
+#if defined(WIN32)
+    #include <Windows.h>
+#elif defined(__linux__)
+    #include <GL/glx.h>
 #endif
 
 GLuint (APIENTRY *glCreateProgram)(void);
@@ -26,7 +30,9 @@ void (APIENTRY *glCompileShader)(GLuint shader);
 void (APIENTRY *glGetShaderiv)(GLuint shader, GLenum pname, GLint *params);
 void (APIENTRY *glGetShaderInfoLog)(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
 
+#if !defined(__linux__)
 void (APIENTRY *glActiveTexture)(GLenum texture);
+#endif
 void (APIENTRY *glGenerateMipmap)(GLenum target);
 
 void (APIENTRY *glGenBuffers)(GLsizei n, GLuint * buffers);
@@ -61,63 +67,70 @@ void (APIENTRY *glUniform3fv)(GLint location, GLsizei count, const GLfloat *valu
 void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
 bool ren::InitGLExtentions() {
-#ifdef WIN32
-    glCreateProgram = (decltype(glCreateProgram)) wglGetProcAddress("glCreateProgram");
-    glDeleteProgram = (decltype(glDeleteProgram)) wglGetProcAddress("glDeleteProgram");
-    glUseProgram = (decltype(glUseProgram)) wglGetProcAddress("glUseProgram");
-    glAttachShader = (decltype(glAttachShader)) wglGetProcAddress("glAttachShader");
-    glLinkProgram = (decltype(glLinkProgram)) wglGetProcAddress("glLinkProgram");
-    glGetProgramiv = (decltype(glGetProgramiv)) wglGetProcAddress("glGetProgramiv");
-    glGetProgramInfoLog = (decltype(glGetProgramInfoLog)) wglGetProcAddress("glGetProgramInfoLog");
-    glGetAttribLocation = (decltype(glGetAttribLocation)) wglGetProcAddress("glGetAttribLocation");
-    glGetUniformLocation = (decltype(glGetUniformLocation)) wglGetProcAddress("glGetUniformLocation");
-    glGetActiveAttrib = (decltype(glGetActiveAttrib)) wglGetProcAddress("glGetActiveAttrib");
-    glGetActiveUniform = (decltype(glGetActiveUniform)) wglGetProcAddress("glGetActiveUniform");
-    glVertexAttribPointer = (decltype(glVertexAttribPointer))wglGetProcAddress("glVertexAttribPointer");
-    glEnableVertexAttribArray = (decltype(glEnableVertexAttribArray))wglGetProcAddress("glEnableVertexAttribArray");
-    glDisableVertexAttribArray = (decltype(glDisableVertexAttribArray))wglGetProcAddress("glDisableVertexAttribArray");
 
-    glCreateShader = (decltype(glCreateShader)) wglGetProcAddress("glCreateShader");
-    glDeleteShader = (decltype(glDeleteShader)) wglGetProcAddress("glDeleteShader");
-    glShaderSource = (decltype(glShaderSource)) wglGetProcAddress("glShaderSource");
-    glCompileShader = (decltype(glCompileShader)) wglGetProcAddress("glCompileShader");
-    glGetShaderiv = (decltype(glGetShaderiv)) wglGetProcAddress("glGetShaderiv");
-    glGetShaderInfoLog = (decltype(glGetShaderInfoLog)) wglGetProcAddress("glGetShaderInfoLog");
+#if defined(WIN32)
+    #define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name); assert(name)
+#elif defined(__linux__)
+    #define GetProcAddress(name) (decltype(name))glXGetProcAddress((const GLubyte *) #name); assert(name)
+#endif
 
-    glActiveTexture = (decltype(glActiveTexture)) wglGetProcAddress("glActiveTexture");
-    glGenerateMipmap = (decltype(glGenerateMipmap)) wglGetProcAddress("glGenerateMipmap");
+    glCreateProgram             = GetProcAddress(glCreateProgram);
+    glDeleteProgram             = GetProcAddress(glDeleteProgram);
+    glUseProgram                = GetProcAddress(glUseProgram);
+    glAttachShader              = GetProcAddress(glAttachShader);
+    glLinkProgram               = GetProcAddress(glLinkProgram);
+    glGetProgramiv              = GetProcAddress(glGetProgramiv);
+    glGetProgramInfoLog         = GetProcAddress(glGetProgramInfoLog);
+    glGetAttribLocation         = GetProcAddress(glGetAttribLocation);
+    glGetUniformLocation        = GetProcAddress(glGetUniformLocation);
+    glGetActiveAttrib           = GetProcAddress(glGetActiveAttrib);
+    glGetActiveUniform          = GetProcAddress(glGetActiveUniform);
+    glVertexAttribPointer       = GetProcAddress(glVertexAttribPointer);
+    glEnableVertexAttribArray   = GetProcAddress(glEnableVertexAttribArray);
+    glDisableVertexAttribArray  = GetProcAddress(glDisableVertexAttribArray);
 
-    glGenBuffers = (decltype(glGenBuffers)) wglGetProcAddress("glGenBuffers");
-    glDeleteBuffers = (decltype(glDeleteBuffers)) wglGetProcAddress("glDeleteBuffers");
-    glBindBuffer = (decltype(glBindBuffer)) wglGetProcAddress("glBindBuffer");
-    glBufferData = (decltype(glBufferData)) wglGetProcAddress("glBufferData");
-    glBufferSubData = (decltype(glBufferSubData))wglGetProcAddress("glBufferSubData");
+    glCreateShader              = GetProcAddress(glCreateShader);
+    glDeleteShader              = GetProcAddress(glDeleteShader);
+    glShaderSource              = GetProcAddress(glShaderSource);
+    glCompileShader             = GetProcAddress(glCompileShader);
+    glGetShaderiv               = GetProcAddress(glGetShaderiv);
+    glGetShaderInfoLog          = GetProcAddress(glGetShaderInfoLog);
 
-    glGenFramebuffers = (decltype(glGenFramebuffers))wglGetProcAddress("glGenFramebuffers");
-    glDeleteFramebuffers = (decltype(glDeleteFramebuffers))wglGetProcAddress("glDeleteFramebuffers");
-    glBindFramebuffer = (decltype(glBindFramebuffer))wglGetProcAddress("glBindFramebuffer");
-    glFramebufferTexture2D = (decltype(glFramebufferTexture2D))wglGetProcAddress("glFramebufferTexture2D");
+#if !defined(__linux__)
+    glActiveTexture             = GetProcAddress(glActiveTexture);
+#endif
+    glGenerateMipmap            = GetProcAddress(glGenerateMipmap);
 
-    glGenRenderbuffers = (decltype(glGenRenderbuffers))wglGetProcAddress("glGenRenderbuffers");
-    glDeleteRenderbuffers = (decltype(glDeleteRenderbuffers))wglGetProcAddress("glDeleteRenderbuffers");
-    glBindRenderbuffer = (decltype(glBindRenderbuffer))wglGetProcAddress("glBindRenderbuffer");
-    glRenderbufferStorage = (decltype(glRenderbufferStorage))wglGetProcAddress("glRenderbufferStorage");
+    glGenBuffers                = GetProcAddress(glGenBuffers);
+    glDeleteBuffers             = GetProcAddress(glDeleteBuffers);
+    glBindBuffer                = GetProcAddress(glBindBuffer);
+    glBufferData                = GetProcAddress(glBufferData);
+    glBufferSubData             = GetProcAddress(glBufferSubData);
 
-    glFramebufferRenderbuffer = (decltype(glFramebufferRenderbuffer))wglGetProcAddress("glFramebufferRenderbuffer");
-    glCheckFramebufferStatus = (decltype(glCheckFramebufferStatus))wglGetProcAddress("glCheckFramebufferStatus");
+    glGenFramebuffers           = GetProcAddress(glGenFramebuffers);
+    glDeleteFramebuffers        = GetProcAddress(glDeleteFramebuffers);
+    glBindFramebuffer           = GetProcAddress(glBindFramebuffer);
+    glFramebufferTexture2D      = GetProcAddress(glFramebufferTexture2D);
 
-    glUniform1f = (decltype(glUniform1f))wglGetProcAddress("glUniform1f");
-    glUniform2f = (decltype(glUniform2f))wglGetProcAddress("glUniform2f");
-    glUniform3f = (decltype(glUniform3f))wglGetProcAddress("glUniform3f");
+    glGenRenderbuffers          = GetProcAddress(glGenRenderbuffers);
+    glDeleteRenderbuffers       = GetProcAddress(glDeleteRenderbuffers);
+    glBindRenderbuffer          = GetProcAddress(glBindRenderbuffer);
+    glRenderbufferStorage       = GetProcAddress(glRenderbufferStorage);
 
-    glUniform1i = (decltype(glUniform1i))wglGetProcAddress("glUniform1i");
-    glUniform2i = (decltype(glUniform2i))wglGetProcAddress("glUniform2i");
-    glUniform3i = (decltype(glUniform3i))wglGetProcAddress("glUniform3i");
+    glFramebufferRenderbuffer   = GetProcAddress(glFramebufferRenderbuffer);
+    glCheckFramebufferStatus    = GetProcAddress(glCheckFramebufferStatus);
 
-    glUniform3fv = (decltype(glUniform3fv))wglGetProcAddress("glUniform3fv");
+    glUniform1f                 = GetProcAddress(glUniform1f);
+    glUniform2f                 = GetProcAddress(glUniform2f);
+    glUniform3f                 = GetProcAddress(glUniform3f);
 
-    glUniformMatrix4fv = (decltype(glUniformMatrix4fv))wglGetProcAddress("glUniformMatrix4fv");
+    glUniform1i                 = GetProcAddress(glUniform1i);
+    glUniform2i                 = GetProcAddress(glUniform2i);
+    glUniform3i                 = GetProcAddress(glUniform3i);
+
+    glUniform3fv                = GetProcAddress(glUniform3fv);
+
+    glUniformMatrix4fv          = GetProcAddress(glUniformMatrix4fv);
 
     return true;
-#endif
 }

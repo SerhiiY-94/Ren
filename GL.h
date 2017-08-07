@@ -95,13 +95,25 @@
 #define GL_RGBA32F 0x8814
 #define GL_RGB32F 0x8815
 
+#define GL_MULTISAMPLE 0x809D
+
 #ifndef APIENTRY
-#define WINAPI      __stdcall
-#define APIENTRY    WINAPI
+#if defined(WIN32)
+    #define WINAPI      __stdcall
+    #define APIENTRY    WINAPI
+#endif
 #endif
 
-extern "C" {
+#ifndef APIENTRYP
+//#define APIENTRYP APIENTRY *
+#endif
+
+//extern "C" {
+#if defined(WIN32)
     #include <GL/GL.h>
+#else
+    #include <GL/gl.h>
+#endif
 
     typedef unsigned int GLenum;
     typedef unsigned int GLuint;
@@ -114,7 +126,7 @@ extern "C" {
 
     typedef ptrdiff_t GLintptr;
     typedef ptrdiff_t GLsizeiptr;
-}
+//}
 
 extern GLuint (APIENTRY *glCreateProgram)(void);
 extern void (APIENTRY *glDeleteProgram)(GLuint program);
@@ -138,7 +150,9 @@ extern void (APIENTRY *glCompileShader)(GLuint shader);
 extern void (APIENTRY *glGetShaderiv)(GLuint shader, GLenum pname, GLint *params);
 extern void (APIENTRY *glGetShaderInfoLog)(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
 
+#if !defined(__linux__)
 extern void (APIENTRY *glActiveTexture)(GLenum texture);
+#endif
 extern void (APIENTRY *glGenerateMipmap)(GLenum target);
 
 extern void (APIENTRY *glGenBuffers)(GLsizei n, GLuint * buffers);
