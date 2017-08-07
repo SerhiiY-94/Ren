@@ -40,6 +40,7 @@
 #define GL_ACTIVE_UNIFORMS 0x8B86
 
 #define GL_TEXTURE0 0x84C0
+#define GL_TEXTURE1 0x84C1
 #define GL_TEXTURE_CUBE_MAP 0x8513
 
 #define GL_CLAMP_TO_EDGE 0x812F
@@ -66,6 +67,8 @@
 #define GL_RENDERBUFFER 0x8D41
 
 #define GL_FRAMEBUFFER_COMPLETE 0x8CD5
+
+#define GL_FRAMEBUFFER_BINDING 0x8CA6
 
 #define GL_COMPRESSED_RED 0x8225
 #define GL_COMPRESSED_RG 0x8226
@@ -177,12 +180,14 @@ extern GLenum (APIENTRY *glCheckFramebufferStatus)(GLenum target);
 extern void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 extern void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);
 extern void (APIENTRY *glUniform3f)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+extern void (APIENTRY *glUniform4f)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 
 extern void (APIENTRY *glUniform1i)(GLint location, GLint v0);
 extern void (APIENTRY *glUniform2i)(GLint location, GLint v0, GLint v1);
 extern void (APIENTRY *glUniform3i)(GLint location, GLint v0, GLint v1, GLint v2);
 
 extern void (APIENTRY *glUniform3fv)(GLint location, GLsizei count, const GLfloat *value);
+extern void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloat *value);
 
 extern void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 

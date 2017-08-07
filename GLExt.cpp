@@ -57,12 +57,14 @@ GLenum (APIENTRY *glCheckFramebufferStatus)(GLenum target);
 void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);
 void (APIENTRY *glUniform3f)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+void (APIENTRY *glUniform4f)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 
 void (APIENTRY *glUniform1i)(GLint location, GLint v0);
 void (APIENTRY *glUniform2i)(GLint location, GLint v0, GLint v1);
 void (APIENTRY *glUniform3i)(GLint location, GLint v0, GLint v1, GLint v2);
 
 void (APIENTRY *glUniform3fv)(GLint location, GLsizei count, const GLfloat *value);
+void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloat *value);
 
 void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
@@ -123,12 +125,14 @@ bool ren::InitGLExtentions() {
     glUniform1f                 = GetProcAddress(glUniform1f);
     glUniform2f                 = GetProcAddress(glUniform2f);
     glUniform3f                 = GetProcAddress(glUniform3f);
+    glUniform4f                 = GetProcAddress(glUniform4f);
 
     glUniform1i                 = GetProcAddress(glUniform1i);
     glUniform2i                 = GetProcAddress(glUniform2i);
     glUniform3i                 = GetProcAddress(glUniform3i);
 
     glUniform3fv                = GetProcAddress(glUniform3fv);
+    glUniform4fv                = GetProcAddress(glUniform4fv);
 
     glUniformMatrix4fv          = GetProcAddress(glUniformMatrix4fv);
 
