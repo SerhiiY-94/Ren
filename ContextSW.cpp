@@ -7,9 +7,20 @@
 #pragma warning(disable : 4996)
 #endif
 
+ren::Context::~Context() {
+    ReleaseAll();
+
+    swDeleteContext(sw_ctx_);
+}
+
 void ren::Context::Init(int w, int h) {
     w_ = w;
     h_ = h;
+
+    sw_ctx_ = swCreateContext(w, h);
+
+    swEnable(SW_FAST_PERSPECTIVE_CORRECTION);
+    swEnable(SW_DEPTH_TEST);
 
     printf("===========================================\n");
     printf("Device info:\n");

@@ -31,16 +31,9 @@ public:
 #elif defined(USE_SW_RENDER)
 #include "../SW/SW.h"
 class MaterialTest : public ren::Context {
-    SWcontext *ctx;
 public:
     MaterialTest() {
-        ctx = swCreateContext(1, 1);
-        swMakeCurrent(ctx);
         ren::Context::Init(1, 1);
-    }
-
-    ~MaterialTest() {
-        swDeleteContext(ctx);
     }
 };
 #endif

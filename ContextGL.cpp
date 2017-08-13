@@ -7,6 +7,10 @@
 #pragma warning(disable : 4996)
 #endif
 
+ren::Context::~Context() {
+    ReleaseAll();
+}
+
 void ren::Context::Init(int w, int h) {
     InitGLExtentions();
 

@@ -57,6 +57,7 @@ namespace {
 void test_anim() {
     {   // Load anim
         ren::Context ctx;
+        ctx.Init(1, 1);
         ren::AnimSeqRef anim_ref = ctx.LoadAnimSequence("anim", __anim);
 
         assert(std::string(anim_ref->name()) == "ArmatureAction");

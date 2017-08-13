@@ -7,15 +7,9 @@
 #include "../SW/SW.h"
 
 class ProgramTest : public ren::Context {
-    SWcontext *ctx;
 public:
     ProgramTest() {
-        ctx = swCreateContext(1, 1);
         ren::Context::Init(1, 1);
-    }
-
-    ~ProgramTest() {
-        swDeleteContext(ctx);
     }
 };
 

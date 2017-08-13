@@ -35,16 +35,9 @@ public:
 #include "../SW/SW.h"
 
 class TextureTest : public ren::Context {
-    SWcontext *ctx;
 public:
     TextureTest() {
-        ctx = swCreateContext(1, 1);
-        swMakeCurrent(ctx);
         ren::Context::Init(1, 1);
-    }
-
-    ~TextureTest() {
-        swDeleteContext(ctx);
     }
 };
 #endif

@@ -7,6 +7,8 @@
 #include "RenderThread.h"
 #include "Texture.h"
 
+struct SWcontext;
+
 namespace ren {
     class Context : public RenderThread {
     protected:
@@ -17,6 +19,10 @@ namespace ren {
         ProgramStorage	 programs_;
         Texture2DStorage textures_;
         AnimSeqStorage   anims_;
+
+#if defined(USE_SW_RENDER)
+		SWcontext		*sw_ctx_;
+#endif
 
 #if defined(USE_GL_RENDER)
         std::string glsl_defines_;
@@ -61,6 +67,8 @@ namespace ren {
         AnimSeqRef LoadAnimSequence(const char *name, void *data);
         int NumAnimsNotReady();
         void ReleaseAnims();
+
+        void ReleaseAll();
 
 #if defined(USE_GL_RENDER)
         float anisotropy = 0;

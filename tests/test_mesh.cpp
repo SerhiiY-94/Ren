@@ -33,16 +33,9 @@ public:
 #else
 #include "../SW/SW.h"
 class MeshTest : public ren::Context {
-    SWcontext *ctx;
 public:
     MeshTest() {
-        ctx = swCreateContext(1, 1);
-        swMakeCurrent(ctx);
         ren::Context::Init(256, 256);
-    }
-
-    ~MeshTest() {
-        swDeleteContext(ctx);
     }
 };
 #endif

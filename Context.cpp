@@ -2,13 +2,7 @@
 
 #include <algorithm>
 
-ren::Context::~Context() {
-    meshes_.Clear();
-    
-    ReleaseAnims();
-    ReleaseMaterials();
-    ReleaseTextures();
-}
+#include <sys/Log.h>
 
 ren::MeshRef ren::Context::LoadMesh(const char *name, void *data, material_load_callback on_mat_load) {
 	MeshRef ref;
@@ -170,4 +164,12 @@ void ren::Context::ReleaseAnims() {
 	}
 	fprintf(stderr, "-----------------------------------\n");
 	anims_.Clear();
+}
+
+void ren::Context::ReleaseAll() {
+    meshes_.Clear();
+
+    ReleaseAnims();
+    ReleaseMaterials();
+    ReleaseTextures();
 }
