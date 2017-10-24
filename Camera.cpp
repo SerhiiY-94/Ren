@@ -46,7 +46,7 @@ void ren::Camera::Perspective(float angle, float aspect, float nearr, float farr
 
 void ren::Camera::Orthographic(float left, float right, float down, float top, float nearr, float farr) {
     is_orthographic_ = true;
-    matrixFrustumM2(projection_matrix_, left, right, down, top, nearr, farr);
+    matrixFrustumM(projection_matrix_, left, right, down, top, nearr, farr);
 }
 
 void ren::Camera::Move(float* v, float delta_time) {

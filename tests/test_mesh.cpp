@@ -235,12 +235,12 @@ void test_mesh() {
 		assert(m_ref->type() == ren::MeshSkeletal);
 		assert(std::string(m_ref->name()) == "test");
 
-		assert(m_ref->bbox_min().x() == Approx(0).epsilon(0.01));
-		assert(m_ref->bbox_min().y() == Approx(0).epsilon(0.01));
-		assert(m_ref->bbox_min().z() == Approx(-5).epsilon(0.01));
-		assert(m_ref->bbox_max().x() == Approx(0).epsilon(0.01));
-		assert(m_ref->bbox_max().y() == Approx(20).epsilon(0.01));
-		assert(m_ref->bbox_max().z() == Approx(5).epsilon(0.01));
+		assert(m_ref->bbox_min().x == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_min().y == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_min().z == Approx(-5).epsilon(0.01));
+		assert(m_ref->bbox_max().x == Approx(0).epsilon(0.01));
+		assert(m_ref->bbox_max().y == Approx(20).epsilon(0.01));
+		assert(m_ref->bbox_max().z == Approx(5).epsilon(0.01));
 
 		assert(m_ref->strip(0).offset != -1);
 		assert(m_ref->strip(1).offset == -1);
