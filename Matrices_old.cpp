@@ -72,13 +72,13 @@ void matrixSetRotateM(float *m, float a, float x, float y, float z) {
 void matrixMultiplyMM(float *m, float *lhs, float *rhs) {
     float t[16];
     for (int i = 0; i < 4; i++) {
-        register const float rhs_i0 = rhs[I(i, 0)];
-        register float ri0 = lhs[I(0, 0)] * rhs_i0;
-        register float ri1 = lhs[I(0, 1)] * rhs_i0;
-        register float ri2 = lhs[I(0, 2)] * rhs_i0;
-        register float ri3 = lhs[I(0, 3)] * rhs_i0;
+        const float rhs_i0 = rhs[I(i, 0)];
+        float ri0 = lhs[I(0, 0)] * rhs_i0;
+        float ri1 = lhs[I(0, 1)] * rhs_i0;
+        float ri2 = lhs[I(0, 2)] * rhs_i0;
+        float ri3 = lhs[I(0, 3)] * rhs_i0;
         for (int j = 1; j < 4; j++) {
-            register const float rhs_ij = rhs[I(i, j)];
+            const float rhs_ij = rhs[I(i, j)];
             ri0 += lhs[I(j, 0)] * rhs_ij;
             ri1 += lhs[I(j, 1)] * rhs_ij;
             ri2 += lhs[I(j, 2)] * rhs_ij;
