@@ -21,7 +21,7 @@ namespace ren {
         AnimSeqStorage   anims_;
 
 #if defined(USE_SW_RENDER)
-		SWcontext		*sw_ctx_;
+        SWcontext		*sw_ctx_;
 #endif
 
 #if defined(USE_GL_RENDER)

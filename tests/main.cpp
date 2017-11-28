@@ -17,7 +17,7 @@ int main() {
     test_material();
     test_mesh();
     test_program();
-	test_storage();
+    test_storage();
     test_sparse_array();
     puts("OK");
 }

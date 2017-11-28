@@ -13,17 +13,17 @@ public:
     }
 };
 
-VSHADER vshader(VS_IN, VS_OUT) { }
+VSHADER vshader(VS_IN, VS_OUT) {}
 
-FSHADER fshader(FS_IN, FS_OUT) { }
+FSHADER fshader(FS_IN, FS_OUT) {}
 
 void test_program() {
     {   // Create program
         ProgramTest test;
 
         ren::eProgLoadStatus status;
-        ren::Attribute _attrs[] = {{}};
-        ren::Uniform _unifs[] = {{}};
+        ren::Attribute _attrs[] = { {} };
+        ren::Uniform _unifs[] = { {} };
         ren::ProgramRef p = test.LoadProgramSW("constant", nullptr, nullptr, 0, _attrs, _unifs, &status);
 
         assert(p);
@@ -38,8 +38,8 @@ void test_program() {
             assert(!pp->ready());
         }
 
-        ren::Uniform unifs[] = {{"unif1", 0, SW_FLOAT, 1}, {"unif2", 1, SW_VEC3, 1}, {}};
-        ren::Attribute attrs[] = {{"attr1", 0, -1, 1}, {"attr2", 1, -1, 1}, {}};
+        ren::Uniform unifs[] = { {"unif1", 0, SW_FLOAT, 1}, {"unif2", 1, SW_VEC3, 1}, {} };
+        ren::Attribute attrs[] = { {"attr1", 0, -1, 1}, {"attr2", 1, -1, 1}, {} };
 
         test.LoadProgramSW("constant", (void*)vshader, (void*)fshader, 0, attrs, unifs, &status);
 

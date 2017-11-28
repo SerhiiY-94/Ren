@@ -27,14 +27,14 @@ void ren::Context::Init(int w, int h) {
 
     // TODO: get cpu name and memory
     // print device info
-    printf("\tVendor\t\t: %s\n",		swGetString(SW_CPU_VENDOR));
-    printf("\tRenderer\t: %s\n",		"Software");
+    printf("\tVendor\t\t: %s\n", swGetString(SW_CPU_VENDOR));
+    printf("\tRenderer\t: %s\n", "Software");
 
     printf("Capabilities:\n");
 
-    printf("\tCPU Model\t\t: %s\n",         swGetString(SW_CPU_MODEL));
-    printf("\tNum CPUs\t\t: %i\n",          (int)swGetInteger(SW_NUM_CPUS));
-    printf("\tPhysical memory\t: %f GB\n",  (float)swGetFloat(SW_PHYSICAL_MEMORY));
+    printf("\tCPU Model\t\t: %s\n", swGetString(SW_CPU_MODEL));
+    printf("\tNum CPUs\t\t: %i\n", (int)swGetInteger(SW_NUM_CPUS));
+    printf("\tPhysical memory\t: %f GB\n", (float)swGetFloat(SW_PHYSICAL_MEMORY));
 
     // how many uniform vec4 vectors can be used
     max_uniform_vec4 = swGetInteger(SW_MAX_VERTEX_UNIFORM_VECTORS);

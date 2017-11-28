@@ -118,7 +118,7 @@ void ren::Texture2D::Init(const char *name, const void *data[6], const int size[
 
 void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p) {
     GLuint tex_id;
-    
+
     if (params_.format == Undefined) {
         glGenTextures(1, &tex_id);
         tex_id_ = tex_id;
@@ -138,7 +138,7 @@ void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
     } else if (p.format == RawLUM8) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, p.w, p.h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
     }
-    
+
     float anisotropy = 0.0f;
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
     if (anisotropy > 0) {
@@ -222,7 +222,7 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
     params_ = p;
 
     int w = p.w, h = p.h;
-    
+
     for (int i = 0; i < 6; i++) {
         if (!data[i]) {
             /*if (!(cubemap_ready_ & (1 << i))) {
@@ -242,7 +242,7 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
             glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_LUMINANCE, w, h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data[i]);
         }
     }
-    
+
     auto f = params_.filter;
     if (f == NoFilter) {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -263,7 +263,7 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
 #if !defined(GL_ES_VERSION_2_0) && !defined(__EMSCRIPTEN__)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 #endif
-    
+
     if ((f == Trilinear || f == Bilinear) && (cubemap_ready_ == 0x3F)) {
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

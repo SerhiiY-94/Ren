@@ -102,8 +102,8 @@
 
 #ifndef APIENTRY
 #if defined(WIN32)
-    #define WINAPI      __stdcall
-    #define APIENTRY    WINAPI
+#define WINAPI      __stdcall
+#define APIENTRY    WINAPI
 #endif
 #endif
 
@@ -113,40 +113,40 @@
 
 //extern "C" {
 #if defined(WIN32)
-    #include <GL/GL.h>
+#include <GL/GL.h>
 #else
-    #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
 
-    typedef unsigned int GLenum;
-    typedef unsigned int GLuint;
-    typedef int GLint;
-    typedef short GLshort;
-    typedef unsigned char GLubyte;
-    typedef unsigned short GLushort;
+typedef unsigned int GLenum;
+typedef unsigned int GLuint;
+typedef int GLint;
+typedef short GLshort;
+typedef unsigned char GLubyte;
+typedef unsigned short GLushort;
 
-    typedef char GLchar;
+typedef char GLchar;
 
-    typedef ptrdiff_t GLintptr;
-    typedef ptrdiff_t GLsizeiptr;
+typedef ptrdiff_t GLintptr;
+typedef ptrdiff_t GLsizeiptr;
 //}
 
-extern GLuint (APIENTRY *glCreateProgram)(void);
+extern GLuint(APIENTRY *glCreateProgram)(void);
 extern void (APIENTRY *glDeleteProgram)(GLuint program);
 extern void (APIENTRY *glUseProgram)(GLuint program);
 extern void (APIENTRY *glAttachShader)(GLuint program, GLuint shader);
 extern void (APIENTRY *glLinkProgram)(GLuint program);
 extern void (APIENTRY *glGetProgramiv)(GLuint program, GLenum pname, GLint *params);
 extern void (APIENTRY *glGetProgramInfoLog)(GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
-extern GLint (APIENTRY *glGetAttribLocation)(GLuint program, const GLchar *name);
-extern GLint (APIENTRY *glGetUniformLocation)(GLuint program, const GLchar *name);
+extern GLint(APIENTRY *glGetAttribLocation)(GLuint program, const GLchar *name);
+extern GLint(APIENTRY *glGetUniformLocation)(GLuint program, const GLchar *name);
 extern void (APIENTRY *glGetActiveAttrib)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
 extern void (APIENTRY *glGetActiveUniform)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
 extern void (APIENTRY *glVertexAttribPointer)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
 extern void (APIENTRY *glEnableVertexAttribArray)(GLuint index);
 extern void (APIENTRY *glDisableVertexAttribArray)(GLuint index);
 
-extern GLuint (APIENTRY *glCreateShader)(GLenum shaderType);
+extern GLuint(APIENTRY *glCreateShader)(GLenum shaderType);
 extern void (APIENTRY *glDeleteShader)(GLuint shader);
 extern void (APIENTRY *glShaderSource)(GLuint shader, GLsizei count, const GLchar **string, const GLint *length);
 extern void (APIENTRY *glCompileShader)(GLuint shader);
@@ -175,7 +175,7 @@ extern void (APIENTRY *glBindRenderbuffer)(GLenum target, GLuint renderbuffer);
 extern void (APIENTRY *glRenderbufferStorage)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
 
 extern void (APIENTRY *glFramebufferRenderbuffer)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
-extern GLenum (APIENTRY *glCheckFramebufferStatus)(GLenum target);
+extern GLenum(APIENTRY *glCheckFramebufferStatus)(GLenum target);
 
 extern void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 extern void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);

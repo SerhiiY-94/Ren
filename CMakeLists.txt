@@ -24,36 +24,36 @@ ENDIF(WIN32)
 
 set(SOURCE_FILES Anim.h
                  Anim.cpp
-				 Camera.h
-				 Camera.cpp
+                 Camera.h
+                 Camera.cpp
                  Context.h
-				 Context.cpp
+                 Context.cpp
                  Fwd.h
                  Material.h
                  Material.cpp
                  Matrices_old.h
                  Matrices_old.cpp
-				 Mesh.h
-				 Mesh.cpp
-				 Program.h
-				 RenderThread.h
-				 RenderThread.cpp
+                 Mesh.h
+                 Mesh.cpp
+                 Program.h
+                 RenderThread.h
+                 RenderThread.cpp
                  RingBuffer.h
                  SparseArray.h
-				 Storage.h
-				 Texture.h
+                 Storage.h
+                 Texture.h
                  Utils.h
                  Utils.cpp)
 
 if(${RENDERER} STREQUAL "GL")
     set(SOURCE_FILES ${SOURCE_FILES}
                      ContextGL.cpp
-					 GL.h
-					 GLExt.cpp
+                     GL.h
+                     GLExt.cpp
                      ProgramGL.h
-				     ProgramGL.cpp
+                     ProgramGL.cpp
                      TextureGL.h
-				     TextureGL.cpp)
+                     TextureGL.cpp)
 
     if(WIN32)
         if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

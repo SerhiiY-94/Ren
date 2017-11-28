@@ -60,12 +60,12 @@ ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
     indices_size_ = rhs.indices_size_;
     rhs.indices_size_ = 0;
 
-	// this does not work properly in vs2013
+    // this does not work properly in vs2013
     //strips_ = std::move(rhs.strips_);
-	
-	for (size_t i = 0; i < strips_.size(); i++) {
-		strips_[i] = std::move(rhs.strips_[i]);
-	}
+
+    for (size_t i = 0; i < strips_.size(); i++) {
+        strips_[i] = std::move(rhs.strips_[i]);
+    }
 
     bbox_min_ = rhs.bbox_min_;
     rhs.bbox_min_ = {};

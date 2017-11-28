@@ -71,7 +71,7 @@ void ren::Program::InitFromFuncs(const char *name, void *vs_shader, void *fs_sha
 
     SWint prog_id = swCreateProgram();
     swUseProgram(prog_id);
-    swInitProgram((vtx_shader_proc )vs_shader, (frag_shader_proc )fs_shader, num_fvars);
+    swInitProgram((vtx_shader_proc)vs_shader, (frag_shader_proc)fs_shader, num_fvars);
 
     prog_id_ = (uint32_t)prog_id;
     ready_ = true;

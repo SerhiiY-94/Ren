@@ -55,8 +55,8 @@ void test_material() {
 #if defined(USE_GL_RENDER)
             return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
 #elif defined(USE_SW_RENDER)
-            ren::Attribute _attrs[] = {{}};
-            ren::Uniform _unifs[] = {{}};
+            ren::Attribute _attrs[] = { {} };
+            ren::Uniform _unifs[] = { {} };
             return test.LoadProgramSW(name, nullptr, nullptr, 0, _attrs, _unifs, &status);
 #endif
         };
@@ -68,14 +68,14 @@ void test_material() {
         };
 
         const char *mat_src = "gl_program: constant constant.vs constant.fs\n"
-                              "sw_program: constant\n"
-                              "flag: alpha_blend\n"
-                              "texture: checker.tga\n"
-                              "texture: checker.tga\n"
-                              "texture: metal_01.tga\n"
-                              "texture: checker.tga\n"
-                              "param: 0 1 2 3\n"
-                              "param: 0.5 1.2 11 15";
+            "sw_program: constant\n"
+            "flag: alpha_blend\n"
+            "texture: checker.tga\n"
+            "texture: checker.tga\n"
+            "texture: metal_01.tga\n"
+            "texture: checker.tga\n"
+            "param: 0 1 2 3\n"
+            "param: 0.5 1.2 11 15";
 
         ren::eMatLoadStatus status;
         ren::MaterialRef m_ref = test.LoadMaterial("mat1", nullptr, &status, on_program_needed, on_texture_needed);
