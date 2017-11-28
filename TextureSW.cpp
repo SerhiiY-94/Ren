@@ -10,8 +10,8 @@
 #endif
 
 namespace ren {
-    std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
-    void CheckError(const char *op);
+std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
+void CheckError(const char *op);
 }
 
 ren::Texture2D::Texture2D(const char *name, const void *data, int size,

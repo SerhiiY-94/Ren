@@ -47,7 +47,8 @@ static ren::Texture2DRef OnTextureNeeded(const char *name) {
 }
 
 void test_material() {
-    {   // Load material
+    {
+        // Load material
         MaterialTest test;
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
@@ -68,14 +69,14 @@ void test_material() {
         };
 
         const char *mat_src = "gl_program: constant constant.vs constant.fs\n"
-            "sw_program: constant\n"
-            "flag: alpha_blend\n"
-            "texture: checker.tga\n"
-            "texture: checker.tga\n"
-            "texture: metal_01.tga\n"
-            "texture: checker.tga\n"
-            "param: 0 1 2 3\n"
-            "param: 0.5 1.2 11 15";
+                              "sw_program: constant\n"
+                              "flag: alpha_blend\n"
+                              "texture: checker.tga\n"
+                              "texture: checker.tga\n"
+                              "texture: metal_01.tga\n"
+                              "texture: checker.tga\n"
+                              "param: 0 1 2 3\n"
+                              "param: 0.5 1.2 11 15";
 
         ren::eMatLoadStatus status;
         ren::MaterialRef m_ref = test.LoadMaterial("mat1", nullptr, &status, on_program_needed, on_texture_needed);

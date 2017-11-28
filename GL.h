@@ -192,6 +192,6 @@ extern void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloa
 extern void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
 namespace ren {
-    bool InitGLExtentions();
+bool InitGLExtentions();
 }
 #endif

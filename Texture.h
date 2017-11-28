@@ -7,5 +7,5 @@
 #endif
 
 namespace ren {
-    class Context;
+class Context;
 }

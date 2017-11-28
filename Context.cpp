@@ -20,7 +20,7 @@ ren::MeshRef ren::Context::LoadMesh(const char *name, void *data, material_load_
 }
 
 ren::MaterialRef ren::Context::LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
-                                            const texture_load_callback &on_tex_load) {
+        const texture_load_callback &on_tex_load) {
     MaterialRef ref;
     for (auto it = materials_.begin(); it != materials_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -42,7 +42,9 @@ ren::MaterialRef ren::Context::LoadMaterial(const char *name, const char *mat_sr
 }
 
 int ren::Context::NumMaterialsNotReady() {
-    return (int)std::count_if(materials_.begin(), materials_.end(), [](const Material &m) { return !m.ready(); });
+    return (int)std::count_if(materials_.begin(), materials_.end(), [](const Material &m) {
+        return !m.ready();
+    });
 }
 
 void ren::Context::ReleaseMaterials() {
@@ -56,7 +58,9 @@ void ren::Context::ReleaseMaterials() {
 }
 
 int ren::Context::NumProgramsNotReady() {
-    return (int)std::count_if(programs_.begin(), programs_.end(), [](const Program &p) { return !p.ready(); });
+    return (int)std::count_if(programs_.begin(), programs_.end(), [](const Program &p) {
+        return !p.ready();
+    });
 }
 
 void ren::Context::ReleasePrograms() {
@@ -72,7 +76,7 @@ void ren::Context::ReleasePrograms() {
 }
 
 ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data, int size,
-                                              const Texture2DParams &p, eTexLoadStatus *load_status) {
+        const Texture2DParams &p, eTexLoadStatus *load_status) {
     Texture2DRef ref;
     for (auto it = textures_.begin(); it != textures_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -95,7 +99,7 @@ ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data
 }
 
 ren::Texture2DRef ren::Context::LoadTextureCube(const char *name, const void *data[6], const int size[6],
-                                                const Texture2DParams &p, eTexLoadStatus *load_status) {
+        const Texture2DParams &p, eTexLoadStatus *load_status) {
     Texture2DRef ref;
     for (auto it = textures_.begin(); it != textures_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -118,7 +122,9 @@ ren::Texture2DRef ren::Context::LoadTextureCube(const char *name, const void *da
 }
 
 int ren::Context::NumTexturesNotReady() {
-    return (int)std::count_if(textures_.begin(), textures_.end(), [](const Texture2D &t) { return !t.ready(); });
+    return (int)std::count_if(textures_.begin(), textures_.end(), [](const Texture2D &t) {
+        return !t.ready();
+    });
 }
 
 void ren::Context::ReleaseTextures() {
@@ -153,7 +159,9 @@ ren::AnimSeqRef ren::Context::LoadAnimSequence(const char *name, void *data) {
 }
 
 int ren::Context::NumAnimsNotReady() {
-    return (int)std::count_if(anims_.begin(), anims_.end(), [](const AnimSequence &a) { return !a.ready(); });
+    return (int)std::count_if(anims_.begin(), anims_.end(), [](const AnimSequence &a) {
+        return !a.ready();
+    });
 }
 
 void ren::Context::ReleaseAnims() {

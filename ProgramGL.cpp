@@ -8,7 +8,7 @@
 #endif
 
 namespace ren {
-    GLuint LoadShader(GLenum shader_type, const char *source);
+GLuint LoadShader(GLenum shader_type, const char *source);
 }
 
 ren::Program::Program(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
@@ -56,7 +56,7 @@ void ren::Program::InitFromGLSL(const char *name, const char *vs_source, const c
     assert(!ready_);
 
     std::string vs_source_str = vs_source,
-        fs_source_str = fs_source;
+                fs_source_str = fs_source;
 
     GLuint v_shader = LoadShader(GL_VERTEX_SHADER, vs_source_str.c_str());
     if (!v_shader) {
@@ -96,7 +96,10 @@ void ren::Program::InitFromGLSL(const char *name, const char *vs_source, const c
     }
 
     // Parse attribute and uniform bindings
-    struct Binding { std::string name; int loc; };
+    struct Binding {
+        std::string name;
+        int loc;
+    };
     std::vector<Binding> attr_bindings, uniform_bindings;
     std::vector<Binding> *cur_bind_target = nullptr;
 
@@ -122,11 +125,13 @@ SECOND_PASS:
         } else if (item == "UNIFORMS") {
             cur_bind_target = &uniform_bindings;
         } else if (cur_bind_target) {
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             if (*p != ':') {
                 fprintf(stderr, "Error parsing material %s", name);
             }
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             int loc = atoi(p);
             cur_bind_target->push_back({ item, loc });
         }

@@ -29,11 +29,12 @@ public:
 };
 
 void test_program() {
-    {   // Load program
+    {
+        // Load program
         ProgramTest test;
 
         const char vs_src[] =	\
-            " \
+                                " \
             /*\n \
             ATTRIBUTES\n \
                 aVertexPosition : 0\n \
@@ -50,7 +51,7 @@ void test_program() {
             } ";
 
         const char fs_src[] =
-                " \
+            " \
             precision mediump float;\n \
             /*\n \
             UNIFORMS\n \

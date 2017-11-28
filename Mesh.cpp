@@ -479,7 +479,7 @@ void ren::Mesh::SplitMesh(int bones_limit) {
                 for (int k = 8; k < 12; k += 1) {
                     if (vtx_attribs[vtx_indices[j] * 16 + k + 4] > 0.00001f) {
                         if (std::find(bone_ids.begin(), bone_ids.end(), (int)vtx_attribs[vtx_indices[j] * 16 + k]) ==
-                            bone_ids.end()) {
+                                bone_ids.end()) {
                             bone_ids.push_back((int)vtx_attribs[vtx_indices[j] * 16 + k]);
                         }
                     }
@@ -511,13 +511,13 @@ void ren::Mesh::SplitMesh(int bones_limit) {
             }
             for (size_t j = 0; j < bone_ids.size(); j++) {
                 if (std::find(best_fit->bone_ids.begin(), best_fit->bone_ids.end(), bone_ids[j]) ==
-                    best_fit->bone_ids.end()) {
+                        best_fit->bone_ids.end()) {
                     best_fit->bone_ids.push_back(bone_ids[j]);
                 }
             }
             if (!best_fit->strip_ids.empty() && s == best_fit->strip_ids[best_fit->strip_ids.size() - 3] &&
-                best_fit->strip_ids[best_fit->strip_ids.size() - 2] +
-                best_fit->strip_ids[best_fit->strip_ids.size() - 1] - 0 == i) {
+                    best_fit->strip_ids[best_fit->strip_ids.size() - 2] +
+                    best_fit->strip_ids[best_fit->strip_ids.size() - 1] - 0 == i) {
                 best_fit->strip_ids[best_fit->strip_ids.size() - 1]++;
             } else {
                 best_fit->strip_ids.push_back(s);
@@ -613,7 +613,7 @@ void ren::Mesh::SplitMesh(int bones_limit) {
                 for (int k = 8; k < 12; k += 1) {
                     if (new_attribs[new_indices[j] * 16 + k + 4] > 0.0f) {
                         int bone_ndx = (int)(std::find(g.bone_ids.begin(), g.bone_ids.end(),
-                            (int)new_attribs[new_indices[j] * 16 + k]) - g.bone_ids.begin());
+                                                       (int)new_attribs[new_indices[j] * 16 + k]) - g.bone_ids.begin());
                         new_attribs[new_indices[j] * 16 + k] = (float)bone_ndx;
                     }
                 }

@@ -58,7 +58,7 @@ void ren::Context::Resize(int w, int h) {
 }
 
 ren::ProgramRef ren::Context::LoadProgramSW(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
-                                            const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *load_status) {
+        const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *load_status) {
     ProgramRef ref;
     for (auto it = programs_.begin(); it != programs_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {

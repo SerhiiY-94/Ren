@@ -29,7 +29,9 @@
 
 class Approx {
 public:
-    Approx(double val) : val(val), eps(0.001) { assert(eps > 0); }
+    Approx(double val) : val(val), eps(0.001) {
+        assert(eps > 0);
+    }
 
     const Approx &epsilon(double _eps) {
         eps = _eps;

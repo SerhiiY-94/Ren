@@ -3,18 +3,19 @@
 #include "../SparseArray.h"
 
 namespace {
-    std::vector<int> GenTestData(int size) {
-        std::vector<int> vec(size);
-        for (int i = 0; i < size; i++) {
-            vec[i] = i;
-        }
-        return vec;
+std::vector<int> GenTestData(int size) {
+    std::vector<int> vec(size);
+    for (int i = 0; i < size; i++) {
+        vec[i] = i;
     }
+    return vec;
+}
 }
 
 void test_sparse_array() {
 
-    {   // Resize method
+    {
+        // Resize method
         SparseArray<int> s1;
         assert(s1.Size() == 0);
         s1.Resize(128);
@@ -22,7 +23,8 @@ void test_sparse_array() {
         assert(s1.Capacity() == 128);
     }
 
-    {   // Adding elements to array
+    {
+        // Adding elements to array
         SparseArray<int> s1;
         size_t i1 = s1.Add(1);
         size_t i2 = s1.Add(12);
@@ -61,7 +63,8 @@ void test_sparse_array() {
         assert(*it == 32);
     }
 
-    {   // Iteration test
+    {
+        // Iteration test
         auto data = GenTestData(100);
         SparseArray<int> s1;
         s1.Resize(100);

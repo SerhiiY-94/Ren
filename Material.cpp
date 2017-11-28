@@ -57,24 +57,29 @@ void ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadS
 
         if (item == "gl_program:") {
 #ifdef USE_GL_RENDER
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             std::string program_name = std::string(p, q);
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             std::string v_shader_name = std::string(p, q);
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             std::string f_shader_name = std::string(p, q);
 
             program_ = on_prog_load(program_name.c_str(), v_shader_name.c_str(), f_shader_name.c_str());
 #endif
         } else if (item == "sw_program:") {
 #ifdef USE_SW_RENDER
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             std::string program_name = std::string(p, q);
 
             program_ = on_prog_load(program_name.c_str(), nullptr, nullptr);
 #endif
         } else if (item == "flag:") {
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             std::string flag = std::string(p, q);
 
             if (flag == "alpha_blend") {
@@ -85,20 +90,25 @@ void ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadS
                 fprintf(stderr, "Unknown flag %s", flag.c_str());
             }
         } else if (item == "texture:") {
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             std::string texture_name = std::string(p, q);
 
             textures_[num_textures] = on_tex_load(texture_name.c_str());
             num_textures++;
         } else if (item == "param:") {
             math::vec4 &par = params_[num_params++];
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             par[0] = (float)atof(p);
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             par[1] = (float)atof(p);
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             par[2] = (float)atof(p);
-            p = q + 1; q = strpbrk(p, delims);
+            p = q + 1;
+            q = strpbrk(p, delims);
             par[3] = (float)atof(p);
         }
 

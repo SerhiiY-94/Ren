@@ -7,7 +7,7 @@
 #include "Matrices_old.h"
 
 namespace {
-    const float epsilon = 0.002f;
+const float epsilon = 0.002f;
 }
 
 int ren::Plane::ClassifyPoint(const float point[3]) const {
@@ -120,10 +120,10 @@ void ren::Camera::UpdatePlanes() {
 
     for (int plane = LeftPlane; plane <= FarPlane; plane++) {
         float inv_l = 1.0f
-            / (float)sqrt(
-                frustum_planes_[plane].n[0] * frustum_planes_[plane].n[0]
-                + frustum_planes_[plane].n[1] * frustum_planes_[plane].n[1]
-                + frustum_planes_[plane].n[2] * frustum_planes_[plane].n[2]);
+                      / (float)sqrt(
+                          frustum_planes_[plane].n[0] * frustum_planes_[plane].n[0]
+                          + frustum_planes_[plane].n[1] * frustum_planes_[plane].n[1]
+                          + frustum_planes_[plane].n[2] * frustum_planes_[plane].n[2]);
         frustum_planes_[plane].n[0] *= inv_l;
         frustum_planes_[plane].n[1] *= inv_l;
         frustum_planes_[plane].n[2] *= inv_l;

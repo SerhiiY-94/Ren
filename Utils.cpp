@@ -26,7 +26,7 @@ std::unique_ptr<uint8_t[]> ren::ReadTGAFile(const void *data, int &w, int &h, eT
     h = img_header[3] * 256u + img_header[2];
 
     if (w <= 0 || h <= 0 ||
-        (img_header[4] != 24 && img_header[4] != 32)) {
+            (img_header[4] != 24 && img_header[4] != 32)) {
         if (w <= 0 || h <= 0) {
             fprintf(stderr, "Image must have a width and height greater than 0");
         }

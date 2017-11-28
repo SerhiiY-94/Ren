@@ -18,7 +18,8 @@ VSHADER vshader(VS_IN, VS_OUT) {}
 FSHADER fshader(FS_IN, FS_OUT) {}
 
 void test_program() {
-    {   // Create program
+    {
+        // Create program
         ProgramTest test;
 
         ren::eProgLoadStatus status;

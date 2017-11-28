@@ -31,7 +31,8 @@ void test_storage() {
         }
     };
 
-    {	// test create/delete
+    {
+        // test create/delete
         ren::Storage<MyObj> my_obj_storage;
         int counter = 0;
 
@@ -41,7 +42,8 @@ void test_storage() {
         assert(counter == 0);
     }
 
-    {	// test copy/move reference
+    {
+        // test copy/move reference
         ren::Storage<MyObj> my_obj_storage;
         int counter = 0;
 
