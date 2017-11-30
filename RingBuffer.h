@@ -21,6 +21,8 @@ public:
     ~RingBuffer() {
         delete[] buf_;
     }
+	RingBuffer(const RingBuffer &) = delete;
+	RingBuffer &operator=(const RingBuffer &) = delete;
 
     bool Push(const T &item) {
         int head = head_.load(std::memory_order_relaxed);

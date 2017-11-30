@@ -59,7 +59,7 @@ void test_sparse_array() {
 
         auto it = s1.begin();
         assert(*it == 1);
-        it++;
+        ++it;
         assert(*it == 32);
     }
 

@@ -44,9 +44,9 @@ void ren::Camera::Perspective(float angle, float aspect, float nearr, float farr
     BuildPerspProjMat(projection_matrix_, angle, aspect, nearr, farr);
 }
 
-void ren::Camera::Orthographic(float left, float right, float down, float top, float nearr, float farr) {
+void ren::Camera::Orthographic(float left, float right, float top, float down, float nearr, float farr) {
     is_orthographic_ = true;
-    matrixFrustumM(projection_matrix_, left, right, down, top, nearr, farr);
+    matrixFrustumM(projection_matrix_, left, right, top, down, nearr, farr);
 }
 
 void ren::Camera::Move(float* v, float delta_time) {
@@ -139,10 +139,8 @@ void ren::Camera::UpdatePlanes() {
 }
 
 bool ren::Camera::IsInFrustum(const float bbox[8][3]) const {
-    int in_count;
-
     for (int plane = LeftPlane; plane <= FarPlane; plane++) {
-        in_count = 8;
+        int in_count = 8;
 
         for (int i = 0; i < 8; i++) {
             //switch (Plane::ClassifyPoint(frustum_planes_[plane], &bbox[i][0])) {

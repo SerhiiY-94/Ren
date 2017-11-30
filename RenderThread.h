@@ -17,7 +17,7 @@ struct TaskList : public std::vector<Task> {
     std::shared_ptr<void> done_event;
 
     TaskList();
-    TaskList(size_t size) : TaskList() {
+    explicit TaskList(size_t size) : TaskList() {
         this->reserve(size);
     }
 

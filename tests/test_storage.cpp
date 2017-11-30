@@ -7,7 +7,7 @@ void test_storage() {
         int *ref;
 
         MyObj() : ref(nullptr) {}
-        MyObj(int *r) : ref(r) {
+        explicit MyObj(int *r) : ref(r) {
             (*ref)++;
         }
         MyObj(const MyObj &rhs) = delete;

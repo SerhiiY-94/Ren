@@ -10,15 +10,17 @@ namespace ren {
 enum eMeshFlags { MeshHasAlpha = 1 };
 
 struct TriStrip {
-    int			offset;
-    int			num_indices;
+    int         offset = -1;
+    int         num_indices = 0;
     MaterialRef mat;
-    uint32_t	flags;
+    uint32_t    flags = 0;
 
     TriStrip() {}
+    TriStrip(const TriStrip &rhs) = delete;
     TriStrip(TriStrip &&rhs) {
         (*this) = std::move(rhs);
     }
+   TriStrip &operator=(const TriStrip &rhs) = delete;
     TriStrip &operator=(TriStrip &&rhs) {
         offset = rhs.offset;
         rhs.offset = -1;
@@ -36,19 +38,19 @@ enum eMeshType { MeshUndefined, MeshSimple, MeshTerrain, MeshSkeletal };
 typedef std::function<MaterialRef(const char *name)> material_load_callback;
 
 class Mesh : public RefCounter {
-    int				type_ = MeshUndefined;
-    uint32_t		flags_ = 0;
+    int             type_ = MeshUndefined;
+    uint32_t        flags_ = 0;
 #if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
-    uint32_t		attribs_buf_id_ = 0;
-    uint32_t		indices_buf_id_ = 0;
+    uint32_t        attribs_buf_id_ = 0;
+    uint32_t        indices_buf_id_ = 0;
 #endif
     std::shared_ptr<void> attribs_;
-    size_t			attribs_size_ = 0;
+    size_t          attribs_size_ = 0;
     std::shared_ptr<void> indices_;
-    size_t			indices_size_ = 0;
+    size_t          indices_size_ = 0;
     std::array<TriStrip, 16>    strips_;
-    math::vec3 		bbox_min_, bbox_max_;
-    char 			name_[32];
+    math::vec3      bbox_min_, bbox_max_;
+    char            name_[32];
 
     Skeleton        skel_;
 

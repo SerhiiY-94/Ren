@@ -17,8 +17,10 @@ protected:
         T			val;
 
         Item() : used(0), next_free(0), val{} {}
+		Item(const Item &) = delete;
         Item(Item &&rhs) : used(rhs.used), next_free(rhs.next_free), val(std::move(rhs.val)) {}
-        Item &operator=(Item &&rhs) {
+        Item &operator=(const Item &) = delete;
+		Item &operator=(Item &&rhs) {
             used = rhs.used;
             next_free = rhs.next_free;
             val = std::move(rhs.val);
@@ -31,7 +33,7 @@ protected:
     size_t size_;
 public:
     SparseArray() : SparseArray(8) {}
-    SparseArray(size_t size) : first_free_(0), size_(0) {
+    explicit SparseArray(size_t size) : first_free_(0), size_(0) {
         Resize(size);
     }
     size_t Size() const {
