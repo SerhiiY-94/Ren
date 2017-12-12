@@ -26,11 +26,11 @@ typedef Descr Attribute;
 enum eProgLoadStatus { ProgFound, ProgSetToDefault, ProgCreatedFromData };
 
 class Program : public RefCounter {
-    uint32_t	prog_id_ = 0;
-    std::array<Attribute, MAX_NUM_ATTRIBUTES>	attributes_;
-    std::array<Uniform, MAX_NUM_UNIFORMS>		uniforms_;
-    bool		ready_ = false;
-    char		name_[32];
+    uint32_t    prog_id_ = 0;
+    std::array<Attribute, MAX_NUM_ATTRIBUTES>   attributes_;
+    std::array<Uniform, MAX_NUM_UNIFORMS>       uniforms_;
+    bool        ready_ = false;
+    char        name_[32];
 
     void InitFromGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status);
 public:

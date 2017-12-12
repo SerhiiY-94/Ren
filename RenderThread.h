@@ -9,8 +9,8 @@
 namespace ren {
 typedef void(*TaskFunc)(void *arg);
 struct Task {
-    TaskFunc	func;
-    void		*arg;
+    TaskFunc    func;
+    void        *arg;
 };
 
 struct TaskList : public std::vector<Task> {

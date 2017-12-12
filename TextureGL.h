@@ -25,9 +25,9 @@ struct Texture2DParams {
 enum eTexLoadStatus { TexFound, TexCreatedDefault, TexCreatedFromData };
 
 class Texture2D : public RefCounter {
-    uint32_t	tex_id_ = 0;
+    uint32_t    tex_id_ = 0;
     Texture2DParams params_;
-    bool	    ready_ = false;
+    bool        ready_ = false;
     uint32_t    cubemap_ready_ = 0;
     char        name_[64];
 

@@ -18,12 +18,12 @@ typedef std::function<Texture2DRef(const char *name)> texture_load_callback;
 typedef std::function<ProgramRef(const char *name, const char *arg1, const char *arg2)> program_load_callback;
 
 class Material : public RefCounter {
-    uint32_t		flags_ = 0;
-    bool			ready_ = false;
-    char			name_[32];
-    ProgramRef		program_;
-    Texture2DRef	textures_[4];
-    math::vec4		params_[8];
+    uint32_t        flags_ = 0;
+    bool            ready_ = false;
+    char            name_[32];
+    ProgramRef      program_;
+    Texture2DRef    textures_[4];
+    math::vec4      params_[8];
 
     void InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
                      const texture_load_callback &on_tex_load);

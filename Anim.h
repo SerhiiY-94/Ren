@@ -13,13 +13,13 @@ namespace ren {
 enum eAnimBoneFlags { AnimHasTranslate = 1 };
 
 struct AnimBone {
-    char		name[64];
-    char		parent_name[64];
-    int			id = -1;
-    int			offset = 0;
-    uint32_t	flags = 0;
-    math::vec3	cur_pos;
-    math::quat	cur_rot;
+    char        name[64];
+    char        parent_name[64];
+    int         id = -1;
+    int         offset = 0;
+    uint32_t    flags = 0;
+    math::vec3  cur_pos;
+    math::quat  cur_rot;
 
     AnimBone() {
         name[0] = parent_name[0] = '\0';
@@ -31,12 +31,12 @@ struct AnimBone {
 struct Bone;
 
 class AnimSequence : public RefCounter {
-    char		name_[64];
-    int			fps_ = 0;
-    int			len_ = 0;
-    int			frame_size_ = 0;
-    float		frame_dur_ = 0;
-    float		anim_dur_ = 0;
+    char        name_[64];
+    int         fps_ = 0;
+    int         len_ = 0;
+    int         frame_size_ = 0;
+    float       frame_dur_ = 0;
+    float       anim_dur_ = 0;
     std::vector<float> frames_;
     math::aligned_vector<AnimBone> bones_;
     bool        ready_ = false;
@@ -91,21 +91,21 @@ typedef StorageRef<AnimSequence> AnimSeqRef;
 typedef Storage<AnimSequence> AnimSeqStorage;
 
 struct AnimLink {
-    float					anim_time = 0;
-    AnimSeqRef			    anim;
+    float                   anim_time = 0;
+    AnimSeqRef              anim;
     std::vector<AnimBone *> anim_bones;
 };
 
 struct Bone {
-    char		name[64];
-    int			id = -1;
-    int			parent_id = -1;
-    bool		dirty = false;
-    math::mat4	cur_matrix;
-    math::mat4	cur_comb_matrix;
-    math::mat4	bind_matrix;
-    math::mat4	inv_bind_matrix;
-    math::vec3	head_pos;
+    char        name[64];
+    int         id = -1;
+    int         parent_id = -1;
+    bool        dirty = false;
+    math::mat4  cur_matrix;
+    math::mat4  cur_comb_matrix;
+    math::mat4  bind_matrix;
+    math::mat4  inv_bind_matrix;
+    math::vec3  head_pos;
 
     Bone() {
         name[0] = '\0';

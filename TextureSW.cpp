@@ -130,12 +130,12 @@ void ren::Texture2D::InitFromTEXFile(const void *data, const Texture2DParams &p)
     swActiveTexture(SW_TEXTURE0);
     swBindTexture(tex_id);
 
-	if (data) {
-		unsigned short *res = (unsigned short *)data;
+    if (data) {
+        unsigned short *res = (unsigned short *)data;
 
-		params_.format = Compressed;
-		params_.w = res[0];
-		params_.h = res[1];
+        params_.format = Compressed;
+        params_.w = res[0];
+        params_.h = res[1];
 
         swTexImage2D(SW_RGBA, SW_COMPRESSED, params_.w, params_.h, (char *)data + 4);
     }

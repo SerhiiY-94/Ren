@@ -6,8 +6,8 @@ namespace ren {
 enum ePointPos { Front, Back, OnPlane };
 
 struct Plane {
-    math::vec3	n;
-    float		d;
+    math::vec3  n;
+    float       d;
 
     int ClassifyPoint(const float point[3]) const;
 };

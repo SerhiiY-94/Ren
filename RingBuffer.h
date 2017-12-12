@@ -5,9 +5,9 @@
 
 template <class T>
 class RingBuffer {
-    T				*buf_;
+    T               *buf_;
     std::atomic_int head_, tail_;
-    int				size_;
+    int             size_;
 
     int next(int cur) {
         return (cur + 1) % size_;
@@ -21,8 +21,8 @@ public:
     ~RingBuffer() {
         delete[] buf_;
     }
-	RingBuffer(const RingBuffer &) = delete;
-	RingBuffer &operator=(const RingBuffer &) = delete;
+    RingBuffer(const RingBuffer &) = delete;
+    RingBuffer &operator=(const RingBuffer &) = delete;
 
     bool Push(const T &item) {
         int head = head_.load(std::memory_order_relaxed);

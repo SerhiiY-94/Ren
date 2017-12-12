@@ -33,7 +33,7 @@ void test_program() {
         // Load program
         ProgramTest test;
 
-        const char vs_src[] =	\
+        const char vs_src[] =   \
                                 " \
             /*\n \
             ATTRIBUTES\n \

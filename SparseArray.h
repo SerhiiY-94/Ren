@@ -12,15 +12,15 @@ template <class T, template<typename val_t> class container = default_container>
 class SparseArray {
 protected:
     struct Item {
-        unsigned	used : 1;
-        unsigned	next_free : 31;
-        T			val;
+        unsigned    used : 1;
+        unsigned    next_free : 31;
+        T           val;
 
         Item() : used(0), next_free(0), val{} {}
-		Item(const Item &) = delete;
+        Item(const Item &) = delete;
         Item(Item &&rhs) : used(rhs.used), next_free(rhs.next_free), val(std::move(rhs.val)) {}
         Item &operator=(const Item &) = delete;
-		Item &operator=(Item &&rhs) {
+        Item &operator=(Item &&rhs) {
             used = rhs.used;
             next_free = rhs.next_free;
             val = std::move(rhs.val);
