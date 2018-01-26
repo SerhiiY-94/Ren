@@ -115,7 +115,11 @@
 #if defined(WIN32)
 #include <GL/GL.h>
 #else
-#include <GL/gl.h>
+    #if defined(__APPLE__)
+        #include <OpenGL/gl.h>
+    #else
+        #include <GL/gl.h>
+    #endif
 #endif
 
 typedef unsigned int GLenum;
@@ -131,6 +135,7 @@ typedef ptrdiff_t GLintptr;
 typedef ptrdiff_t GLsizeiptr;
 //}
 
+#if !defined(__APPLE__)
 extern GLuint(APIENTRY *glCreateProgram)(void);
 extern void (APIENTRY *glDeleteProgram)(GLuint program);
 extern void (APIENTRY *glUseProgram)(GLuint program);
@@ -152,7 +157,9 @@ extern void (APIENTRY *glShaderSource)(GLuint shader, GLsizei count, const GLcha
 extern void (APIENTRY *glCompileShader)(GLuint shader);
 extern void (APIENTRY *glGetShaderiv)(GLuint shader, GLenum pname, GLint *params);
 extern void (APIENTRY *glGetShaderInfoLog)(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
+#endif
 
+#if !defined(__APPLE__)
 #if !defined(__linux__)
 extern void (APIENTRY *glActiveTexture)(GLenum texture);
 #endif
@@ -194,4 +201,5 @@ extern void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLbool
 namespace ren {
 bool InitGLExtentions();
 }
+#endif
 #endif
