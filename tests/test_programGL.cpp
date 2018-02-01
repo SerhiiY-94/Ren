@@ -52,7 +52,13 @@ void test_program() {
 
         const char fs_src[] =
             " \
-            precision mediump float;\n \
+            #ifdef GL_ES\n \
+				precision mediump float;\n \
+			#else\n \
+				#define lowp\n \
+				#define mediump\n \
+				#define highp\n \
+			#endif\n \
             /*\n \
             UNIFORMS\n \
                 asdasd : 1\n \

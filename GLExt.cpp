@@ -72,6 +72,10 @@ bool ren::InitGLExtentions() {
 
 #if defined(WIN32)
 #define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name); assert(name)
+
+	if (wglGetCurrentContext() == NULL) {
+		return false;
+	}
 #elif defined(__linux__)
 #define GetProcAddress(name) (decltype(name))glXGetProcAddress((const GLubyte *) #name); assert(name)
 #endif
