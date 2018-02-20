@@ -416,9 +416,9 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
             if (strips_[s].offset == -1) break;
             BoneGroup grp;
             for (size_t i = 0; i < bones.size(); i++) {
-                grp.bone_ids.push_back(i);
+                grp.bone_ids.push_back((uint32_t)i);
             }
-            grp.strip_ids.push_back(s);
+            grp.strip_ids.push_back((uint32_t)s);
             grp.strip_ids.push_back(strips_[s].offset / 2);
             grp.strip_ids.push_back(strips_[s].num_indices);
             skel_.bone_groups.push_back(grp);
