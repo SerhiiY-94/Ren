@@ -1,12 +1,12 @@
 
 namespace ren {
-    enum e_uninitialized { uninitialize };
+    enum eUninitialized { Uninitialize };
 
 	template <typename T, int N>
     class Vec {
         T data_[N];
     public:
-        Vec(e_uninitialized) {}
+        Vec(eUninitialized) {}
         Vec() : data_{ (T)0 } {}
         explicit Vec(T v) {
             for (int i = 0; i < N; i++) {
@@ -69,7 +69,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator-(const Vec<T, N> &v) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = -v.data_[i];
             }
@@ -77,7 +77,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator+(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = lhs.data_[i] + rhs.data_[i];
             }
@@ -85,7 +85,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator-(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = lhs.data_[i] - rhs.data_[i];
             }
@@ -93,7 +93,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator*(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = lhs.data_[i] * rhs.data_[i];
             }
@@ -101,7 +101,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator*(const T lhs, const Vec<T, N> &rhs) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = lhs * rhs.data_[i];
             }
@@ -109,7 +109,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator*(const Vec<T, N> &lhs, const T &rhs) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = lhs.data_[i] * rhs;
             }
@@ -117,7 +117,7 @@ namespace ren {
         }
 
         friend Vec<T, N> operator/(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
-            Vec<T, N> res = { uninitialize };
+            Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
                 res.data_[i] = lhs.data_[i] / rhs.data_[i];
             }
