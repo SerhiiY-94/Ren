@@ -1,13 +1,13 @@
 #pragma once
 
-#include <math/vec3.hpp>
+#include "Vec.h"
 
 namespace ren {
 enum ePointPos { Front, Back, OnPlane };
 
 struct Plane {
-    math::vec3  n;
-    float       d;
+    Vec3f   n;
+    float   d;
 
     int ClassifyPoint(const float point[3]) const;
 };

@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <math/math.hpp>
-
 #include "Matrices_old.h"
 
 namespace {
@@ -11,7 +9,7 @@ const float epsilon = 0.002f;
 }
 
 int ren::Plane::ClassifyPoint(const float point[3]) const {
-    float result = math::dot(math::make_vec3(point), n) + d;
+    float result = Dot(MakeVec3(point), n) + d;
     if (result > epsilon) {
         return Front;
     } else if (result < -epsilon) {
