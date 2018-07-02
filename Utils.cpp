@@ -110,24 +110,24 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
         std::unique_ptr<int32_t[]> tris;
     };
 
-    auto get_vertex_score = [](const vtx_data_t &v) -> float {
+    const int MaxSizeVertexCache = 32;
+
+    auto get_vertex_score = [MaxSizeVertexCache](int32_t cache_pos, uint32_t active_tris_count) -> float {
         const float CacheDecayPower = 1.5f;
         const float LastTriScore = 0.75f;
         const float ValenceBoostScale = 2.0f;
         const float ValenceBoostPower = 0.5f;
 
-        const int MaxSizeVertexCache = 32;
-
-        if (v.active_tris_count == 0) {
+        if (active_tris_count == 0) {
             // No tri needs this vertex!
             return -1.0f;
         }
 
         float score = 0.0f;
 
-        if (v.cache_pos < 0) {
+        if (cache_pos < 0) {
             // Vertex is not in FIFO cache - no score.
-        } else if (v.cache_pos < 3) {
+        } else if (cache_pos < 3) {
             // This vertex was used in the last triangle,
             // so it has a fixed score, whichever of the three
             // it's in. Otherwise, you can get very different
@@ -135,18 +135,18 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
             // the triangle 1,2,3 or 3,1,2 - which is silly.
             score = LastTriScore;
         } else {
-            assert(v.cache_pos < MaxSizeVertexCache);
+            assert(cache_pos < MaxSizeVertexCache);
             // Points for being high in the cache.
             const float scaler = 1.0f / (MaxSizeVertexCache - 3);
-            score = 1.0f - (v.cache_pos - 3) * scaler;
+            score = 1.0f - (cache_pos - 3) * scaler;
             score = std::pow(score, CacheDecayPower);
         }
 
         // Bonus points for having a low number of tris still to
         // use the vert, so we get rid of lone verts quickly.
 
-        float ValenceBoost = std::pow((float)v.active_tris_count, -ValenceBoostPower);
-        score += ValenceBoostScale * ValenceBoost;
+        float valence_boost = std::pow((float)active_tris_count, -ValenceBoostPower);
+        score += ValenceBoostScale * valence_boost;
         return score;
     };
 
@@ -173,7 +173,7 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
 
     for (auto &v : vertices) {
         v.tris.reset(new int32_t[v.active_tris_count]);
-        v.score = get_vertex_score(v);
+        v.score = get_vertex_score(v.cache_pos, v.active_tris_count);
     }
 
     int32_t next_best_index = -1, next_next_best_index = -1;
@@ -217,6 +217,31 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
         }
     };
 
+    auto enforce_size = [&get_vertex_score](std::deque<uint32_t> &lru_cache, vtx_data_t *vertices, uint32_t max_size, std::vector<uint32_t> &out_tris_to_update) {
+        out_tris_to_update.clear();
+
+        if (lru_cache.size() > max_size) {
+            lru_cache.resize(max_size);
+        }
+
+        for (size_t i = 0; i < lru_cache.size(); i++) {
+            auto &v = vertices[lru_cache[i]];
+
+            v.cache_pos = i;
+            v.score = get_vertex_score(v.cache_pos, v.active_tris_count);
+
+            for (uint32_t j = 0; j < v.ref_count; j++) {
+                int tri_index = v.tris[j];
+                if (tri_index != -1) {
+                    auto it = std::find(std::begin(out_tris_to_update), std::end(out_tris_to_update), tri_index);
+                    if (it == std::end(out_tris_to_update)) {
+                        out_tris_to_update.push_back(tri_index);
+                    }
+                }
+            }
+        }
+    };
+
     for (int32_t out_index = 0; out_index < indices_count; ) {
         if (next_best_index < 0) {
             next_best_score = next_next_best_score = -1.0f;
@@ -235,26 +260,59 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
                         next_best_score = tri.score;
                     }
                 }
-
-                auto &next_best_tri = triangles[next_best_index];
-
-                for (int32_t j = 0; j < 3; j++) {
-                    out_indices[out_index++] = next_best_tri.indices[j];
-
-                    auto &v = vertices[next_best_tri.indices[j]];
-                    v.active_tris_count--;
-                    for (uint32_t k = 0; k < v.ref_count; k++) {
-                        if (v.tris[k] == next_best_index) {
-                            v.tris[k] = -1;
-                            break;
-                        }
-                    }
-
-                    use_vertex(lru_cache, next_best_tri.indices[j]);
-                }
-
-                next_best_tri.is_in_list = true;
             }
+        }
+
+        auto &next_best_tri = triangles[next_best_index];
+
+        for (int32_t j = 0; j < 3; j++) {
+            out_indices[out_index++] = next_best_tri.indices[j];
+
+            auto &v = vertices[next_best_tri.indices[j]];
+            v.active_tris_count--;
+            for (uint32_t k = 0; k < v.ref_count; k++) {
+                if (v.tris[k] == next_best_index) {
+                    v.tris[k] = -1;
+                    break;
+                }
+            }
+
+            use_vertex(lru_cache, next_best_tri.indices[j]);
+        }
+
+        next_best_tri.is_in_list = true;
+
+        std::vector<uint32_t> tris_to_update;
+        enforce_size(lru_cache, &vertices[0], MaxSizeVertexCache, tris_to_update);
+
+        next_best_score = -1.0f;
+        next_best_index = -1;
+
+        for (const auto ti : tris_to_update) {
+            auto &tri = triangles[ti];
+
+            if (!tri.is_in_list) {
+                tri.score = vertices[tri.indices[0]].score + vertices[tri.indices[1]].score + vertices[tri.indices[2]].score;
+
+                if (tri.score > next_best_score) {
+                    if (tri.score > next_next_best_score) {
+                        next_next_best_index = ti;
+                        next_next_best_score = tri.score;
+                    }
+                    next_best_index = ti;
+                    next_best_score = tri.score;
+                }
+            }
+        }
+
+        if (next_best_index == -1 && next_next_best_index != -1) {
+            if (!triangles[next_next_best_index].is_in_list) {
+                next_best_index = next_next_best_index;
+                next_best_score = next_next_best_score;
+            }
+
+            next_next_best_index = -1;
+            next_next_best_score = -1.0f;
         }
     }
 }
