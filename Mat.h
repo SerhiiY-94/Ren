@@ -1,7 +1,7 @@
 
-#include "Vec.hpp"
+#include "Vec.h"
 
-namespace Math {
+namespace ren {
     template <typename T, int M, int N>
     using Mat = Vec<Vec<T, N>, M>;
 

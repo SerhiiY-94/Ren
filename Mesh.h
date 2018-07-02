@@ -20,7 +20,7 @@ struct TriStrip {
     TriStrip(TriStrip &&rhs) {
         (*this) = std::move(rhs);
     }
-   TriStrip &operator=(const TriStrip &rhs) = delete;
+    TriStrip &operator=(const TriStrip &rhs) = delete;
     TriStrip &operator=(TriStrip &&rhs) {
         offset = rhs.offset;
         rhs.offset = -1;

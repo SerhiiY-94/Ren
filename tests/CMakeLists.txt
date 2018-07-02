@@ -28,6 +28,7 @@ set(SOURCE_FILES main.cpp
                  test_sparse_array.cpp
                  test_storage.cpp
                  test_texture.cpp
+				 test_vec.cpp
                  )
 
 if(${RENDERER} STREQUAL "GL")

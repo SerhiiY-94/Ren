@@ -1,5 +1,5 @@
 
-namespace Math {
+namespace ren {
     enum e_uninitialized { uninitialize };
 
 	template <typename T, int N>
@@ -8,6 +8,11 @@ namespace Math {
     public:
         Vec(e_uninitialized) {}
         Vec() : data_{ (T)0 } {}
+        explicit Vec(T v) {
+            for (int i = 0; i < N; i++) {
+                data_[i] = v;
+            }
+        }
 
         template <typename... Tail>
         Vec(typename std::enable_if<sizeof...(Tail)+1 == N, T>::type head, Tail... tail)
@@ -162,6 +167,18 @@ namespace Math {
         Vec<T, N> temp = lhs - rhs;
         return Dot(temp, temp);
     }
+
+    template <typename T, int N>
+    const T *ValuePtr(const Vec<T, N> &v) {
+        return &v[0];
+    }
+
+    template <typename T>
+    Vec<T, 2> MakeVec2(const T *v) { return Vec<T, 2>(v[0], v[1]); }
+    template <typename T>
+    Vec<T, 3> MakeVec3(const T *v) { return Vec<T, 3>(v[0], v[1], v[2]); }
+    template <typename T>
+    Vec<T, 4> MakeVec4(const T *v) { return Vec<T, 4>(v[0], v[1], v[2], v[3]); }
 
     using Vec2i = Vec<int, 2>;
     using Vec3i = Vec<int, 3>;

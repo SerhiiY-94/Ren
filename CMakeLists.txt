@@ -29,6 +29,7 @@ set(SOURCE_FILES Anim.h
                  Context.h
                  Context.cpp
                  Fwd.h
+				 Mat.h
                  Material.h
                  Material.cpp
                  Matrices_old.h
@@ -43,7 +44,8 @@ set(SOURCE_FILES Anim.h
                  Storage.h
                  Texture.h
                  Utils.h
-                 Utils.cpp)
+                 Utils.cpp
+				 Vec.h)
 
 if(${RENDERER} STREQUAL "GL")
     set(SOURCE_FILES ${SOURCE_FILES}
