@@ -80,38 +80,38 @@ void test_material() {
 
         ren::eMatLoadStatus status;
         ren::MaterialRef m_ref = test.LoadMaterial("mat1", nullptr, &status, on_program_needed, on_texture_needed);
-        assert(status == ren::MatSetToDefault);
+        require(status == ren::MatSetToDefault);
 
         {
-            assert(m_ref->ready() == false);
+            require(m_ref->ready() == false);
         }
 
         test.LoadMaterial("mat1", mat_src, &status, on_program_needed, on_texture_needed);
 
-        assert(status == ren::MatCreatedFromData);
-        assert(m_ref->flags() & ren::AlphaBlend);
-        assert(m_ref->ready() == true);
-        assert(std::string(m_ref->name()) == "mat1");
+        require(status == ren::MatCreatedFromData);
+        require(m_ref->flags() & ren::AlphaBlend);
+        require(m_ref->ready() == true);
+        require(std::string(m_ref->name()) == "mat1");
 
         ren::ProgramRef p = m_ref->program();
 
-        assert(std::string(p->name()) == "constant");
-        assert(p->ready() == false);
+        require(std::string(p->name()) == "constant");
+        require(p->ready() == false);
 
         ren::Texture2DRef t0 = m_ref->texture(0);
         ren::Texture2DRef t1 = m_ref->texture(1);
         ren::Texture2DRef t2 = m_ref->texture(2);
         ren::Texture2DRef t3 = m_ref->texture(3);
 
-        assert(t0 == t1);
-        assert(t0 == t3);
+        require(t0 == t1);
+        require(t0 == t3);
 
-        assert(std::string(t0->name()) == "checker.tga");
-        assert(std::string(t1->name()) == "checker.tga");
-        assert(std::string(t2->name()) == "metal_01.tga");
-        assert(std::string(t3->name()) == "checker.tga");
+        require(std::string(t0->name()) == "checker.tga");
+        require(std::string(t1->name()) == "checker.tga");
+        require(std::string(t2->name()) == "metal_01.tga");
+        require(std::string(t3->name()) == "checker.tga");
 
-        assert(m_ref->param(0) == math::vec4(0, 1, 2, 3));
-        assert(m_ref->param(1) == math::vec4(0.5f, 1.2f, 11, 15));
+        require(m_ref->param(0) == math::vec4(0, 1, 2, 3));
+        require(m_ref->param(1) == math::vec4(0.5f, 1.2f, 11, 15));
     }
 }

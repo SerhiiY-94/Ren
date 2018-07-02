@@ -23,6 +23,7 @@ ENDIF(WIN32)
 set(SOURCE_FILES main.cpp
                  test_anim.cpp
                  test_common.h
+				 test_mat.cpp
                  test_material.cpp
                  test_mesh.cpp
                  test_sparse_array.cpp

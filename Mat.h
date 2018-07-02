@@ -35,7 +35,7 @@ namespace ren {
     }
 
     template <typename T, int M, int N, int P>
-    Mat<M, P> operator*(const Mat<M, N> &lhs, const Mat<N, P> &rhs) {
+    Mat<T, M, P> operator*(const Mat<T, M, N> &lhs, const Mat<T, N, P> &rhs) {
         Mat<M, P> res = { uninitialize };
         for (int m = 0; m < M; m++) {
             for (int p = 0; p < P, p++) {
@@ -50,7 +50,7 @@ namespace ren {
     }
 
     template <typename T, int M, int N>
-    Mat<N, M> Transpose(const Mat<M, N> &mat) {
+    Mat<T, N, M> Transpose(const Mat<T, M, N> &mat) {
         Mat<N, M> res = { uninitialize };
         for (int m = 0; m < M; m++) {
             for (int n = 0; n < N; n++) {

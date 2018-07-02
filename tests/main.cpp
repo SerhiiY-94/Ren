@@ -4,6 +4,7 @@
 #include <math/math.hpp>
 
 void test_anim();
+void test_mat();
 void test_material();
 void test_mesh();
 void test_program();
@@ -15,6 +16,7 @@ int main() {
     math::init();
 
     test_anim();
+    test_mat();
     test_material();
     test_mesh();
     test_program();

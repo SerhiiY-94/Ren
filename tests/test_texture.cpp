@@ -55,27 +55,27 @@ void test_texture() {
         ren::eTexLoadStatus status;
         ren::Texture2DParams p;
         ren::Texture2DRef t_ref = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
-        assert(status == ren::TexCreatedDefault);
+        require(status == ren::TexCreatedDefault);
 
-        assert(std::string(t_ref->name()) == "checker.tga");
-        assert(t_ref->params().w == 1);
-        assert(t_ref->params().h == 1);
-        assert(t_ref->params().format == ren::RawRGB888);
-        assert(!t_ref->ready());
+        require(std::string(t_ref->name()) == "checker.tga");
+        require(t_ref->params().w == 1);
+        require(t_ref->params().h == 1);
+        require(t_ref->params().format == ren::RawRGB888);
+        require(!t_ref->ready());
 
         {
             ren::Texture2DRef t_ref2 = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
-            assert(status == ren::TexFound);
-            assert(!t_ref2->ready());
+            require(status == ren::TexFound);
+            require(!t_ref2->ready());
         }
 
         {
             ren::Texture2DRef t_ref3 = test.LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), p, &status);
-            assert(status == ren::TexCreatedFromData);
-            assert(t_ref3->params().w == 2);
-            assert(t_ref3->params().h == 2);
-            assert(t_ref3->params().format == ren::RawRGB888);
-            assert(t_ref3->ready());
+            require(status == ren::TexCreatedFromData);
+            require(t_ref3->params().w == 2);
+            require(t_ref3->params().h == 2);
+            require(t_ref3->params().format == ren::RawRGB888);
+            require(t_ref3->ready());
         }
     }
 }

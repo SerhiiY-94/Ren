@@ -37,9 +37,9 @@ void test_storage() {
         int counter = 0;
 
         auto ref1 = my_obj_storage.Add(&counter);
-        assert(counter == 1);
+        require(counter == 1);
         ref1 = {};
-        assert(counter == 0);
+        require(counter == 0);
     }
 
     {
@@ -48,19 +48,19 @@ void test_storage() {
         int counter = 0;
 
         auto ref1 = my_obj_storage.Add(&counter);
-        assert(counter == 1);
+        require(counter == 1);
         auto ref2 = ref1;
-        assert(counter == 1);
+        require(counter == 1);
         ref1 = {};
-        assert(counter == 1);
+        require(counter == 1);
         ref2 = {};
-        assert(counter == 0);
+        require(counter == 0);
 
         ref1 = my_obj_storage.Add(&counter);
-        assert(counter == 1);
+        require(counter == 1);
         ref2 = std::move(ref1);
-        assert(counter == 1);
+        require(counter == 1);
         ref2 = {};
-        assert(counter == 0);
+        require(counter == 0);
     }
 }
