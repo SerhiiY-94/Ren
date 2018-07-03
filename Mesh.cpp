@@ -16,7 +16,7 @@
 
 int ren::Mesh::max_gpu_bones = 16;
 
-ren::Mesh::Mesh(const char *name, void *data, material_load_callback on_mat_load) {
+ren::Mesh::Mesh(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
     Init(name, data, on_mat_load);
 }
 
@@ -78,11 +78,13 @@ ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
     return *this;
 }
 
-void ren::Mesh::Init(const char *name, void *data, material_load_callback on_mat_load) {
+void ren::Mesh::Init(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
     strcpy(name_, name);
 
     char mesh_type_str[12];
-    memcpy(mesh_type_str, data, 12);
+    auto pos = data.tellg();
+    data.read(mesh_type_str, 12);
+    data.seekg(pos, std::ios::beg);
 
     if (strcmp(mesh_type_str, "STATIC_MESH\0") == 0) {
         InitMeshSimple(data, on_mat_load);
@@ -93,13 +95,9 @@ void ren::Mesh::Init(const char *name, void *data, material_load_callback on_mat
     }
 }
 
-#define READ_ADVANCE(dest, p, size) memcpy(dest, p, size); p += size;
-
-void ren::Mesh::InitMeshSimple(void *data, material_load_callback on_mat_load) {
-    char *p = (char *)data;
-
+void ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback &on_mat_load) {
     char mesh_type_str[12];
-    READ_ADVANCE(mesh_type_str, p, 12);
+    data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "STATIC_MESH\0") == 0);
 
     type_ = MeshSimple;
@@ -122,28 +120,28 @@ void ren::Mesh::InitMeshSimple(void *data, material_load_callback on_mat_load) {
         ChunkPos p[5];
     } file_header;
 
-    READ_ADVANCE(&file_header, p, sizeof(file_header));
+    data.read((char *)&file_header, sizeof(file_header));
 
     // Skip name, cant remember why i put it there
-    p += 32;
+    data.seekg(32, std::ios::cur);
 
     float temp_f[3];
-    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    data.read((char *)&temp_f[0], sizeof(math::vec3));
     bbox_min_ = math::make_vec3(temp_f);
-    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    data.read((char *)&temp_f[0], sizeof(math::vec3));
     bbox_max_ = math::make_vec3(temp_f);
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
-    READ_ADVANCE(attribs_.get(), p, attribs_size_);
+    data.read((char *)attribs_.get(), attribs_size_);
 
     indices_size_ = (size_t)file_header.p[VTX_NDX_CHUNK].length;
     indices_.reset(new char[indices_size_], std::default_delete<char[]>());
-    READ_ADVANCE(indices_.get(), p, indices_size_);
+    data.read((char *)indices_.get(), indices_size_);
 
     std::vector<std::array<char, 64>> material_names((size_t)file_header.p[MATERIALS_CHUNK].length / 64);
     for (auto &n : material_names) {
-        READ_ADVANCE(&n[0], p, 64);
+        data.read(&n[0], 64);
     }
 
     flags_ = 0;
@@ -151,9 +149,9 @@ void ren::Mesh::InitMeshSimple(void *data, material_load_callback on_mat_load) {
     int num_strips = file_header.p[STRIPS_CHUNK].length / 12;
     for (int i = 0; i < num_strips; i++) {
         int index, num_indices, alpha;
-        READ_ADVANCE(&index, p, 4);
-        READ_ADVANCE(&num_indices, p, 4);
-        READ_ADVANCE(&alpha, p, 4);
+        data.read((char *)&index, 4);
+        data.read((char *)&num_indices, 4);
+        data.read((char *)&alpha, 4);
 
         strips_[i].offset = (int)(index * sizeof(unsigned short));
         strips_[i].num_indices = (int)num_indices;
@@ -193,11 +191,9 @@ void ren::Mesh::InitMeshSimple(void *data, material_load_callback on_mat_load) {
 #endif
 }
 
-void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) {
-    char *p = (char *)data;
-
+void ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load) {
     char mesh_type_str[12];
-    READ_ADVANCE(mesh_type_str, p, 12);
+    data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "TERRAI_MESH\0") == 0);
 
     type_ = MeshTerrain;
@@ -220,15 +216,15 @@ void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) 
         ChunkPos p[5];
     } file_header;
 
-    READ_ADVANCE(&file_header, p, sizeof(file_header));
+    data.read((char *)&file_header, sizeof(file_header));
 
     // Skip name, cant remember why i put it there
-    p += 32;
+    data.seekg(32, std::ios::cur);
 
     float temp_f[3];
-    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    data.read((char *)&temp_f[0], sizeof(math::vec3));
     bbox_min_ = math::make_vec3(temp_f);
-    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    data.read((char *)&temp_f[0], sizeof(math::vec3));
     bbox_max_ = math::make_vec3(temp_f);
 
     attribs_size_ = file_header.p[VTX_ATTR_CHUNK].length + file_header.p[VTX_NDX_CHUNK].length * sizeof(float);
@@ -236,22 +232,22 @@ void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) 
 
     float *p_fattrs = (float *)attribs_.get();
     for (int i = 0; i < file_header.p[VTX_NDX_CHUNK].length; i++) {
-        READ_ADVANCE(&p_fattrs[i * 9], p, 8 * sizeof(float));
+        data.read((char *)&p_fattrs[i * 9], 8 * sizeof(float));
     }
 
     for (int i = 0; i < file_header.p[VTX_NDX_CHUNK].length; i++) {
         unsigned char c;
-        READ_ADVANCE(&c, p, 1);
+        data.read((char *)&c, 1);
         p_fattrs[i * 9 + 8] = float(c);
     }
 
     indices_size_ = (size_t)file_header.p[VTX_NDX_CHUNK].length;
     indices_.reset(new char[indices_size_], std::default_delete<char[]>());
-    READ_ADVANCE(indices_.get(), p, indices_size_);
+    data.read((char *)indices_.get(), indices_size_);
 
     std::vector<std::array<char, 64>> material_names((size_t)file_header.p[MATERIALS_CHUNK].length / 64);
     for (auto &n : material_names) {
-        READ_ADVANCE(&n[0], p, 64);
+        data.read(&n[0], 64);
     }
 
     flags_ = 0;
@@ -259,9 +255,9 @@ void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) 
     int num_strips = file_header.p[STRIPS_CHUNK].length / 12;
     for (int i = 0; i < num_strips; i++) {
         int index, num_indices, alpha;
-        READ_ADVANCE(&index, p, 4);
-        READ_ADVANCE(&num_indices, p, 4);
-        READ_ADVANCE(&alpha, p, 4);
+        data.read((char *)&index, 4);
+        data.read((char *)&num_indices, 4);
+        data.read((char *)&alpha, 4);
 
         strips_[i].offset = (int)index * sizeof(unsigned short);
         strips_[i].num_indices = (int)num_indices;
@@ -301,11 +297,9 @@ void ren::Mesh::InitMeshTerrain(void *data, material_load_callback on_mat_load) 
 #endif
 }
 
-void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load) {
-    char *p = (char *)data;
-
+void ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load) {
     char mesh_type_str[12];
-    READ_ADVANCE(mesh_type_str, p, 12);
+    data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "SKELET_MESH\0") == 0);
 
     type_ = MeshSkeletal;
@@ -329,28 +323,28 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
         ChunkPos p[6];
     } file_header;
 
-    READ_ADVANCE(&file_header, p, sizeof(file_header));
+    data.read((char *)&file_header, sizeof(file_header));
 
     // Skip name, cant remember why i put it there
-    p += 32;
+    data.seekg(32, std::ios::cur);
 
     float temp_f[3];
-    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    data.read((char *)&temp_f[0], sizeof(math::vec3));
     bbox_min_ = math::make_vec3(temp_f);
-    READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+    data.read((char *)&temp_f[0], sizeof(math::vec3));
     bbox_max_ = math::make_vec3(temp_f);
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
-    READ_ADVANCE(attribs_.get(), p, attribs_size_);
+    data.read((char *)attribs_.get(), attribs_size_);
 
     indices_size_ = (size_t)file_header.p[VTX_NDX_CHUNK].length;
     indices_.reset(new char[indices_size_], std::default_delete<char[]>());
-    READ_ADVANCE(indices_.get(), p, indices_size_);
+    data.read((char *)indices_.get(), indices_size_);
 
     std::vector<std::array<char, 64>> material_names((size_t)file_header.p[MATERIALS_CHUNK].length / 64);
     for (auto &n : material_names) {
-        READ_ADVANCE(&n[0], p, 64);
+        data.read(&n[0], 64);
     }
 
     flags_ = 0;
@@ -358,9 +352,9 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
     int num_strips = file_header.p[STRIPS_CHUNK].length / 12;
     for (int i = 0; i < num_strips; i++) {
         int index, num_indices, alpha;
-        READ_ADVANCE(&index, p, 4);
-        READ_ADVANCE(&num_indices, p, 4);
-        READ_ADVANCE(&alpha, p, 4);
+        data.read((char *)&index, 4);
+        data.read((char *)&num_indices, 4);
+        data.read((char *)&alpha, 4);
 
         strips_[i].offset = (int)index * sizeof(unsigned short);
         strips_[i].num_indices = (int)num_indices;
@@ -386,15 +380,15 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
         float temp_f[4];
         math::vec3 temp_v;
         math::quat temp_q;
-        READ_ADVANCE(bones[i].name, p, 64);
+        data.read(bones[i].name, 64);
         const char *cc = bones[i].name;
-        READ_ADVANCE(&bones[i].id, p, sizeof(int));
-        READ_ADVANCE(&bones[i].parent_id, p, sizeof(int));
+        data.read((char *)&bones[i].id, sizeof(int));
+        data.read((char *)&bones[i].parent_id, sizeof(int));
 
-        READ_ADVANCE(&temp_f[0], p, sizeof(math::vec3));
+        data.read((char *)&temp_f[0], sizeof(math::vec3));
         temp_v = math::make_vec3(&temp_f[0]);
         bones[i].bind_matrix = math::translate(bones[i].bind_matrix, temp_v);
-        READ_ADVANCE(&temp_f[0], p, sizeof(math::quat));
+        data.read((char *)&temp_f[0], sizeof(math::quat));
         temp_q = math::make_quat(&temp_f[0]);
         bones[i].bind_matrix *= math::to_mat4(temp_q);
         bones[i].inv_bind_matrix = math::inverse(bones[i].bind_matrix);
@@ -450,8 +444,6 @@ void ren::Mesh::InitMeshSkeletal(void *data, material_load_callback on_mat_load)
     swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
 #endif
 }
-
-#undef READ_ADVANCE
 
 #undef max
 

@@ -42,7 +42,7 @@ public:
     void Resize(int w, int h);
 
     /*** Mesh ***/
-    MeshRef LoadMesh(const char *name, void *data, material_load_callback on_mat_load);
+    MeshRef LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load);
 
     /*** Material ***/
     MaterialRef LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,

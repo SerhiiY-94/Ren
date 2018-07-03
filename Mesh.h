@@ -55,11 +55,11 @@ class Mesh : public RefCounter {
     Skeleton        skel_;
 
     // simple static mesh with normals
-    void InitMeshSimple(void *data, material_load_callback on_mat_load);
+    void InitMeshSimple(std::istream &data, const material_load_callback &on_mat_load);
     // simple mesh with tex index per vertex
-    void InitMeshTerrain(void *data, material_load_callback on_mat_load);
+    void InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load);
     // mesh with 4 bone weights per vertex
-    void InitMeshSkeletal(void *data, material_load_callback on_mat_load);
+    void InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load);
 
     // split skeletal mesh into chunks to fit uniforms limit in shader
     void SplitMesh(int bones_limit);
@@ -67,7 +67,7 @@ public:
     Mesh() {
         name_[0] = '\0';
     }
-    Mesh(const char *name, void *data, material_load_callback on_mat_load);
+    Mesh(const char *name, std::istream &data, const material_load_callback &on_mat_load);
     Mesh(const Mesh &rhs) = delete;
     Mesh(Mesh &&rhs) {
         *this = std::move(rhs);
@@ -120,7 +120,7 @@ public:
         return &skel_;
     }
 
-    void Init(const char *name, void *data, material_load_callback on_mat_load);
+    void Init(const char *name, std::istream &data, const material_load_callback &on_mat_load);
 
     static int max_gpu_bones;
 };

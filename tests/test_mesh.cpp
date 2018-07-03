@@ -153,8 +153,17 @@ unsigned int __skeletal_mesh_len = 802;
 
 void test_mesh() {
 
+    struct membuf : std::streambuf {
+        membuf(char* begin, char* end) {
+            this->setg(begin, begin, end);
+        }
+    };
+
     {
         // Load simple mesh
+        membuf sbuf((char *)__ivy_mesh, (char *)__ivy_mesh + sizeof(__ivy_mesh));
+        std::istream in(&sbuf);
+
         MeshTest test;
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
@@ -179,7 +188,7 @@ void test_mesh() {
             return test.LoadMaterial(name, nullptr, &status, on_program_needed, on_texture_needed);
         };
 
-        ren::MeshRef m_ref = test.LoadMesh("ivy", __ivy_mesh, on_material_needed);
+        ren::MeshRef m_ref = test.LoadMesh("ivy", in, on_material_needed);
         require(m_ref->type() == ren::MeshSimple);
         require(std::string(m_ref->name()) == "ivy");
 
@@ -198,7 +207,7 @@ void test_mesh() {
         require(m_ref->strip(0).flags == ren::MeshHasAlpha);
 
         {
-            ren::MeshRef m_ref2 = test.LoadMesh("ivy", __ivy_mesh, on_material_needed);
+            ren::MeshRef m_ref2 = test.LoadMesh("ivy", in, on_material_needed);
             require(m_ref2);
         }
 
@@ -208,6 +217,9 @@ void test_mesh() {
 
     {
         // Load skeletal mesh
+        membuf sbuf((char *)__skeletal_mesh, (char *)__skeletal_mesh + sizeof(__skeletal_mesh));
+        std::istream in(&sbuf);
+
         MeshTest test;
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
@@ -232,7 +244,7 @@ void test_mesh() {
             return test.LoadMaterial(name, nullptr, &status, on_program_needed, on_texture_needed);
         };
 
-        ren::MeshRef m_ref = test.LoadMesh("test", __skeletal_mesh, on_material_needed);
+        ren::MeshRef m_ref = test.LoadMesh("test", in, on_material_needed);
         require(m_ref);
         require(m_ref->type() == ren::MeshSkeletal);
         require(std::string(m_ref->name()) == "test");
@@ -268,7 +280,7 @@ void test_mesh() {
         require(m_ref->skel()->bones[1].dirty == 1);
 
         {
-            ren::MeshRef m_ref2 = test.LoadMesh("test", __skeletal_mesh, on_material_needed);
+            ren::MeshRef m_ref2 = test.LoadMesh("test", in, on_material_needed);
             require(m_ref2);
         }
 

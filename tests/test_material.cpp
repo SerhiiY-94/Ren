@@ -111,7 +111,7 @@ void test_material() {
         require(std::string(t2->name()) == "metal_01.tga");
         require(std::string(t3->name()) == "checker.tga");
 
-        require(m_ref->param(0) == math::vec4(0, 1, 2, 3));
-        require(m_ref->param(1) == math::vec4(0.5f, 1.2f, 11, 15));
+        require(m_ref->param(0) == ren::Vec4f(0, 1, 2, 3));
+        require(m_ref->param(1) == ren::Vec4f(0.5f, 1.2f, 11, 15));
     }
 }

@@ -4,7 +4,7 @@
 
 #include <sys/Log.h>
 
-ren::MeshRef ren::Context::LoadMesh(const char *name, void *data, material_load_callback on_mat_load) {
+ren::MeshRef ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load) {
     MeshRef ref;
     for (auto it = meshes_.begin(); it != meshes_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {

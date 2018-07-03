@@ -8,6 +8,7 @@
 #include "Program.h"
 #include "Storage.h"
 #include "Texture.h"
+#include "Vec.h"
 
 namespace ren {
 enum eMaterialFlags { AlphaBlend = 1, DoubleSided = 2 };
@@ -23,7 +24,7 @@ class Material : public RefCounter {
     char            name_[32];
     ProgramRef      program_;
     Texture2DRef    textures_[4];
-    math::vec4      params_[8];
+    Vec4f           params_[8];
 
     void InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
                      const texture_load_callback &on_tex_load);
@@ -58,7 +59,7 @@ public:
     const Texture2DRef &texture(int i) const {
         return textures_[i];
     }
-    const math::vec4 &param(int i) const {
+    const Vec4f &param(int i) const {
         return params_[i];
     }
 

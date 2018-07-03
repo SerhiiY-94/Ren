@@ -97,7 +97,7 @@ void ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadS
             textures_[num_textures] = on_tex_load(texture_name.c_str());
             num_textures++;
         } else if (item == "param:") {
-            math::vec4 &par = params_[num_params++];
+            Vec4f &par = params_[num_params++];
             p = q + 1;
             q = strpbrk(p, delims);
             par[0] = (float)atof(p);
