@@ -50,16 +50,9 @@ void test_mat() {
 
         v3 = v1 * v2;
 
-        require(v3[0][0] == Approx(3.0f));
-        require(v3[0][1] == Approx(8.0f));
-        require(v3[1][0] == Approx(15.0f));
-        require(v3[1][1] == Approx(24.0f));
-
-        v3 = v1 / v2;
-
-        require(v3[0][0] == Approx(0.33333f));
-        require(v3[0][1] == Approx(0.5f));
-        require(v3[1][0] == Approx(0.6f));
-        require(v3[1][1] == Approx(0.66666f));
+        require(v3[0][0] == Approx(13.0f));
+        require(v3[0][1] == Approx(16.0f));
+        require(v3[1][0] == Approx(29.0f));
+        require(v3[1][1] == Approx(36.0f));
     }
 }

@@ -35,15 +35,15 @@ void test_vec() {
         require(v3[0] == Approx(-2.0f));
         require(v3[1] == Approx(-2.0f));
 
-        v3 = v1 * v2;
+        v3 = 2.0f * v1;
 
-        require(v3[0] == Approx(3.0f));
-        require(v3[1] == Approx(8.0f));
+        require(v3[0] == Approx(2.0f));
+        require(v3[1] == Approx(4.0f));
 
-        v3 = v1 / v2;
+        v3 = v1 / 2.0f;
 
-        require(v3[0] == Approx(0.33333f));
-        require(v3[1] == Approx(0.5f));
+        require(v3[0] == Approx(0.5f));
+        require(v3[1] == Approx(1.0f));
     }
 
     {
@@ -82,17 +82,17 @@ void test_vec() {
         require(v3[1] == Approx(-2.0f));
         require(v3[2] == Approx(-2.0f));
 
-        v3 = v1 * v2;
+        v3 = 2.0f * v1;
 
-        require(v3[0] == Approx(3.0f));
-        require(v3[1] == Approx(8.0f));
-        require(v3[2] == Approx(15.0f));
+        require(v3[0] == Approx(2.0f));
+        require(v3[1] == Approx(4.0f));
+        require(v3[2] == Approx(6.0f));
 
-        v3 = v1 / v2;
+        v3 = v1 / 2.0f;
 
-        require(v3[0] == Approx(0.33333f));
-        require(v3[1] == Approx(0.5f));
-        require(v3[2] == Approx(0.6f));
+        require(v3[0] == Approx(0.5f));
+        require(v3[1] == Approx(1.0f));
+        require(v3[2] == Approx(1.5f));
     }
 
     {
@@ -137,18 +137,18 @@ void test_vec() {
         require(v3[2] == Approx(-2.0f));
         require(v3[3] == Approx(-2.0f));
 
-        v3 = v1 * v2;
+        v3 = 2.0f * v1;
 
-        require(v3[0] == Approx(3.0f));
-        require(v3[1] == Approx(8.0f));
-        require(v3[2] == Approx(15.0f));
-        require(v3[3] == Approx(24.0f));
+        require(v3[0] == Approx(2.0f));
+        require(v3[1] == Approx(4.0f));
+        require(v3[2] == Approx(6.0f));
+        require(v3[3] == Approx(8.0f));
 
-        v3 = v1 / v2;
+        v3 = v1 / 2.0f;
 
-        require(v3[0] == Approx(0.33333f));
-        require(v3[1] == Approx(0.5f));
-        require(v3[2] == Approx(0.6f));
-        require(v3[3] == Approx(0.66666f));
+        require(v3[0] == Approx(0.5f));
+        require(v3[1] == Approx(1.0f));
+        require(v3[2] == Approx(1.5f));
+        require(v3[3] == Approx(2.0f));
     }
 }

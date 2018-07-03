@@ -54,16 +54,16 @@ namespace ren {
             return *this;
         }
 
-        Vec<T, N> &operator*=(const Vec<T, N> &rhs) {
+        Vec<T, N> &operator*=(T rhs) {
             for (int i = 0; i < N; i++) {
-                data_[i] *= rhs.data_[i];
+                data_[i] *= rhs;
             }
             return *this;
         }
 
-        Vec<T, N> &operator/=(const Vec<T, N> &rhs) {
+        Vec<T, N> &operator/=(T rhs) {
             for (int i = 0; i < N; i++) {
-                data_[i] /= rhs.data_[i];
+                data_[i] /= rhs;
             }
             return *this;
         }
@@ -92,18 +92,18 @@ namespace ren {
             return res;
         }
 
-        friend Vec<T, N> operator*(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
+        friend Vec<T, N> operator*(T lhs, const Vec<T, N> &rhs) {
             Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
-                res.data_[i] = lhs.data_[i] * rhs.data_[i];
+                res.data_[i] = lhs * rhs.data_[i];
             }
             return res;
         }
 
-        friend Vec<T, N> operator*(const T lhs, const Vec<T, N> &rhs) {
+        friend Vec<T, N> operator/(T lhs, const Vec<T, N> &rhs) {
             Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
-                res.data_[i] = lhs * rhs.data_[i];
+                res.data_[i] = lhs / rhs.data_[i];
             }
             return res;
         }
@@ -116,10 +116,10 @@ namespace ren {
             return res;
         }
 
-        friend Vec<T, N> operator/(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
+        friend Vec<T, N> operator/(const Vec<T, N> &lhs, const T &rhs) {
             Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
-                res.data_[i] = lhs.data_[i] / rhs.data_[i];
+                res.data_[i] = lhs.data_[i] / rhs;
             }
             return res;
         }

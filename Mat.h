@@ -36,9 +36,9 @@ namespace ren {
 
     template <typename T, int M, int N, int P>
     Mat<T, M, P> operator*(const Mat<T, M, N> &lhs, const Mat<T, N, P> &rhs) {
-        Mat<M, P> res = { Uninitialize };
+        Mat<T, M, P> res = { Uninitialize };
         for (int m = 0; m < M; m++) {
-            for (int p = 0; p < P, p++) {
+            for (int p = 0; p < P; p++) {
                 T sum = (T)0;
                 for (int n = 0; n < N; n++) {
                     sum += lhs[m][n] * rhs[n][p];
