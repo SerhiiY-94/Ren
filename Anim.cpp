@@ -5,23 +5,19 @@
 #pragma warning(disable : 4996)
 #endif
 
-ren::AnimSequence::AnimSequence(const char *name, void *data) {
+ren::AnimSequence::AnimSequence(const char *name, std::istream &data) {
     Init(name, data);
 }
 
-void ren::AnimSequence::Init(const char *name, void *data) {
+void ren::AnimSequence::Init(const char *name, std::istream &data) {
     strcpy(name_, name);
     if (!data) {
         ready_ = false;
         return;
     }
 
-#define READ_ADVANCE(dest, p, size) memcpy(dest, p, size); p += size;
-
-    char *p = (char *)data;
-
     char str[12];
-    READ_ADVANCE(str, p, 12);
+    data.read(str, 12);
     assert(strcmp(str, "ANIM_SEQUEN\0") == 0);
 
     enum {
@@ -40,7 +36,7 @@ void ren::AnimSequence::Init(const char *name, void *data) {
         ChunkPos p[3];
     } file_header;
 
-    READ_ADVANCE(&file_header, p, sizeof(file_header));
+    data.read((char *)&file_header, sizeof(file_header));
 
     size_t num_bones = (size_t)file_header.p[SKELETON_CHUNK].length / (64 + 64 + 4);
     bones_.resize(num_bones);
@@ -48,10 +44,10 @@ void ren::AnimSequence::Init(const char *name, void *data) {
     for (size_t i = 0; i < num_bones; i++) {
         bones_[i].id = (int)i;
         bones_[i].flags = 0;
-        READ_ADVANCE(bones_[i].name, p, 64);
-        READ_ADVANCE(bones_[i].parent_name, p, 64);
+        data.read(bones_[i].name, 64);
+        data.read(bones_[i].parent_name, 64);
         int has_translate_anim = 0;
-        READ_ADVANCE(&has_translate_anim, p, 4);
+        data.read((char *)&has_translate_anim, 4);
         if (has_translate_anim) bones_[i].flags |= AnimHasTranslate;
         bones_[i].offset = offset;
         if (has_translate_anim) {
@@ -61,12 +57,12 @@ void ren::AnimSequence::Init(const char *name, void *data) {
         }
     }
     frame_size_ = offset;
-    READ_ADVANCE(name_, p, 64);
-    READ_ADVANCE(&fps_, p, 4);
-    READ_ADVANCE(&len_, p, 4);
+    data.read(name_, 64);
+    data.read((char *)&fps_, 4);
+    data.read((char *)&len_, 4);
 
     frames_.resize(file_header.p[FRAMES_CHUNK].length / 4);
-    READ_ADVANCE(&frames_[0], p, (size_t)file_header.p[FRAMES_CHUNK].length);
+    data.read((char *)&frames_[0], (size_t)file_header.p[FRAMES_CHUNK].length);
 
     frame_dur_ = 1.0f / fps_;
     anim_dur_ = len_ * frame_dur_;

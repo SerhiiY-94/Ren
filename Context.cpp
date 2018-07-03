@@ -137,7 +137,7 @@ void ren::Context::ReleaseTextures() {
     textures_.Clear();
 }
 
-ren::AnimSeqRef ren::Context::LoadAnimSequence(const char *name, void *data) {
+ren::AnimSeqRef ren::Context::LoadAnimSequence(const char *name, std::istream &data) {
     AnimSeqRef ref;
     for (auto it = anims_.begin(); it != anims_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {

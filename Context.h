@@ -68,7 +68,7 @@ public:
     void ReleaseTextures();
 
     /*** Anims ***/
-    AnimSeqRef LoadAnimSequence(const char *name, void *data);
+    AnimSeqRef LoadAnimSequence(const char *name, std::istream &data);
     int NumAnimsNotReady();
     void ReleaseAnims();
 
