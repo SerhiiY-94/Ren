@@ -1,9 +1,7 @@
 
 #include "Anim.cpp"
-#include "Camera.cpp"
 #include "Context.cpp"
 #include "Material.cpp"
-#include "Matrices_old.cpp"
 #include "Mesh.cpp"
 #include "RenderThread.cpp"
 #include "Utils.cpp"

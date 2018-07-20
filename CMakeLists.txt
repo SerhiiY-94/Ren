@@ -24,15 +24,11 @@ ENDIF(WIN32)
 
 set(SOURCE_FILES Anim.h
                  Anim.cpp
-                 Camera.h
-                 Camera.cpp
                  Context.h
                  Context.cpp
                  Fwd.h
                  Material.h
                  Material.cpp
-                 Matrices_old.h
-                 Matrices_old.cpp
                  Mesh.h
                  Mesh.cpp
 				 MMat.h
