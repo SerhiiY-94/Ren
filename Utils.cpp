@@ -193,12 +193,17 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
         tri.score = v0.score + v1.score + v2.score;
 
         if (tri.score > next_best_score) {
-            if (tri.score > next_next_best_score) {
-                next_next_best_index = i / 3;
-                next_next_best_score = tri.score;
+            if (next_best_score > next_next_best_score) {
+                next_next_best_index = next_best_index;
+                next_next_best_score = next_best_score;
             }
             next_best_index = i / 3;
             next_best_score = tri.score;
+        }
+
+        if (tri.score > next_next_best_score) {
+            next_next_best_index = i / 3;
+            next_next_best_score = tri.score;
         }
     }
 
@@ -209,6 +214,7 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
 
         if (it == std::end(lru_cache)) {
             lru_cache.push_back(vtx_index);
+            it = std::begin(lru_cache);
         }
 
         if (it != std::begin(lru_cache)) {
@@ -252,12 +258,17 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
 
                 if (!tri.is_in_list) {
                     if (tri.score > next_best_score) {
-                        if (tri.score > next_next_best_score) {
-                            next_next_best_index = i / 3;
-                            next_next_best_score = tri.score;
+                        if (next_best_score > next_next_best_score) {
+                            next_next_best_index = next_best_index;
+                            next_next_best_score = next_best_score;
                         }
                         next_best_index = i / 3;
                         next_best_score = tri.score;
+                    }
+
+                    if (tri.score > next_next_best_score) {
+                        next_next_best_index = i / 3;
+                        next_next_best_score = tri.score;
                     }
                 }
             }
@@ -295,12 +306,17 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
                 tri.score = vertices[tri.indices[0]].score + vertices[tri.indices[1]].score + vertices[tri.indices[2]].score;
 
                 if (tri.score > next_best_score) {
-                    if (tri.score > next_next_best_score) {
-                        next_next_best_index = ti;
-                        next_next_best_score = tri.score;
+                    if (next_best_score > next_next_best_score) {
+                        next_next_best_index = next_best_index;
+                        next_next_best_score = next_best_score;
                     }
                     next_best_index = ti;
                     next_best_score = tri.score;
+                }
+
+                if (tri.score > next_next_best_score) {
+                    next_next_best_index = ti;
+                    next_next_best_score = tri.score;
                 }
             }
         }
