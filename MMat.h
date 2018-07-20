@@ -3,8 +3,150 @@
 #include "MVec.h"
 
 namespace ren {
+
     template <typename T, int M, int N>
-    using Mat = Vec<Vec<T, N>, M>;
+    class Mat : public Vec<Vec<T, N>, M> {
+    public:
+        Mat(eUninitialized) {}
+        Mat() : Mat(T(1)) {}
+        explicit Mat(T v) {
+            for (int i = 0; i < M; i++) {
+                data_[i][i] = v;
+            }
+        }
+
+        explicit Mat(const Mat<T, M - 1, N - 1> &v) {
+            for (int i = 0; i < M - 1; i++) {
+                for (int j = 0; j < N - 1; j++) {
+                    data_[i][j] = v[i][j];
+                }
+            }
+            data_[M - 1][N - 1] = T(1);
+        }
+
+        template <typename... Tail>
+        Mat(typename std::enable_if<sizeof...(Tail)+1 == M, Vec<T, N>>::type head, Tail... tail)
+            : Vec{ head, tail... } {
+        }
+
+        Vec<T, N> &operator[](int i) { return data_[i]; }
+        const Vec<T, N> &operator[](int i) const { return data_[i]; }
+
+        friend bool operator==(const Mat<T, M, N> &lhs, const Mat<T, M, N> &rhs) {
+            bool res = true;
+            for (int i = 0; i < M; i++) {
+                if (lhs[i] != rhs[i]) {
+                    res = false;
+                    break;
+                }
+            }
+            return res;
+        }
+
+        Mat<T, M, N> &operator+=(const Mat<T, M, N> &rhs) {
+            for (int i = 0; i < M; i++) {
+                data_[i] += rhs.data_[i];
+            }
+            return *this;
+        }
+
+        Mat<T, M, N> &operator-=(const Mat<T, M, N> &rhs) {
+            for (int i = 0; i < M; i++) {
+                data_[i] -= rhs.data_[i];
+            }
+            return *this;
+        }
+
+        Mat<T, M, N> &operator*=(const Mat<T, M, N> &rhs) {
+            (*this) = (*this) * rhs;
+            return *this;
+        }
+
+        Mat<T, M, N> &operator/=(const Mat<T, M, N> &rhs) {
+            for (int i = 0; i < M; i++) {
+                data_[i] /= rhs.data_[i];
+            }
+            return *this;
+        }
+
+        Mat<T, M, N> &operator*=(T rhs) {
+            for (int i = 0; i < M; i++) {
+                data_[i] *= rhs;
+            }
+            return *this;
+        }
+
+        Mat<T, M, N> &operator/=(T rhs) {
+            for (int i = 0; i < M; i++) {
+                data_[i] /= rhs;
+            }
+            return *this;
+        }
+
+        friend Mat<T, M, N> operator-(const Mat<T, M, N> &v) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = -v.data_[i];
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator+(const Mat<T, M, N> &lhs, const Mat<T, M, N> &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs.data_[i] + rhs.data_[i];
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator-(const Mat<T, M, N> &lhs, const Mat<T, M, N> &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs.data_[i] - rhs.data_[i];
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator/(const Mat<T, M, N> &lhs, const Mat<T, M, N> &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs.data_[i] / rhs.data_[i];
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator*(T lhs, const Mat<T, M, N> &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs * rhs.data_[i];
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator/(T lhs, const Mat<T, M, N> &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs / rhs.data_[i];
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator*(const Mat<T, M, N> &lhs, const T &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs.data_[i] * rhs;
+            }
+            return res;
+        }
+
+        friend Mat<T, M, N> operator/(const Mat<T, M, N> &lhs, const T &rhs) {
+            Mat<T, M, N> res = { Uninitialize };
+            for (int i = 0; i < M; i++) {
+                res.data_[i] = lhs.data_[i] / rhs;
+            }
+            return res;
+        }
+    };
 
     using Mat2f = Mat<float, 2, 2>;
     using Mat2d = Mat<double, 2, 2>;
@@ -14,7 +156,7 @@ namespace ren {
     using Mat4d = Mat<double, 4, 4>;
 
     template <typename T, int M, int N>
-    Vec<T, N> operator*(const Vec<T, M> &lhs, const Vec<Vec<T, N>, M> &rhs) {
+    Vec<T, N> operator*(const Vec<T, M> &lhs, const Mat<T, M, N> &rhs) {
         Vec<T, N> res = { uninitialize };
         for (int n = 0; n < N; n++) {
             T sum = (T)0;
@@ -27,8 +169,8 @@ namespace ren {
     }
 
     template <typename T, int M, int N>
-    Vec<T, M> operator*(const Vec<Vec<T, N>, M> &lhs, const Vec<T, N> &rhs) {
-        Vec<T, M> res = { uninitialize };
+    Vec<T, M> operator*(const Mat<T, M, N> &lhs, const Vec<T, N> &rhs) {
+        Vec<T, M> res = { Uninitialize };
         for (int m = 0; m < M; m++) {
             res[m] = Dot(lhs[m], rhs);
         }
@@ -195,7 +337,7 @@ namespace ren {
         T minor3 = mat[0][1] * r1r2 - mat[1][1] * r0r2 + mat[2][1] * r0r1;
         T det = mat[0][0] * minor0 - mat[1][0] * minor1 + mat[2][0] * minor2 - mat[3][0] * minor3;        T inv_det = T(1) / det;
 
-        Mat<T, 3, 3> res = { uninitialize };
+        Mat<T, 4, 4> res = { Uninitialize };
         res[0][0] = inv_det * minor0;
         res[0][1] = inv_det * -minor1;
         res[0][2] = inv_det * minor2;
@@ -237,4 +379,31 @@ namespace ren {
 
         return res;
     }
+
+    template <typename T>
+    Mat<T, 4, 4> Translate(const Mat<T, 4, 4> &m, const Vec<T, 3> &v) {
+        Mat<T, 4, 4> res = m;
+        res[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];
+        return res;
+    }
+
+    template <typename T, int M, int N>
+    const T *ValuePtr(const Mat<T, M, N> &v) {
+        return &v[0][0];
+    }
+
+    /*template <typename T>
+    Mat<T, 3, 3> MakeMat3(T v) {
+        return Mat<T, 3, 3>{ Vec<T, 3>{ v, T(0), T(0) },
+                             Vec<T, 3>{ T(0), v, T(0) },
+                             Vec<T, 3>{ T(0), T(0), v } };
+    }
+
+    template <typename T>
+    Mat<T, 4, 4> MakeMat4(T v) {
+        return Mat<T, 4, 4>{ Vec<T, 4>{ v,    T(0), T(0), T(0) },
+                             Vec<T, 4>{ T(0), v,    T(0), T(0) },
+                             Vec<T, 4>{ T(0), T(0), v,    T(0) },
+                             Vec<T, 4>{ T(0), T(0), T(0), v    } };
+    }*/
 }

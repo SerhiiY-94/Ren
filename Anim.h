@@ -6,7 +6,8 @@
 #include <istream>
 #include <vector>
 
-#include <math/math.hpp>
+#include "MMat.h"
+#include "MQuat.h"
 
 #include "Storage.h"
 
@@ -19,14 +20,12 @@ struct AnimBone {
     int         id = -1;
     int         offset = 0;
     uint32_t    flags = 0;
-    math::vec3  cur_pos;
-    math::quat  cur_rot;
+    Vec3f       cur_pos;
+    Quatf       cur_rot;
 
     AnimBone() {
         name[0] = parent_name[0] = '\0';
     }
-
-    static const size_t alignment = math::quat::alignment;
 };
 
 struct Bone;
@@ -39,7 +38,7 @@ class AnimSequence : public RefCounter {
     float       frame_dur_ = 0;
     float       anim_dur_ = 0;
     std::vector<float> frames_;
-    math::aligned_vector<AnimBone> bones_;
+    std::vector<AnimBone> bones_;
     bool        ready_ = false;
 
 public:
@@ -67,7 +66,7 @@ public:
 
     void Init(const char *name, std::istream &data);
 
-    std::vector<AnimBone *> LinkBones(math::aligned_vector<Bone, math::mat4::alignment> &bones);
+    std::vector<AnimBone *> LinkBones(std::vector<Bone> &bones);
     void Update(float delta, float *time);
     void InterpolateFrames(int fr_0, int fr_1, float t);
 };
@@ -86,17 +85,15 @@ struct Bone {
     int         id = -1;
     int         parent_id = -1;
     bool        dirty = false;
-    math::mat4  cur_matrix;
-    math::mat4  cur_comb_matrix;
-    math::mat4  bind_matrix;
-    math::mat4  inv_bind_matrix;
-    math::vec3  head_pos;
+    Mat4f       cur_matrix;
+    Mat4f       cur_comb_matrix;
+    Mat4f       bind_matrix;
+    Mat4f       inv_bind_matrix;
+    Vec3f       head_pos;
 
     Bone() {
         name[0] = '\0';
     }
-
-    static const size_t alignment = math::mat4::alignment;
 };
 
 struct BoneGroup {
@@ -105,12 +102,12 @@ struct BoneGroup {
 };
 
 struct Skeleton {
-    math::aligned_vector<Bone>          bones;
-    std::vector<AnimLink>               anims;
-    math::aligned_vector<math::mat4>    matr_palette;
-    std::vector<BoneGroup>              bone_groups;
+    std::vector<Bone>           bones;
+    std::vector<AnimLink>       anims;
+    std::vector<Mat4f>          matr_palette;
+    std::vector<BoneGroup>      bone_groups;
 
-    math::aligned_vector<Bone>::iterator bone(const char *name) {
+    std::vector<Bone>::iterator bone(const char *name) {
         auto b = bones.begin();
         for (; b != bones.end(); ++b) {
             if (strcmp(b->name, name) == 0) {
@@ -129,11 +126,11 @@ struct Skeleton {
         }
     }
 
-    math::vec3 bone_pos(const char *name);
-    math::vec3 bone_pos(int i);
+    Vec3f bone_pos(const char *name);
+    Vec3f bone_pos(int i);
 
-    void bone_matrix(const char *name, math::mat4 &mat);
-    void bone_matrix(int i, math::mat4 &mat);
+    void bone_matrix(const char *name, Mat4f &mat);
+    void bone_matrix(int i, Mat4f &mat);
 
     int AddAnimSequence(const AnimSeqRef &ref);
 

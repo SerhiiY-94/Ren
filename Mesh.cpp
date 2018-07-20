@@ -126,10 +126,10 @@ void ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
     data.seekg(32, std::ios::cur);
 
     float temp_f[3];
-    data.read((char *)&temp_f[0], sizeof(math::vec3));
-    bbox_min_ = math::make_vec3(temp_f);
-    data.read((char *)&temp_f[0], sizeof(math::vec3));
-    bbox_max_ = math::make_vec3(temp_f);
+    data.read((char *)&temp_f[0], sizeof(float) * 3);
+    bbox_min_ = MakeVec3(temp_f);
+    data.read((char *)&temp_f[0], sizeof(float) * 3);
+    bbox_max_ = MakeVec3(temp_f);
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -222,10 +222,10 @@ void ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
     data.seekg(32, std::ios::cur);
 
     float temp_f[3];
-    data.read((char *)&temp_f[0], sizeof(math::vec3));
-    bbox_min_ = math::make_vec3(temp_f);
-    data.read((char *)&temp_f[0], sizeof(math::vec3));
-    bbox_max_ = math::make_vec3(temp_f);
+    data.read((char *)&temp_f[0], sizeof(float) * 3);
+    bbox_min_ = MakeVec3(temp_f);
+    data.read((char *)&temp_f[0], sizeof(float) * 3);
+    bbox_max_ = MakeVec3(temp_f);
 
     attribs_size_ = file_header.p[VTX_ATTR_CHUNK].length + file_header.p[VTX_NDX_CHUNK].length * sizeof(float);
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -329,10 +329,10 @@ void ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
     data.seekg(32, std::ios::cur);
 
     float temp_f[3];
-    data.read((char *)&temp_f[0], sizeof(math::vec3));
-    bbox_min_ = math::make_vec3(temp_f);
-    data.read((char *)&temp_f[0], sizeof(math::vec3));
-    bbox_max_ = math::make_vec3(temp_f);
+    data.read((char *)&temp_f[0], sizeof(float) * 3);
+    bbox_min_ = MakeVec3(temp_f);
+    data.read((char *)&temp_f[0], sizeof(float) * 3);
+    bbox_max_ = MakeVec3(temp_f);
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -378,27 +378,28 @@ void ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
     bones.resize((size_t)num_bones);
     for (int i = 0; i < num_bones; i++) {
         float temp_f[4];
-        math::vec3 temp_v;
-        math::quat temp_q;
+        Vec3f temp_v;
+        Quatf temp_q;
         data.read(bones[i].name, 64);
         const char *cc = bones[i].name;
         data.read((char *)&bones[i].id, sizeof(int));
         data.read((char *)&bones[i].parent_id, sizeof(int));
 
-        data.read((char *)&temp_f[0], sizeof(math::vec3));
-        temp_v = math::make_vec3(&temp_f[0]);
-        bones[i].bind_matrix = math::translate(bones[i].bind_matrix, temp_v);
-        data.read((char *)&temp_f[0], sizeof(math::quat));
-        temp_q = math::make_quat(&temp_f[0]);
-        bones[i].bind_matrix *= math::to_mat4(temp_q);
-        bones[i].inv_bind_matrix = math::inverse(bones[i].bind_matrix);
+        data.read((char *)&temp_f[0], sizeof(float) * 3);
+        temp_v = MakeVec3(&temp_f[0]);
+        bones[i].bind_matrix = Translate(bones[i].bind_matrix, temp_v);
+        data.read((char *)&temp_f[0], sizeof(float) * 4);
+        temp_q = MakeQuat(&temp_f[0]);
+        bones[i].bind_matrix *= ToMat4(temp_q);
+        bones[i].inv_bind_matrix = Inverse(bones[i].bind_matrix);
 
         if (bones[i].parent_id != -1) {
             bones[i].cur_matrix = bones[bones[i].parent_id].inv_bind_matrix * bones[i].bind_matrix;
-            bones[i].head_pos = math::vec3(bones[bones[i].parent_id].inv_bind_matrix * bones[i].bind_matrix[3]);
+            Vec4f pos = bones[bones[i].parent_id].inv_bind_matrix * bones[i].bind_matrix[3];
+            bones[i].head_pos = MakeVec3(&pos[0]);
         } else {
             bones[i].cur_matrix = bones[i].bind_matrix;
-            bones[i].head_pos = math::vec3(bones[i].bind_matrix[3]);
+            bones[i].head_pos = MakeVec3(&bones[i].bind_matrix[3][0]);
         }
         bones[i].cur_comb_matrix = bones[i].cur_matrix;
         bones[i].dirty = true;

@@ -188,8 +188,8 @@ void test_mesh() {
         require(m_ref->type() == ren::MeshSimple);
         require(std::string(m_ref->name()) == "ivy");
 
-        require(m_ref->bbox_min() == math::vec3(-10.389862f, -220.607803f, -441.704651f));
-        require(m_ref->bbox_max() == math::vec3(83.354584f, 179.815552f, 441.704651f));
+        require(m_ref->bbox_min() == ren::Vec3f(-10.389862f, -220.607803f, -441.704651f));
+        require(m_ref->bbox_max() == ren::Vec3f(83.354584f, 179.815552f, 441.704651f));
 
         require(m_ref->strip(0).offset != -1);
         require(m_ref->strip(1).offset == -1);
@@ -245,12 +245,12 @@ void test_mesh() {
         require(m_ref->type() == ren::MeshSkeletal);
         require(std::string(m_ref->name()) == "test");
 
-        require(m_ref->bbox_min().x == Approx(0).epsilon(0.01));
-        require(m_ref->bbox_min().y == Approx(0).epsilon(0.01));
-        require(m_ref->bbox_min().z == Approx(-5).epsilon(0.01));
-        require(m_ref->bbox_max().x == Approx(0).epsilon(0.01));
-        require(m_ref->bbox_max().y == Approx(20).epsilon(0.01));
-        require(m_ref->bbox_max().z == Approx(5).epsilon(0.01));
+        require(m_ref->bbox_min()[0] == Approx(0).epsilon(0.01));
+        require(m_ref->bbox_min()[1] == Approx(0).epsilon(0.01));
+        require(m_ref->bbox_min()[2] == Approx(-5).epsilon(0.01));
+        require(m_ref->bbox_max()[0] == Approx(0).epsilon(0.01));
+        require(m_ref->bbox_max()[1] == Approx(20).epsilon(0.01));
+        require(m_ref->bbox_max()[2] == Approx(5).epsilon(0.01));
 
         require(m_ref->strip(0).offset != -1);
         require(m_ref->strip(1).offset == -1);

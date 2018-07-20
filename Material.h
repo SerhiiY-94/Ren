@@ -69,6 +69,6 @@ public:
               const texture_load_callback &on_tex_load);
 };
 
-//typedef StorageRef<Material, mat_container> MaterialRef;
-typedef Storage<Material, mat_container> MaterialStorage;
+//typedef StorageRef<Material> MaterialRef;
+typedef Storage<Material> MaterialStorage;
 }

@@ -70,7 +70,7 @@ void ren::AnimSequence::Init(const char *name, std::istream &data) {
     ready_ = true;
 }
 
-std::vector<ren::AnimBone *> ren::AnimSequence::LinkBones(math::aligned_vector<Bone> &_bones) {
+std::vector<ren::AnimBone *> ren::AnimSequence::LinkBones(std::vector<Bone> &_bones) {
     std::vector<AnimBone *> anim_bones;
     anim_bones.reserve(_bones.size());
     for (size_t i = 0; i < _bones.size(); i++) {
@@ -100,12 +100,12 @@ void ren::AnimSequence::Update(float delta, float *time) {
     while (*time < 0.0f)*time += anim_dur_;
 
     float frame = *time * (float)fps_;
-    int fr_0 = (int)math::floor(frame);
-    int fr_1 = (int)math::ceil(frame);
+    int fr_0 = (int)std::floor(frame);
+    int fr_1 = (int)std::ceil(frame);
 
     fr_0 = fr_0 % len_;
     fr_1 = fr_1 % len_;
-    float t = math::mod(*time, frame_dur_) / frame_dur_;
+    float t = std::remainder(*time, frame_dur_) / frame_dur_;
     InterpolateFrames(fr_0, fr_1, t);
 }
 
@@ -113,23 +113,23 @@ void ren::AnimSequence::InterpolateFrames(int fr_0, int fr_1, float t) {
     for (size_t i = 0; i < bones_.size(); i++) {
         int offset = bones_[i].offset;
         if (bones_[i].flags & AnimHasTranslate) {
-            math::vec3 p1 = math::make_vec3(&frames_[fr_0 * frame_size_ + offset]);
-            math::vec3 p2 = math::make_vec3(&frames_[fr_1 * frame_size_ + offset]);
-            bones_[i].cur_pos = math::mix(p1, p2, t);
+            Vec3f p1 = MakeVec3(&frames_[fr_0 * frame_size_ + offset]);
+            Vec3f p2 = MakeVec3(&frames_[fr_1 * frame_size_ + offset]);
+            bones_[i].cur_pos = Mix(p1, p2, t);
             offset += 3;
         }
-        math::quat q1 = math::make_quat(&frames_[fr_0 * frame_size_ + offset]);
-        math::quat q2 = math::make_quat(&frames_[fr_1 * frame_size_ + offset]);
-        bones_[i].cur_rot = math::mix(q1, q2, t);
+        Quatf q1 = MakeQuat(&frames_[fr_0 * frame_size_ + offset]);
+        Quatf q2 = MakeQuat(&frames_[fr_1 * frame_size_ + offset]);
+        bones_[i].cur_rot = Mix(q1, q2, t);
     }
 }
 
 // skeleton
 
-math::vec3 ren::Skeleton::bone_pos(const char *name) {
+ren::Vec3f ren::Skeleton::bone_pos(const char *name) {
     auto b = bone(name);
-    math::vec3 ret;
-    const float *m = math::value_ptr(b->cur_comb_matrix);
+    Vec3f ret;
+    const float *m = ValuePtr(b->cur_comb_matrix);
     /*ret[0] = -(m[0] * m[12] + m[1] * m[13] + m[2] * m[14]);
     ret[1] = -(m[4] * m[12] + m[5] * m[13] + m[6] * m[14]);
     ret[2] = -(m[8] * m[12] + m[9] * m[13] + m[10] * m[14]);*/
@@ -141,10 +141,10 @@ math::vec3 ren::Skeleton::bone_pos(const char *name) {
     return ret;
 }
 
-math::vec3 ren::Skeleton::bone_pos(int i) {
+ren::Vec3f ren::Skeleton::bone_pos(int i) {
     auto b = &bones[i];
-    math::vec3 ret;
-    const float *m = math::value_ptr(b->cur_comb_matrix);
+    Vec3f ret;
+    const float *m = ValuePtr(b->cur_comb_matrix);
     /*ret[0] = -(m[0] * m[12] + m[1] * m[13] + m[2] * m[14]);
     ret[1] = -(m[4] * m[12] + m[5] * m[13] + m[6] * m[14]);
     ret[2] = -(m[8] * m[12] + m[9] * m[13] + m[10] * m[14]);*/
@@ -156,14 +156,14 @@ math::vec3 ren::Skeleton::bone_pos(int i) {
     return ret;
 }
 
-void ren::Skeleton::bone_matrix(const char *name, math::mat4 &mat) {
+void ren::Skeleton::bone_matrix(const char *name, Mat4f &mat) {
     auto b = bone(name);
     UpdateBones();
     assert(b != bones.end());
     mat = b->cur_comb_matrix;
 }
 
-void ren::Skeleton::bone_matrix(int i, math::mat4 &mat) {
+void ren::Skeleton::bone_matrix(int i, Mat4f &mat) {
     UpdateBones();
     mat = bones[i].cur_comb_matrix;
 }
@@ -202,13 +202,13 @@ void ren::Skeleton::MarkChildren() {
 void ren::Skeleton::ApplyAnim(int id) {
     for (size_t i = 0; i < bones.size(); i++) {
         if (anims[id].anim_bones[i]) {
-            math::mat4 m(1.0f);
+            Mat4f m = Mat4f{ 1.0f };
             if (anims[id].anim_bones[i]->flags & AnimHasTranslate) {
-                m = math::translate(m, anims[id].anim_bones[i]->cur_pos);
+                m = Translate(m, anims[id].anim_bones[i]->cur_pos);
             } else {
-                m = math::translate(m, bones[i].head_pos);
+                m = Translate(m, bones[i].head_pos);
             }
-            m *= math::to_mat4(anims[id].anim_bones[i]->cur_rot);
+            m *= ToMat4(anims[id].anim_bones[i]->cur_rot);
             bones[i].cur_matrix = m;
             bones[i].dirty = true;
         }
@@ -219,9 +219,9 @@ void ren::Skeleton::ApplyAnim(int id) {
 void ren::Skeleton::ApplyAnim(int anim_id1, int anim_id2, float t) {
     for (size_t i = 0; i < bones.size(); i++) {
         if (anims[anim_id1].anim_bones[i] || anims[anim_id2].anim_bones[i]) {
-            math::mat4 m(1.0f);
-            math::vec3 pos;
-            math::quat orient;
+            Mat4f m(1.0f);
+            Vec3f pos;
+            Quatf orient;
             if (anims[anim_id1].anim_bones[i]) {
                 if (anims[anim_id1].anim_bones[i]->flags & AnimHasTranslate) {
                     pos = anims[anim_id1].anim_bones[i]->cur_pos;
@@ -232,12 +232,12 @@ void ren::Skeleton::ApplyAnim(int anim_id1, int anim_id2, float t) {
             }
             if (anims[anim_id2].anim_bones[i]) {
                 if (anims[anim_id2].anim_bones[i]->flags & AnimHasTranslate) {
-                    pos = math::mix(pos, anims[anim_id2].anim_bones[i]->cur_pos, t);
+                    pos = Mix(pos, anims[anim_id2].anim_bones[i]->cur_pos, t);
                 }
-                orient = math::slerp(orient, anims[anim_id2].anim_bones[i]->cur_rot, t);
+                orient = Slerp(orient, anims[anim_id2].anim_bones[i]->cur_rot, t);
             }
-            m = math::translate(m, pos);
-            m *= math::to_mat4(orient);
+            m = Translate(m, pos);
+            m *= ToMat4(orient);
             bones[i].cur_matrix = m;
             bones[i].dirty = true;
         }

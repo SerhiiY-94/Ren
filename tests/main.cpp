@@ -13,8 +13,6 @@ void test_sparse_array();
 void test_vec();
 
 int main() {
-    math::init();
-
     test_anim();
     test_mat();
     test_material();

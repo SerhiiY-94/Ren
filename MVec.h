@@ -5,6 +5,7 @@ namespace ren {
 
 	template <typename T, int N>
     class Vec {
+    protected:
         T data_[N];
     public:
         Vec(eUninitialized) {}
@@ -93,6 +94,22 @@ namespace ren {
             return res;
         }
 
+        friend Vec<T, N> operator*(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
+            Vec<T, N> res = { Uninitialize };
+            for (int i = 0; i < N; i++) {
+                res.data_[i] = lhs.data_[i] * rhs.data_[i];
+            }
+            return res;
+        }
+
+        friend Vec<T, N> operator/(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
+            Vec<T, N> res = { Uninitialize };
+            for (int i = 0; i < N; i++) {
+                res.data_[i] = lhs.data_[i] / rhs.data_[i];
+            }
+            return res;
+        }
+
         friend Vec<T, N> operator*(T lhs, const Vec<T, N> &rhs) {
             Vec<T, N> res = { Uninitialize };
             for (int i = 0; i < N; i++) {
@@ -168,6 +185,9 @@ namespace ren {
         Vec<T, N> temp = lhs - rhs;
         return Dot(temp, temp);
     }
+
+    template <typename T, typename S>
+    T Mix(const T &x, const T &y, const S &a) { return x * (S(1) - a) + y * a; }
 
     template <typename T, int N>
     const T *ValuePtr(const Vec<T, N> &v) {

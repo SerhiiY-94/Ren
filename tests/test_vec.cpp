@@ -35,6 +35,16 @@ void test_vec() {
         require(v3[0] == Approx(-2.0f));
         require(v3[1] == Approx(-2.0f));
 
+        v3 = v1 * v2;
+
+        require(v3[0] == Approx(3.0f));
+        require(v3[1] == Approx(8.0f));
+
+        v3 = v1 / v2;
+
+        require(v3[0] == Approx(1.0f/3.0f));
+        require(v3[1] == Approx(2.0f/4.0f));
+
         v3 = 2.0f * v1;
 
         require(v3[0] == Approx(2.0f));
@@ -81,6 +91,18 @@ void test_vec() {
         require(v3[0] == Approx(-2.0f));
         require(v3[1] == Approx(-2.0f));
         require(v3[2] == Approx(-2.0f));
+
+        v3 = v1 * v2;
+
+        require(v3[0] == Approx(3.0f));
+        require(v3[1] == Approx(8.0f));
+        require(v3[2] == Approx(15.0f));
+
+        v3 = v1 / v2;
+
+        require(v3[0] == Approx(1.0f/3.0f));
+        require(v3[1] == Approx(2.0f/4.0f));
+        require(v3[2] == Approx(3.0f/5.0f));
 
         v3 = 2.0f * v1;
 
@@ -136,6 +158,20 @@ void test_vec() {
         require(v3[1] == Approx(-2.0f));
         require(v3[2] == Approx(-2.0f));
         require(v3[3] == Approx(-2.0f));
+
+        v3 = v1 * v2;
+
+        require(v3[0] == Approx(3.0f));
+        require(v3[1] == Approx(8.0f));
+        require(v3[2] == Approx(15.0f));
+        require(v3[3] == Approx(24.0f));
+
+        v3 = v1 / v2;
+
+        require(v3[0] == Approx(1.0f/3.0f));
+        require(v3[1] == Approx(2.0f/4.0f));
+        require(v3[2] == Approx(3.0f/5.0f));
+        require(v3[3] == Approx(4.0f/6.0f));
 
         v3 = 2.0f * v1;
 

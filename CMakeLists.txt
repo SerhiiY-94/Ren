@@ -86,6 +86,6 @@ list(APPEND ALL_SOURCE_FILES _ren.cpp)
 source_group("src" FILES _ren.cpp)
 
 add_library(ren STATIC ${ALL_SOURCE_FILES})
-target_link_libraries(ren ${LIBS} math)
+target_link_libraries(ren ${LIBS})
 
 add_subdirectory(tests)

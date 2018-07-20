@@ -49,7 +49,7 @@ class Mesh : public RefCounter {
     std::shared_ptr<void> indices_;
     size_t          indices_size_ = 0;
     std::array<TriStrip, 16>    strips_;
-    math::vec3      bbox_min_, bbox_max_;
+    Vec3f           bbox_min_, bbox_max_;
     char            name_[32];
 
     Skeleton        skel_;
@@ -106,10 +106,10 @@ public:
     const TriStrip &strip(int i) const {
         return strips_[i];
     }
-    const math::vec3 &bbox_min() const {
+    const Vec3f &bbox_min() const {
         return bbox_min_;
     }
-    const math::vec3 &bbox_max() const {
+    const Vec3f &bbox_max() const {
         return bbox_max_;
     }
     const char *name() const {
@@ -125,6 +125,6 @@ public:
     static int max_gpu_bones;
 };
 
-typedef StorageRef<Mesh, mesh_container> MeshRef;
-typedef Storage<Mesh, mesh_container> MeshStorage;
+typedef StorageRef<Mesh> MeshRef;
+typedef Storage<Mesh> MeshStorage;
 }
