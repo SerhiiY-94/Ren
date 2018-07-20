@@ -1,5 +1,7 @@
 #include "test_common.h"
 
+#include "membuf.h"
+
 #include "../Context.h"
 #include "../Mesh.h"
 
@@ -153,15 +155,9 @@ unsigned int __skeletal_mesh_len = 802;
 
 void test_mesh() {
 
-    struct membuf : std::streambuf {
-        membuf(char* begin, char* end) {
-            this->setg(begin, begin, end);
-        }
-    };
-
     {
         // Load simple mesh
-        membuf sbuf((char *)__ivy_mesh, (char *)__ivy_mesh + sizeof(__ivy_mesh));
+        membuf sbuf(__ivy_mesh, sizeof(__ivy_mesh));
         std::istream in(&sbuf);
 
         MeshTest test;
@@ -217,7 +213,7 @@ void test_mesh() {
 
     {
         // Load skeletal mesh
-        membuf sbuf((char *)__skeletal_mesh, (char *)__skeletal_mesh + sizeof(__skeletal_mesh));
+        membuf sbuf(__skeletal_mesh, sizeof(__skeletal_mesh));
         std::istream in(&sbuf);
 
         MeshTest test;

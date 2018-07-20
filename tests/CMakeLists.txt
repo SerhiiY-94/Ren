@@ -21,6 +21,7 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 set(SOURCE_FILES main.cpp
+				 membuf.h
                  test_anim.cpp
                  test_common.h
 				 test_mat.cpp

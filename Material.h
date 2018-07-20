@@ -8,7 +8,8 @@
 #include "Program.h"
 #include "Storage.h"
 #include "Texture.h"
-#include "Vec.h"
+
+#include "MVec.h"
 
 namespace ren {
 enum eMaterialFlags { AlphaBlend = 1, DoubleSided = 2 };

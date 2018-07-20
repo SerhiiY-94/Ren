@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "membuf.h"
+
 #include "../Anim.h"
 #include "../Context.h"
 
@@ -55,16 +57,10 @@ unsigned int __anim_len = 508;
 }
 
 void test_anim() {
-    struct membuf : std::streambuf {
-        membuf(char* begin, char* end) {
-            this->setg(begin, begin, end);
-        }
-    };
-
     {
         // Load anim
 
-        membuf sbuf((char *)__anim, (char *)__anim + sizeof(__anim));
+        membuf sbuf(__anim, sizeof(__anim));
         std::istream in(&sbuf);
 
         ren::Context ctx;

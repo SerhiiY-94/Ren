@@ -227,7 +227,7 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
         for (size_t i = 0; i < lru_cache.size(); i++) {
             auto &v = vertices[lru_cache[i]];
 
-            v.cache_pos = i;
+            v.cache_pos = (int32_t)i;
             v.score = get_vertex_score(v.cache_pos, v.active_tris_count);
 
             for (uint32_t j = 0; j < v.ref_count; j++) {
@@ -242,12 +242,12 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
         }
     };
 
-    for (int32_t out_index = 0; out_index < indices_count; ) {
+    for (int32_t out_index = 0; out_index < (int32_t)indices_count; ) {
         if (next_best_index < 0) {
             next_best_score = next_next_best_score = -1.0f;
             next_best_index = next_next_best_index = -1;
 
-            for (int32_t i = 0; i < prim_count; i++) {
+            for (int32_t i = 0; i < (int32_t)prim_count; i++) {
                 auto &tri = triangles[i];
 
                 if (!tri.is_in_list) {

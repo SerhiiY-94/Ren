@@ -29,13 +29,15 @@ set(SOURCE_FILES Anim.h
                  Context.h
                  Context.cpp
                  Fwd.h
-				 Mat.h
                  Material.h
                  Material.cpp
                  Matrices_old.h
                  Matrices_old.cpp
                  Mesh.h
                  Mesh.cpp
+				 MMat.h
+				 MQuat.h
+				 MVec.h
                  Program.h
                  RenderThread.h
                  RenderThread.cpp
@@ -44,8 +46,7 @@ set(SOURCE_FILES Anim.h
                  Storage.h
                  Texture.h
                  Utils.h
-                 Utils.cpp
-				 Vec.h)
+                 Utils.cpp)
 
 if(${RENDERER} STREQUAL "GL")
     set(SOURCE_FILES ${SOURCE_FILES}

@@ -1,6 +1,6 @@
 #include "test_common.h"
 
-#include "../Vec.h"
+#include "../MVec.h"
 
 void test_vec() {
     using namespace ren;

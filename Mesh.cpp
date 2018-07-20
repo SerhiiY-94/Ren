@@ -512,7 +512,7 @@ void ren::Mesh::SplitMesh(int bones_limit) {
                     best_fit->strip_ids[best_fit->strip_ids.size() - 1] - 0 == i) {
                 best_fit->strip_ids[best_fit->strip_ids.size() - 1]++;
             } else {
-                best_fit->strip_ids.push_back(s);
+                best_fit->strip_ids.push_back((int)s);
                 if ((i - strips_[s].offset / 2) % 2 == 0) {
                     best_fit->strip_ids.push_back(i);
                 } else {
