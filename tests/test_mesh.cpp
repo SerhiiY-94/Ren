@@ -285,14 +285,4 @@ void test_mesh() {
         require(mat_ref);
         require(!mat_ref->ready());
     }
-
-    {
-        uint32_t indices[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-        const int indices_count = sizeof(indices) / sizeof(indices[0]);
-        uint32_t res_indices[indices_count];
-
-        ren::ReorderTriangleIndices(&indices[0], indices_count, 9, &res_indices[0]);
-
-        __debugbreak();
-    }
 }

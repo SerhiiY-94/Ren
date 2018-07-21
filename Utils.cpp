@@ -262,12 +262,12 @@ void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
                             next_next_best_index = next_best_index;
                             next_next_best_score = next_best_score;
                         }
-                        next_best_index = i / 3;
+                        next_best_index = i;
                         next_best_score = tri.score;
                     }
 
                     if (tri.score > next_next_best_score) {
-                        next_next_best_index = i / 3;
+                        next_next_best_index = i;
                         next_next_best_score = tri.score;
                     }
                 }
