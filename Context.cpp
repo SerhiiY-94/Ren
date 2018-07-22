@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include <sys/Log.h>
+#include <Sys/Log.h>
 
 Ren::MeshRef Ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load) {
     MeshRef ref;
