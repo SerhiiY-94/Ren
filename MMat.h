@@ -184,7 +184,7 @@ namespace Ren {
             for (int p = 0; p < P; p++) {
                 T sum = (T)0;
                 for (int n = 0; n < N; n++) {
-                    sum += lhs[m][n] * rhs[n][p];
+                    sum += rhs[m][n] * lhs[n][p];
                 }
                 res[m][p] = sum;
             }
@@ -383,7 +383,7 @@ namespace Ren {
     template <typename T>
     Mat<T, 4, 4> Translate(const Mat<T, 4, 4> &m, const Vec<T, 3> &v) {
         Mat<T, 4, 4> res = m;
-        res[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];
+        res[3] += m[0] * v[0] + m[1] * v[1] + m[2] * v[2];
         return res;
     }
 
@@ -475,10 +475,10 @@ namespace Ren {
     }
 
     template <typename T>
-    void PerspectiveProjection(Mat<T, 4, 4> &m, float fov, T aspect, T znear, T zfar) {
+    void PerspectiveProjection(Mat<T, 4, 4> &m, T fov, T aspect, T znear, T zfar) {
         const T Pi = T(3.1415926535897932384626433832795);
 
-        T xymax = znear * std::tan(fov * Pi / 360);
+        T xymax = znear * std::tan(fov * Pi / T(360));
         T ymin = -xymax;
         T xmin = -xymax;
 

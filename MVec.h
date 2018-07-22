@@ -159,9 +159,9 @@ namespace Ren {
 
     template <typename T>
     Vec<T, 3> Cross(const Vec<T, 3> &lhs, const Vec<T, 3> &rhs) {
-        return Vec<T, 3> { lhs[1] * rhs[2] - rhs[1] * lhs[2],
-                           rhs[0] * lhs[2] - lhs[0] * rhs[2],
-                           lhs[0] * rhs[1] - rhs[0] * lhs[1] };
+        return Vec<T, 3> { lhs[1] * rhs[2] - lhs[2] * rhs[1],
+                           lhs[2] * rhs[0] - lhs[0] * rhs[2],
+                           lhs[0] * rhs[1] - lhs[1] * rhs[0] };
     }
 
     template <typename T, int N>
