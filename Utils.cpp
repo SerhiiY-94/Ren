@@ -332,3 +332,111 @@ void Ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count
         }
     }
 }
+
+void Ren::ComputeTextureBasis(std::vector<vertex_t> &vertices, std::vector<uint32_t> &new_vtx_indices,
+                              const uint32_t *indices, size_t indices_count) {
+    const float flt_eps = 0.0000001f;
+
+    std::vector<std::array<uint32_t, 3>> twin_verts(vertices.size(), { 0, 0, 0 });
+    std::vector<Vec3f> binormals(vertices.size());
+    for (size_t i = 0; i < indices_count; i += 3) {
+        auto *v0 = &vertices[indices[i + 0]];
+        auto *v1 = &vertices[indices[i + 1]];
+        auto *v2 = &vertices[indices[i + 2]];
+
+        auto &b0 = binormals[indices[i + 0]];
+        auto &b1 = binormals[indices[i + 1]];
+        auto &b2 = binormals[indices[i + 2]];
+
+        Vec3f dp1 = MakeVec3(v1->p) - MakeVec3(v0->p);
+        Vec3f dp2 = MakeVec3(v2->p) - MakeVec3(v0->p);
+
+        Vec2f dt1 = MakeVec2(v1->t0) - MakeVec2(v0->t0);
+        Vec2f dt2 = MakeVec2(v2->t0) - MakeVec2(v0->t0);
+
+        float det = dt1[0] * dt2[1] - dt1[1] * dt2[0];
+        float inv_det = std::abs(det) > flt_eps ? 1.0f / det : 0;
+        Vec3f tangent = (dp1 * dt2[1] - dp2 * dt1[1]) * inv_det;
+        Vec3f binormal = (dp2 * dt1[0] - dp1 * dt2[0]) * inv_det;
+
+        int i1 = v0->b[0] * tangent[0] + v0->b[1] * tangent[1] + v0->b[2] * tangent[2] < 0;
+        int i2 = 2 * (b0[0] * binormal[0] + b0[1] * binormal[1] + b0[2] * binormal[2] < 0);
+
+        if (i1 || i2) {
+            uint32_t index = twin_verts[indices[i + 0]][i1 + i2 - 1];
+            if (index == 0) {
+                index = (uint32_t)(vertices.size());
+                vertices.push_back(*v0);
+                memset(&vertices.back().b[0], 0, 3 * sizeof(float));
+                twin_verts[indices[i + 0]][i1 + i2 - 1] = index;
+
+                v1 = &vertices[indices[i + 1]];
+                v2 = &vertices[indices[i + 2]];
+            }
+            new_vtx_indices[i] = index;
+            v0 = &vertices[index];
+        } else {
+            b0 = binormal;
+        }
+
+        v0->b[0] += tangent[0];
+        v0->b[1] += tangent[1];
+        v0->b[2] += tangent[2];
+
+        i1 = v1->b[0] * tangent[0] + v1->b[1] * tangent[1] + v1->b[2] * tangent[2] < 0;
+        i2 = 2 * (b1[0] * binormal[0] + b1[1] * binormal[1] + b1[2] * binormal[2] < 0);
+
+        if (i1 || i2) {
+            uint32_t index = twin_verts[indices[i + 1]][i1 + i2 - 1];
+            if (index == 0) {
+                index = (uint32_t)(vertices.size());
+                vertices.push_back(*v1);
+                memset(&vertices.back().b[0], 0, 3 * sizeof(float));
+                twin_verts[indices[i + 1]][i1 + i2 - 1] = index;
+
+                v0 = &vertices[indices[i + 0]];
+                v2 = &vertices[indices[i + 2]];
+            }
+            new_vtx_indices[i + 1] = index;
+            v1 = &vertices[index];
+        } else {
+            b1 = binormal;
+        }
+
+        v1->b[0] += tangent[0];
+        v1->b[1] += tangent[1];
+        v1->b[2] += tangent[2];
+
+        i1 = v2->b[0] * tangent[0] + v2->b[1] * tangent[1] + v2->b[2] * tangent[2] < 0;
+        i2 = 2 * (b2[0] * binormal[0] + b2[1] * binormal[1] + b2[2] * binormal[2] < 0);
+
+        if (i1 || i2) {
+            uint32_t index = twin_verts[indices[i + 2]][i1 + i2 - 1];
+            if (index == 0) {
+                index = (uint32_t)(vertices.size());
+                vertices.push_back(*v2);
+                memset(&vertices.back().b[0], 0, 3 * sizeof(float));
+                twin_verts[indices[i + 2]][i1 + i2 - 1] = index;
+
+                v0 = &vertices[indices[i + 0]];
+                v1 = &vertices[indices[i + 1]];
+            }
+            new_vtx_indices[i + 2] = index;
+            v2 = &vertices[index];
+        } else {
+            b2 = binormal;
+        }
+
+        v2->b[0] += tangent[0];
+        v2->b[1] += tangent[1];
+        v2->b[2] += tangent[2];
+    }
+
+    for (auto &v : vertices) {
+        if (std::abs(v.b[0]) > flt_eps || std::abs(v.b[1]) > flt_eps || std::abs(v.b[2]) > flt_eps) {
+            Vec3f tangent = MakeVec3(v.b);
+            Vec3f binormal = Normalize(Cross(MakeVec3(v.n), tangent));
+            memcpy(&v.b[0], &binormal[0], 3 * sizeof(float));
+        }
+    }
+}
