@@ -152,7 +152,7 @@ namespace Ren {
     T Dot(const Vec<T, N> &lhs, const Vec<T, N> &rhs) {
         T res = lhs[0] * rhs[0];
         for (int i = 1; i < N; i++) {
-            res += lhs[1] * rhs[1];
+            res += lhs[i] * rhs[i];
         }
         return res;
     }
