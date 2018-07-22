@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(TestRen)
+project(test_Ren)
 
 IF(WIN32)
     IF(SDL_STATIC)
@@ -43,5 +43,5 @@ elseif(${RENDERER} STREQUAL "VK")
 
 endif()
 
-add_executable(TestRen ${SOURCE_FILES})
-target_link_libraries(TestRen ${LIBS} Ren)
+add_executable(test_Ren ${SOURCE_FILES})
+target_link_libraries(test_Ren ${LIBS} Ren)
