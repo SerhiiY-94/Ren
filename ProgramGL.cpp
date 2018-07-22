@@ -7,22 +7,22 @@
 #pragma warning(disable : 4996)
 #endif
 
-namespace ren {
+namespace Ren {
 GLuint LoadShader(GLenum shader_type, const char *source);
 }
 
-ren::Program::Program(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
+Ren::Program::Program(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
     Init(name, vs_source, fs_source, status);
 }
 
-ren::Program::~Program() {
+Ren::Program::~Program() {
     if (prog_id_) {
         GLuint prog = (GLuint)prog_id_;
         glDeleteProgram(prog);
     }
 }
 
-ren::Program &ren::Program::operator=(Program &&rhs) {
+Ren::Program &Ren::Program::operator=(Program &&rhs) {
     RefCounter::operator=(std::move(rhs));
 
     if (prog_id_) {
@@ -42,12 +42,12 @@ ren::Program &ren::Program::operator=(Program &&rhs) {
     return *this;
 }
 
-void ren::Program::Init(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
+void Ren::Program::Init(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
     strcpy(name_, name);
     InitFromGLSL(name, vs_source, fs_source, status);
 }
 
-void ren::Program::InitFromGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
+void Ren::Program::InitFromGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
     if (!vs_source || !fs_source) {
         if (status) *status = ProgSetToDefault;
         return;
@@ -239,7 +239,7 @@ SECOND_PASS:
     if (status) *status = ProgCreatedFromData;
 }
 
-GLuint ren::LoadShader(GLenum shader_type, const char *source) {
+GLuint Ren::LoadShader(GLenum shader_type, const char *source) {
     GLuint shader = glCreateShader(shader_type);
     if (shader) {
         glShaderSource(shader, 1, &source, NULL);

@@ -13,7 +13,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-namespace ren {
+namespace Ren {
 const int MAX_NUM_ATTRIBUTES = 16;
 const int MAX_NUM_UNIFORMS = 16;
 struct Descr {

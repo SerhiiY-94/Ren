@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.4)
-project(ren)
+project(Ren)
 
 if(WIN32)
     if(SDL_STATIC)
@@ -84,10 +84,10 @@ list(APPEND ALL_SOURCE_FILES ${SOURCE_FILES})
 set_source_files_properties(${SOURCE_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 source_group("src" FILES ${SOURCE_FILES})
 
-list(APPEND ALL_SOURCE_FILES _ren.cpp)
-source_group("src" FILES _ren.cpp)
+list(APPEND ALL_SOURCE_FILES _Ren.cpp)
+source_group("src" FILES _Ren.cpp)
 
-add_library(ren STATIC ${ALL_SOURCE_FILES})
-target_link_libraries(ren ${LIBS})
+add_library(Ren STATIC ${ALL_SOURCE_FILES})
+target_link_libraries(Ren ${LIBS})
 
 add_subdirectory(tests)

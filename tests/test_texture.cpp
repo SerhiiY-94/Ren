@@ -9,7 +9,7 @@
 
 #include "../GL.h"
 
-class TextureTest : public ren::Context {
+class TextureTest : public Ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -34,10 +34,10 @@ public:
 
 #include "../SW/SW.h"
 
-class TextureTest : public ren::Context {
+class TextureTest : public Ren::Context {
 public:
     TextureTest() {
-        ren::Context::Init(1, 1);
+        Ren::Context::Init(1, 1);
     }
 };
 #endif
@@ -52,29 +52,29 @@ void test_texture() {
         // TGA load
         TextureTest test;
 
-        ren::eTexLoadStatus status;
-        ren::Texture2DParams p;
-        ren::Texture2DRef t_ref = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
-        require(status == ren::TexCreatedDefault);
+        Ren::eTexLoadStatus status;
+        Ren::Texture2DParams p;
+        Ren::Texture2DRef t_ref = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
+        require(status == Ren::TexCreatedDefault);
 
         require(std::string(t_ref->name()) == "checker.tga");
         require(t_ref->params().w == 1);
         require(t_ref->params().h == 1);
-        require(t_ref->params().format == ren::RawRGB888);
+        require(t_ref->params().format == Ren::RawRGB888);
         require(!t_ref->ready());
 
         {
-            ren::Texture2DRef t_ref2 = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
-            require(status == ren::TexFound);
+            Ren::Texture2DRef t_ref2 = test.LoadTexture2D("checker.tga", nullptr, 0, p, &status);
+            require(status == Ren::TexFound);
             require(!t_ref2->ready());
         }
 
         {
-            ren::Texture2DRef t_ref3 = test.LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), p, &status);
-            require(status == ren::TexCreatedFromData);
+            Ren::Texture2DRef t_ref3 = test.LoadTexture2D("checker.tga", test_tga_img, (int)sizeof(test_tga_img), p, &status);
+            require(status == Ren::TexCreatedFromData);
             require(t_ref3->params().w == 2);
             require(t_ref3->params().h == 2);
-            require(t_ref3->params().format == ren::RawRGB888);
+            require(t_ref3->params().format == Ren::RawRGB888);
             require(t_ref3->ready());
         }
     }

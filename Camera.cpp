@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-int ren::Plane::ClassifyPoint(const float point[3]) const {
+int Ren::Plane::ClassifyPoint(const float point[3]) const {
     const float epsilon = 0.002f;
 
     float result = Dot(MakeVec3(point), n) + d;
@@ -12,11 +12,11 @@ int ren::Plane::ClassifyPoint(const float point[3]) const {
     return OnPlane;
 }
 
-ren::Camera::Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
+Ren::Camera::Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
     SetupView(center, target, up);
 }
 
-void ren::Camera::SetupView(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
+void Ren::Camera::SetupView(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
     LookAt(view_matrix_, center, target, up);
     
     world_position_[0] = -Dot(view_matrix_[0], view_matrix_[3]);
@@ -24,17 +24,17 @@ void ren::Camera::SetupView(const Vec3f &center, const Vec3f &target, const Vec3
     world_position_[2] = -Dot(view_matrix_[2], view_matrix_[3]);
 }
 
-void ren::Camera::Perspective(float angle, float aspect, float nearr, float farr) {
+void Ren::Camera::Perspective(float angle, float aspect, float nearr, float farr) {
     is_orthographic_ = false;
     PerspectiveProjection(projection_matrix_, angle, aspect, nearr, farr);
 }
 
-void ren::Camera::Orthographic(float left, float right, float top, float down, float nearr, float farr) {
+void Ren::Camera::Orthographic(float left, float right, float top, float down, float nearr, float farr) {
     is_orthographic_ = true;
     OrthographicProjection(projection_matrix_, left, right, top, down, nearr, farr);
 }
 
-void ren::Camera::Move(const Vec3f &v, float delta_time) {
+void Ren::Camera::Move(const Vec3f &v, float delta_time) {
     view_matrix_[3][0] -= v[0] * delta_time;
     view_matrix_[3][1] -= v[1] * delta_time;
     view_matrix_[3][2] -= v[2] * delta_time;
@@ -44,7 +44,7 @@ void ren::Camera::Move(const Vec3f &v, float delta_time) {
     //world_position_[2] = -(view_matrix_[8]*view_matrix_[12] + view_matrix_[9]*view_matrix_[13] + view_matrix_[10]*view_matrix_[14]);
 }
 
-void ren::Camera::Rotate(float rx, float ry, float delta_time) {
+void Ren::Camera::Rotate(float rx, float ry, float delta_time) {
     Vec3f front;
     front[0] = -view_matrix_[0][2];
     front[1] = -view_matrix_[1][2];
@@ -52,8 +52,8 @@ void ren::Camera::Rotate(float rx, float ry, float delta_time) {
 
     Mat4f rot_matrix(1.0f);
 
-    rot_matrix = ren::Rotate(rot_matrix, rx * delta_time, Vec3f{ view_matrix_[0][0], view_matrix_[1][0], view_matrix_[2][0] });
-    rot_matrix = ren::Rotate(rot_matrix, ry * delta_time, Vec3f{ view_matrix_[0][1], view_matrix_[1][1], view_matrix_[2][1] });
+    rot_matrix = Ren::Rotate(rot_matrix, rx * delta_time, Vec3f{ view_matrix_[0][0], view_matrix_[1][0], view_matrix_[2][0] });
+    rot_matrix = Ren::Rotate(rot_matrix, ry * delta_time, Vec3f{ view_matrix_[0][1], view_matrix_[1][1], view_matrix_[2][1] });
 
     Vec3f tr_front;
 
@@ -64,7 +64,7 @@ void ren::Camera::Rotate(float rx, float ry, float delta_time) {
     LookAt(view_matrix_, world_position_, world_position_ + tr_front, Vec3f{ 0.0f, 1.0f, 0.0f });
 }
 
-void ren::Camera::UpdatePlanes() {
+void Ren::Camera::UpdatePlanes() {
     Mat4f combo_matrix = projection_matrix_ * view_matrix_;
 
     frustum_planes_[LeftPlane].n[0] = combo_matrix[0][3] + combo_matrix[0][0];
@@ -99,7 +99,7 @@ void ren::Camera::UpdatePlanes() {
 
     for (int plane = LeftPlane; plane <= FarPlane; plane++) {
         float inv_l = 1.0f
-                      / (float)sqrt(
+                      / std::sqrt(
                           frustum_planes_[plane].n[0] * frustum_planes_[plane].n[0]
                           + frustum_planes_[plane].n[1] * frustum_planes_[plane].n[1]
                           + frustum_planes_[plane].n[2] * frustum_planes_[plane].n[2]);
@@ -114,7 +114,7 @@ void ren::Camera::UpdatePlanes() {
     world_position_[2] = -Dot(view_matrix_[2], view_matrix_[3]);
 }
 
-bool ren::Camera::IsInFrustum(const float bbox[8][3]) const {
+bool Ren::Camera::IsInFrustum(const float bbox[8][3]) const {
     for (int plane = LeftPlane; plane <= FarPlane; plane++) {
         int in_count = 8;
 

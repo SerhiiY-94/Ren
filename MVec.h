@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ren {
+namespace Ren {
     enum eUninitialized { Uninitialize };
 
 	template <typename T, int N>

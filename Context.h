@@ -9,7 +9,7 @@
 
 struct SWcontext;
 
-namespace ren {
+namespace Ren {
 class Context : public RenderThread {
 protected:
     int w_ = 0, h_ = 0;

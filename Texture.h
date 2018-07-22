@@ -6,6 +6,6 @@
 #include "TextureSW.h"
 #endif
 
-namespace ren {
+namespace Ren {
 class Context;
 }

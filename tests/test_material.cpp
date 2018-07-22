@@ -7,7 +7,7 @@
 
 #if defined(USE_GL_RENDER)
 #include "../GL.h"
-class MaterialTest : public ren::Context {
+class MaterialTest : public Ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -30,19 +30,19 @@ public:
 };
 #elif defined(USE_SW_RENDER)
 #include "../SW/SW.h"
-class MaterialTest : public ren::Context {
+class MaterialTest : public Ren::Context {
 public:
     MaterialTest() {
-        ren::Context::Init(1, 1);
+        Ren::Context::Init(1, 1);
     }
 };
 #endif
 
-static ren::ProgramRef OnProgramNeeded(const char *name, const char *arg1, const char *arg2) {
+static Ren::ProgramRef OnProgramNeeded(const char *name, const char *arg1, const char *arg2) {
     return {};
 }
 
-static ren::Texture2DRef OnTextureNeeded(const char *name) {
+static Ren::Texture2DRef OnTextureNeeded(const char *name) {
     return {};
 }
 
@@ -52,19 +52,19 @@ void test_material() {
         MaterialTest test;
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
-            ren::eProgLoadStatus status;
+            Ren::eProgLoadStatus status;
 #if defined(USE_GL_RENDER)
             return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
 #elif defined(USE_SW_RENDER)
-            ren::Attribute _attrs[] = { {} };
-            ren::Uniform _unifs[] = { {} };
+            Ren::Attribute _attrs[] = { {} };
+            Ren::Uniform _unifs[] = { {} };
             return test.LoadProgramSW(name, nullptr, nullptr, 0, _attrs, _unifs, &status);
 #endif
         };
 
         auto on_texture_needed = [&test](const char *name) {
-            ren::eTexLoadStatus status;
-            ren::Texture2DParams p;
+            Ren::eTexLoadStatus status;
+            Ren::Texture2DParams p;
             return test.LoadTexture2D(name, nullptr, 0, p, &status);
         };
 
@@ -78,9 +78,9 @@ void test_material() {
                               "param: 0 1 2 3\n"
                               "param: 0.5 1.2 11 15";
 
-        ren::eMatLoadStatus status;
-        ren::MaterialRef m_ref = test.LoadMaterial("mat1", nullptr, &status, on_program_needed, on_texture_needed);
-        require(status == ren::MatSetToDefault);
+        Ren::eMatLoadStatus status;
+        Ren::MaterialRef m_ref = test.LoadMaterial("mat1", nullptr, &status, on_program_needed, on_texture_needed);
+        require(status == Ren::MatSetToDefault);
 
         {
             require(m_ref->ready() == false);
@@ -88,20 +88,20 @@ void test_material() {
 
         test.LoadMaterial("mat1", mat_src, &status, on_program_needed, on_texture_needed);
 
-        require(status == ren::MatCreatedFromData);
-        require(m_ref->flags() & ren::AlphaBlend);
+        require(status == Ren::MatCreatedFromData);
+        require(m_ref->flags() & Ren::AlphaBlend);
         require(m_ref->ready() == true);
         require(std::string(m_ref->name()) == "mat1");
 
-        ren::ProgramRef p = m_ref->program();
+        Ren::ProgramRef p = m_ref->program();
 
         require(std::string(p->name()) == "constant");
         require(p->ready() == false);
 
-        ren::Texture2DRef t0 = m_ref->texture(0);
-        ren::Texture2DRef t1 = m_ref->texture(1);
-        ren::Texture2DRef t2 = m_ref->texture(2);
-        ren::Texture2DRef t3 = m_ref->texture(3);
+        Ren::Texture2DRef t0 = m_ref->texture(0);
+        Ren::Texture2DRef t1 = m_ref->texture(1);
+        Ren::Texture2DRef t2 = m_ref->texture(2);
+        Ren::Texture2DRef t3 = m_ref->texture(3);
 
         require(t0 == t1);
         require(t0 == t3);
@@ -111,7 +111,7 @@ void test_material() {
         require(std::string(t2->name()) == "metal_01.tga");
         require(std::string(t3->name()) == "checker.tga");
 
-        require(m_ref->param(0) == ren::Vec4f(0, 1, 2, 3));
-        require(m_ref->param(1) == ren::Vec4f(0.5f, 1.2f, 11, 15));
+        require(m_ref->param(0) == Ren::Vec4f(0, 1, 2, 3));
+        require(m_ref->param(1) == Ren::Vec4f(0.5f, 1.2f, 11, 15));
     }
 }

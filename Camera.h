@@ -2,7 +2,7 @@
 
 #include "MVec.h"
 
-namespace ren {
+namespace Ren {
 enum ePointPos { Front, Back, OnPlane };
 
 struct Plane {

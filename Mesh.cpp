@@ -14,13 +14,13 @@
 #endif
 
 
-int ren::Mesh::max_gpu_bones = 16;
+int Ren::Mesh::max_gpu_bones = 16;
 
-ren::Mesh::Mesh(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
+Ren::Mesh::Mesh(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
     Init(name, data, on_mat_load);
 }
 
-ren::Mesh::~Mesh() {
+Ren::Mesh::~Mesh() {
 #if defined(USE_GL_RENDER)
     if (type_ != MeshUndefined) {
         GLuint buf = (GLuint)attribs_buf_id_;
@@ -31,7 +31,7 @@ ren::Mesh::~Mesh() {
 #endif
 }
 
-ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
+Ren::Mesh &Ren::Mesh::operator=(Mesh &&rhs) {
     RefCounter::operator=(std::move(rhs));
 
 #if defined(USE_GL_RENDER)
@@ -78,7 +78,7 @@ ren::Mesh &ren::Mesh::operator=(Mesh &&rhs) {
     return *this;
 }
 
-void ren::Mesh::Init(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::Init(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
     strcpy(name_, name);
 
     char mesh_type_str[12];
@@ -95,7 +95,7 @@ void ren::Mesh::Init(const char *name, std::istream &data, const material_load_c
     }
 }
 
-void ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback &on_mat_load) {
     char mesh_type_str[12];
     data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "STATIC_MESH\0") == 0);
@@ -191,7 +191,7 @@ void ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
 #endif
 }
 
-void ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load) {
     char mesh_type_str[12];
     data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "TERRAI_MESH\0") == 0);
@@ -297,7 +297,7 @@ void ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
 #endif
 }
 
-void ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load) {
     char mesh_type_str[12];
     data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "SKELET_MESH\0") == 0);
@@ -448,7 +448,7 @@ void ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
 
 #undef max
 
-void ren::Mesh::SplitMesh(int bones_limit) {
+void Ren::Mesh::SplitMesh(int bones_limit) {
     assert(type_ == MeshSkeletal);
 
     std::vector<int> bone_ids;
@@ -478,7 +478,7 @@ void ren::Mesh::SplitMesh(int bones_limit) {
                     }
                 }
             }
-            ren::BoneGroup *best_fit = nullptr;
+            Ren::BoneGroup *best_fit = nullptr;
             int best_k = std::numeric_limits<int>::max();
             for (auto &g : skel_.bone_groups) {
                 bool b = true;

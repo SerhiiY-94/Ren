@@ -4,7 +4,7 @@
 
 #include <sys/Log.h>
 
-ren::MeshRef ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load) {
+Ren::MeshRef Ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load) {
     MeshRef ref;
     for (auto it = meshes_.begin(); it != meshes_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -19,7 +19,7 @@ ren::MeshRef ren::Context::LoadMesh(const char *name, std::istream &data, materi
     return ref;
 }
 
-ren::MaterialRef ren::Context::LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
+Ren::MaterialRef Ren::Context::LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
         const texture_load_callback &on_tex_load) {
     MaterialRef ref;
     for (auto it = materials_.begin(); it != materials_.end(); ++it) {
@@ -41,13 +41,13 @@ ren::MaterialRef ren::Context::LoadMaterial(const char *name, const char *mat_sr
     return ref;
 }
 
-int ren::Context::NumMaterialsNotReady() {
+int Ren::Context::NumMaterialsNotReady() {
     return (int)std::count_if(materials_.begin(), materials_.end(), [](const Material &m) {
         return !m.ready();
     });
 }
 
-void ren::Context::ReleaseMaterials() {
+void Ren::Context::ReleaseMaterials() {
     if (!materials_.Size()) return;
     fprintf(stderr, "---------REMAINING MATERIALS--------\n");
     for (const auto &m : materials_) {
@@ -57,13 +57,13 @@ void ren::Context::ReleaseMaterials() {
     materials_.Clear();
 }
 
-int ren::Context::NumProgramsNotReady() {
+int Ren::Context::NumProgramsNotReady() {
     return (int)std::count_if(programs_.begin(), programs_.end(), [](const Program &p) {
         return !p.ready();
     });
 }
 
-void ren::Context::ReleasePrograms() {
+void Ren::Context::ReleasePrograms() {
     if (!programs_.Size()) return;
     fprintf(stderr, "---------REMAINING PROGRAMS--------\n");
     for (const auto &p : programs_) {
@@ -75,7 +75,7 @@ void ren::Context::ReleasePrograms() {
     programs_.Clear();
 }
 
-ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data, int size,
+Ren::Texture2DRef Ren::Context::LoadTexture2D(const char *name, const void *data, int size,
         const Texture2DParams &p, eTexLoadStatus *load_status) {
     Texture2DRef ref;
     for (auto it = textures_.begin(); it != textures_.end(); ++it) {
@@ -98,7 +98,7 @@ ren::Texture2DRef ren::Context::LoadTexture2D(const char *name, const void *data
     return ref;
 }
 
-ren::Texture2DRef ren::Context::LoadTextureCube(const char *name, const void *data[6], const int size[6],
+Ren::Texture2DRef Ren::Context::LoadTextureCube(const char *name, const void *data[6], const int size[6],
         const Texture2DParams &p, eTexLoadStatus *load_status) {
     Texture2DRef ref;
     for (auto it = textures_.begin(); it != textures_.end(); ++it) {
@@ -121,13 +121,13 @@ ren::Texture2DRef ren::Context::LoadTextureCube(const char *name, const void *da
     return ref;
 }
 
-int ren::Context::NumTexturesNotReady() {
+int Ren::Context::NumTexturesNotReady() {
     return (int)std::count_if(textures_.begin(), textures_.end(), [](const Texture2D &t) {
         return !t.ready();
     });
 }
 
-void ren::Context::ReleaseTextures() {
+void Ren::Context::ReleaseTextures() {
     if (!textures_.Size()) return;
     fprintf(stderr, "---------REMAINING TEXTURES--------\n");
     for (const auto &t : textures_) {
@@ -137,7 +137,7 @@ void ren::Context::ReleaseTextures() {
     textures_.Clear();
 }
 
-ren::AnimSeqRef ren::Context::LoadAnimSequence(const char *name, std::istream &data) {
+Ren::AnimSeqRef Ren::Context::LoadAnimSequence(const char *name, std::istream &data) {
     AnimSeqRef ref;
     for (auto it = anims_.begin(); it != anims_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -158,13 +158,13 @@ ren::AnimSeqRef ren::Context::LoadAnimSequence(const char *name, std::istream &d
     return ref;
 }
 
-int ren::Context::NumAnimsNotReady() {
+int Ren::Context::NumAnimsNotReady() {
     return (int)std::count_if(anims_.begin(), anims_.end(), [](const AnimSequence &a) {
         return !a.ready();
     });
 }
 
-void ren::Context::ReleaseAnims() {
+void Ren::Context::ReleaseAnims() {
     if (!anims_.Size()) return;
     fprintf(stderr, "---------REMAINING ANIMS--------\n");
     for (const auto &a : anims_) {
@@ -174,7 +174,7 @@ void ren::Context::ReleaseAnims() {
     anims_.Clear();
 }
 
-void ren::Context::ReleaseAll() {
+void Ren::Context::ReleaseAll() {
     meshes_.Clear();
 
     ReleaseAnims();

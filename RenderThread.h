@@ -6,7 +6,7 @@
 
 #include "RingBuffer.h"
 
-namespace ren {
+namespace Ren {
 typedef void(*TaskFunc)(void *arg);
 struct Task {
     TaskFunc    func;

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace ren {
+namespace Ren {
 enum eTex2DFormat;
 std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
 

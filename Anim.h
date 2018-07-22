@@ -11,7 +11,7 @@
 
 #include "Storage.h"
 
-namespace ren {
+namespace Ren {
 enum eAnimBoneFlags { AnimHasTranslate = 1 };
 
 struct AnimBone {

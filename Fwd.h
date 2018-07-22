@@ -2,7 +2,7 @@
 
 #include "Storage.h"
 
-namespace ren {
+namespace Ren {
 class Anim;
 class Camera;
 class Material;

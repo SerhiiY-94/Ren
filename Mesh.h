@@ -6,7 +6,7 @@
 #include "Anim.h"
 #include "Material.h"
 
-namespace ren {
+namespace Ren {
 enum eMeshFlags { MeshHasAlpha = 1 };
 
 struct TriStrip {

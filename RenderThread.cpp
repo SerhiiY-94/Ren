@@ -2,16 +2,16 @@
 
 #include <thread>
 
-ren::TaskList::TaskList() {
+Ren::TaskList::TaskList() {
     done_event = std::make_shared<std::atomic_bool>();
     *(std::atomic_bool*)done_event.get() = false;
 }
 
-void ren::TaskList::Submit(RenderThread *r) {
+void Ren::TaskList::Submit(RenderThread *r) {
     r->AddTaskList(std::move(*this));
 }
 
-void ren::TaskList::Wait() {
+void Ren::TaskList::Wait() {
 #ifndef __EMSCRIPTEN__
     while (!*(std::atomic_bool*)done_event.get()) {
         std::this_thread::yield();
@@ -19,7 +19,7 @@ void ren::TaskList::Wait() {
 #endif
 }
 
-void ren::RenderThread::AddTaskList(TaskList &&list) {
+void Ren::RenderThread::AddTaskList(TaskList &&list) {
 #ifndef __EMSCRIPTEN__
     std::lock_guard<std::mutex> lck(add_list_mtx_);
     task_lists_.Push(std::move(list));
@@ -31,7 +31,7 @@ void ren::RenderThread::AddTaskList(TaskList &&list) {
 #endif
 }
 
-void ren::RenderThread::AddSingleTask(TaskFunc func, void *arg) {
+void Ren::RenderThread::AddSingleTask(TaskFunc func, void *arg) {
 #ifndef __EMSCRIPTEN__
     TaskList list;
     list.push_back({ func, arg });
@@ -41,7 +41,7 @@ void ren::RenderThread::AddSingleTask(TaskFunc func, void *arg) {
 #endif
 }
 
-void ren::RenderThread::ProcessSingleTask(TaskFunc func, void *arg) {
+void Ren::RenderThread::ProcessSingleTask(TaskFunc func, void *arg) {
 #ifndef __EMSCRIPTEN__
     TaskList list;
     list.push_back({ func, arg });
@@ -52,7 +52,7 @@ void ren::RenderThread::ProcessSingleTask(TaskFunc func, void *arg) {
 #endif
 }
 
-bool ren::RenderThread::ProcessTasks() {
+bool Ren::RenderThread::ProcessTasks() {
 #ifndef __EMSCRIPTEN__
     TaskList list;
     if (task_lists_.Pop(list)) {

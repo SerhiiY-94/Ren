@@ -4,7 +4,7 @@
 
 #include "Texture.h"
 
-std::unique_ptr<uint8_t[]> ren::ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format) {
+std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format) {
     uint8_t tga_header[12] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     const uint8_t *tga_compare = (const uint8_t *)data;
     const uint8_t *img_header = (const uint8_t *)data + sizeof(tga_header);
@@ -97,7 +97,7 @@ std::unique_ptr<uint8_t[]> ren::ReadTGAFile(const void *data, int &w, int &h, eT
     return image_ret;
 }
 
-void ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count, uint32_t vtx_count, uint32_t *out_indices) {
+void Ren::ReorderTriangleIndices(const uint32_t *indices, uint32_t indices_count, uint32_t vtx_count, uint32_t *out_indices) {
     // From https://tomforsyth1000.github.io/papers/fast_vert_cache_opt.html
 
     uint32_t prim_count = indices_count / 3;

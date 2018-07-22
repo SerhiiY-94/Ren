@@ -12,7 +12,7 @@
 
 #include "../GL.h"
 
-class MeshTest : public ren::Context {
+class MeshTest : public Ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -22,7 +22,7 @@ public:
         window_ = SDL_CreateWindow("View", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 256, 256, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
         gl_ctx_ = SDL_GL_CreateContext(window_);
 
-        ren::Context::Init(256, 256);
+        Ren::Context::Init(256, 256);
     }
 
     ~MeshTest() {
@@ -35,10 +35,10 @@ public:
 };
 #else
 #include "../SW/SW.h"
-class MeshTest : public ren::Context {
+class MeshTest : public Ren::Context {
 public:
     MeshTest() {
-        ren::Context::Init(256, 256);
+        Ren::Context::Init(256, 256);
     }
 };
 #endif
@@ -164,33 +164,33 @@ void test_mesh() {
         MeshTest test;
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
-            ren::eProgLoadStatus status;
+            Ren::eProgLoadStatus status;
 #if defined(USE_GL_RENDER)
             return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
 #elif defined(USE_SW_RENDER)
-            ren::Attribute attrs[] = { {} };
-            ren::Uniform unifs[] = { {} };
+            Ren::Attribute attrs[] = { {} };
+            Ren::Uniform unifs[] = { {} };
             return test.LoadProgramSW(name, nullptr, nullptr, 0, attrs, unifs, &status);
 #endif
         };
 
         auto on_texture_needed = [&test](const char *name) {
-            ren::eTexLoadStatus status;
-            ren::Texture2DParams p;
+            Ren::eTexLoadStatus status;
+            Ren::Texture2DParams p;
             return test.LoadTexture2D(name, nullptr, 0, p, &status);
         };
 
         auto on_material_needed = [&](const char *name) {
-            ren::eMatLoadStatus status;
+            Ren::eMatLoadStatus status;
             return test.LoadMaterial(name, nullptr, &status, on_program_needed, on_texture_needed);
         };
 
-        ren::MeshRef m_ref = test.LoadMesh("ivy", in, on_material_needed);
-        require(m_ref->type() == ren::MeshSimple);
+        Ren::MeshRef m_ref = test.LoadMesh("ivy", in, on_material_needed);
+        require(m_ref->type() == Ren::MeshSimple);
         require(std::string(m_ref->name()) == "ivy");
 
-        require(m_ref->bbox_min() == ren::Vec3f(-10.389862f, -220.607803f, -441.704651f));
-        require(m_ref->bbox_max() == ren::Vec3f(83.354584f, 179.815552f, 441.704651f));
+        require(m_ref->bbox_min() == Ren::Vec3f(-10.389862f, -220.607803f, -441.704651f));
+        require(m_ref->bbox_max() == Ren::Vec3f(83.354584f, 179.815552f, 441.704651f));
 
         require(m_ref->strip(0).offset != -1);
         require(m_ref->strip(1).offset == -1);
@@ -200,15 +200,15 @@ void test_mesh() {
         require(m_ref->indices() != nullptr);
         require(m_ref->indices_size() == 20);
 
-        require(m_ref->flags() == ren::MeshHasAlpha);
-        require(m_ref->strip(0).flags == ren::MeshHasAlpha);
+        require(m_ref->flags() == Ren::MeshHasAlpha);
+        require(m_ref->strip(0).flags == Ren::MeshHasAlpha);
 
         {
-            ren::MeshRef m_ref2 = test.LoadMesh("ivy", in, on_material_needed);
+            Ren::MeshRef m_ref2 = test.LoadMesh("ivy", in, on_material_needed);
             require(m_ref2);
         }
 
-        ren::MaterialRef mat_ref = m_ref->strip(0).mat;
+        Ren::MaterialRef mat_ref = m_ref->strip(0).mat;
         require(!mat_ref->ready());
     }
 
@@ -220,30 +220,30 @@ void test_mesh() {
         MeshTest test;
 
         auto on_program_needed = [&test](const char *name, const char *arg1, const char *arg2) {
-            ren::eProgLoadStatus status;
+            Ren::eProgLoadStatus status;
 #if defined(USE_GL_RENDER)
             return test.LoadProgramGLSL(name, nullptr, nullptr, &status);
 #elif defined(USE_SW_RENDER)
-            ren::Attribute _attrs[] = { {} };
-            ren::Uniform _unifs[] = { {} };
+            Ren::Attribute _attrs[] = { {} };
+            Ren::Uniform _unifs[] = { {} };
             return test.LoadProgramSW(name, nullptr, nullptr, 0, _attrs, _unifs, &status);
 #endif
         };
 
         auto on_texture_needed = [&test](const char *name) {
-            ren::eTexLoadStatus status;
-            ren::Texture2DParams p;
+            Ren::eTexLoadStatus status;
+            Ren::Texture2DParams p;
             return test.LoadTexture2D(name, nullptr, 0, p, &status);
         };
 
         auto on_material_needed = [&](const char *name) {
-            ren::eMatLoadStatus status;
+            Ren::eMatLoadStatus status;
             return test.LoadMaterial(name, nullptr, &status, on_program_needed, on_texture_needed);
         };
 
-        ren::MeshRef m_ref = test.LoadMesh("test", in, on_material_needed);
+        Ren::MeshRef m_ref = test.LoadMesh("test", in, on_material_needed);
         require(m_ref);
-        require(m_ref->type() == ren::MeshSkeletal);
+        require(m_ref->type() == Ren::MeshSkeletal);
         require(std::string(m_ref->name()) == "test");
 
         require(m_ref->bbox_min()[0] == Approx(0).epsilon(0.01));
@@ -277,11 +277,11 @@ void test_mesh() {
         require(m_ref->skel()->bones[1].dirty == 1);
 
         {
-            ren::MeshRef m_ref2 = test.LoadMesh("test", in, on_material_needed);
+            Ren::MeshRef m_ref2 = test.LoadMesh("test", in, on_material_needed);
             require(m_ref2);
         }
 
-        ren::MaterialRef mat_ref = m_ref->strip(0).mat;
+        Ren::MaterialRef mat_ref = m_ref->strip(0).mat;
         require(mat_ref);
         require(!mat_ref->ready());
     }

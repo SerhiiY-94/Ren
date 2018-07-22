@@ -3,7 +3,7 @@
 #include "../MVec.h"
 
 void test_vec() {
-    using namespace ren;
+    using namespace Ren;
 
     {
         Vec2f v1 = { 1.0f, 2.0f }, v2 = { 3.0f, 4.0f };

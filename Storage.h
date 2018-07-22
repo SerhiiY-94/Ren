@@ -2,7 +2,7 @@
 
 #include "SparseArray.h"
 
-namespace ren {
+namespace Ren {
 template<typename T, template<typename val_t> class container = default_container>
 class StorageRef;
 

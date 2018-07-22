@@ -6,7 +6,7 @@
 #include "../Context.h"
 #include "../Material.h"
 
-class ProgramTest : public ren::Context {
+class ProgramTest : public Ren::Context {
     SDL_Window *window_;
     void *gl_ctx_;
 public:
@@ -69,17 +69,17 @@ void test_program() {
                 gl_FragColor = vec4(col, 1.0);\n \
             }";
 
-        ren::eProgLoadStatus status;
-        ren::ProgramRef p = test.LoadProgramGLSL("constant", nullptr, nullptr, &status);
+        Ren::eProgLoadStatus status;
+        Ren::ProgramRef p = test.LoadProgramGLSL("constant", nullptr, nullptr, &status);
 
-        assert(status == ren::ProgSetToDefault);
+        assert(status == Ren::ProgSetToDefault);
         assert(std::string(p->name()) == "constant");
         assert(p->prog_id() == 0); // not initialized
         assert(p->ready() == false);
 
         test.LoadProgramGLSL("constant", vs_src, fs_src, &status);
 
-        assert(status == ren::ProgCreatedFromData);
+        assert(status == Ren::ProgCreatedFromData);
 
         assert(std::string(p->name()) == "constant");
 

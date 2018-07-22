@@ -7,12 +7,12 @@
 #pragma warning(disable : 4996)
 #endif
 
-ren::Material::Material(const char *name, const char *mat_src, eMatLoadStatus *status,
+Ren::Material::Material(const char *name, const char *mat_src, eMatLoadStatus *status,
                         const program_load_callback &on_prog_load, const texture_load_callback &on_tex_load) {
     Init(name, mat_src, status, on_prog_load, on_tex_load);
 }
 
-ren::Material &ren::Material::operator=(Material &&rhs) {
+Ren::Material &Ren::Material::operator=(Material &&rhs) {
     RefCounter::operator=(std::move(rhs));
     flags_ = rhs.flags_;
     ready_ = rhs.ready_;
@@ -27,13 +27,13 @@ ren::Material &ren::Material::operator=(Material &&rhs) {
     return *this;
 }
 
-void ren::Material::Init(const char *name, const char *mat_src, eMatLoadStatus *status,
+void Ren::Material::Init(const char *name, const char *mat_src, eMatLoadStatus *status,
                          const program_load_callback &on_prog_load, const texture_load_callback &on_tex_load) {
     strcpy(name_, name);
     InitFromTXT(name, mat_src, status, on_prog_load, on_tex_load);
 }
 
-void ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status,
+void Ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status,
                                 const program_load_callback &on_prog_load, const texture_load_callback &on_tex_load) {
     if (!mat_src) {
         if (status) *status = MatSetToDefault;

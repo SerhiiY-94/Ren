@@ -7,11 +7,11 @@
 #pragma warning(disable : 4996)
 #endif
 
-ren::Context::~Context() {
+Ren::Context::~Context() {
     ReleaseAll();
 }
 
-void ren::Context::Init(int w, int h) {
+void Ren::Context::Init(int w, int h) {
     InitGLExtentions();
 
     w_ = w;
@@ -61,13 +61,13 @@ void ren::Context::Init(int w, int h) {
     printf("===========================================\n\n");
 }
 
-void ren::Context::Resize(int w, int h) {
+void Ren::Context::Resize(int w, int h) {
     w_ = w;
     h_ = h;
     glViewport(0, 0, w_, h_);
 }
 
-ren::ProgramRef ren::Context::LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status) {
+Ren::ProgramRef Ren::Context::LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status) {
     ProgramRef ref;
     for (auto it = programs_.begin(); it != programs_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -102,7 +102,7 @@ ren::ProgramRef ren::Context::LoadProgramGLSL(const char *name, const char *vs_s
     return ref;
 }
 
-bool ren::Context::IsExtensionSupported(const char *ext) {
+bool Ren::Context::IsExtensionSupported(const char *ext) {
     const GLubyte *extensions = NULL;
     const GLubyte *start;
     GLubyte *where, *terminator;
@@ -127,7 +127,7 @@ bool ren::Context::IsExtensionSupported(const char *ext) {
     return 0;
 }
 
-void ren::CheckError(const char *op) {
+void Ren::CheckError(const char *op) {
     for (GLint error = glGetError(); error; error = glGetError()) {
         fprintf(stderr, "after %s glError (0x%x)\n", op, error);
     }

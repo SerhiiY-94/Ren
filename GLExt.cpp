@@ -68,7 +68,7 @@ void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloat *valu
 
 void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
-bool ren::InitGLExtentions() {
+bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
 #define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name); assert(name)

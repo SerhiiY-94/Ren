@@ -3,7 +3,7 @@
 #include "../Storage.h"
 
 void test_storage() {
-    struct MyObj : public ren::RefCounter {
+    struct MyObj : public Ren::RefCounter {
         int *ref;
 
         MyObj() : ref(nullptr) {}
@@ -33,7 +33,7 @@ void test_storage() {
 
     {
         // test create/delete
-        ren::Storage<MyObj> my_obj_storage;
+        Ren::Storage<MyObj> my_obj_storage;
         int counter = 0;
 
         auto ref1 = my_obj_storage.Add(&counter);
@@ -44,7 +44,7 @@ void test_storage() {
 
     {
         // test copy/move reference
-        ren::Storage<MyObj> my_obj_storage;
+        Ren::Storage<MyObj> my_obj_storage;
         int counter = 0;
 
         auto ref1 = my_obj_storage.Add(&counter);

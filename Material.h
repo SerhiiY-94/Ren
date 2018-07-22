@@ -11,7 +11,7 @@
 
 #include "MVec.h"
 
-namespace ren {
+namespace Ren {
 enum eMaterialFlags { AlphaBlend = 1, DoubleSided = 2 };
 
 enum eMatLoadStatus { MatFound, MatSetToDefault, MatCreatedFromData };

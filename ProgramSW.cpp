@@ -7,19 +7,19 @@
 #pragma warning(disable : 4996)
 #endif
 
-ren::Program::Program(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
+Ren::Program::Program(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
                       const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *status) {
     Init(name, vs_shader, fs_shader, num_fvars, attrs, unifs, status);
 }
 
-ren::Program::~Program() {
+Ren::Program::~Program() {
     if (prog_id_) {
         SWint prog = (SWint)prog_id_;
         swDeleteProgram(prog);
     }
 }
 
-ren::Program &ren::Program::operator=(Program &&rhs) {
+Ren::Program &Ren::Program::operator=(Program &&rhs) {
     RefCounter::operator=(std::move(rhs));
 
     if (prog_id_) {
@@ -39,7 +39,7 @@ ren::Program &ren::Program::operator=(Program &&rhs) {
     return *this;
 }
 
-void ren::Program::Init(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
+void Ren::Program::Init(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
                         const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *status) {
     strcpy(name_, name);
     if (!vs_shader || !fs_shader || !attrs || !unifs) {
@@ -61,7 +61,7 @@ void ren::Program::Init(const char *name, void *vs_shader, void *fs_shader, int 
     }
 }
 
-void ren::Program::InitFromFuncs(const char *name, void *vs_shader, void *fs_shader, int num_fvars, eProgLoadStatus *status) {
+void Ren::Program::InitFromFuncs(const char *name, void *vs_shader, void *fs_shader, int num_fvars, eProgLoadStatus *status) {
     if (!vs_shader || !fs_shader) {
         if (status) *status = ProgSetToDefault;
         return;

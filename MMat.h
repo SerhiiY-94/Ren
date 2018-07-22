@@ -2,7 +2,7 @@
 
 #include "MVec.h"
 
-namespace ren {
+namespace Ren {
 
     template <typename T, int M, int N>
     class Mat : public Vec<Vec<T, N>, M> {

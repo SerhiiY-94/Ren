@@ -63,9 +63,9 @@ void test_anim() {
         membuf sbuf(__anim, sizeof(__anim));
         std::istream in(&sbuf);
 
-        ren::Context ctx;
+        Ren::Context ctx;
         ctx.Init(1, 1);
-        ren::AnimSeqRef anim_ref = ctx.LoadAnimSequence("anim", in);
+        Ren::AnimSeqRef anim_ref = ctx.LoadAnimSequence("anim", in);
 
         require(std::string(anim_ref->name()) == "ArmatureAction");
         require(anim_ref->fps() == 24);
@@ -79,13 +79,13 @@ void test_anim() {
         require(std::string(anim_ref->bone(0)->parent_name) == "None");
         require(anim_ref->bone(0)->id == 0);
         require(anim_ref->bone(0)->offset == 0);
-        require((anim_ref->bone(0)->flags & ren::AnimHasTranslate) == 1);
+        require((anim_ref->bone(0)->flags & Ren::AnimHasTranslate) == 1);
 
         require(std::string(anim_ref->bone(1)->name) == "Bone02");
         require(std::string(anim_ref->bone(1)->parent_name) == "Bone01");
         require(anim_ref->bone(1)->id == 1);
         require(anim_ref->bone(1)->offset == 7); // 4 for rotation, 3 for translation from previous bone
-        require(anim_ref->bone(1)->flags != ren::AnimHasTranslate);
+        require(anim_ref->bone(1)->flags != Ren::AnimHasTranslate);
 
         //translation of Bone01 frame 0
         require(anim_ref->frames()[0] == 0);

@@ -11,29 +11,29 @@
 #pragma warning(disable : 4996)
 #endif
 
-namespace ren {
+namespace Ren {
 std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
 void CheckError(const char *op);
 }
 
-ren::Texture2D::Texture2D(const char *name, const void *data, int size,
+Ren::Texture2D::Texture2D(const char *name, const void *data, int size,
                           const Texture2DParams &p, eTexLoadStatus *load_status) {
     Init(name, data, size, p, load_status);
 }
 
-ren::Texture2D::Texture2D(const char *name, const void *data[6], const int size[6],
+Ren::Texture2D::Texture2D(const char *name, const void *data[6], const int size[6],
                           const Texture2DParams &p, eTexLoadStatus *load_status) {
     Init(name, data, size, p, load_status);
 }
 
-ren::Texture2D::~Texture2D() {
+Ren::Texture2D::~Texture2D() {
     if (params_.format != Undefined) {
         GLuint gl_tex = (GLuint)tex_id_;
         glDeleteTextures(1, &gl_tex);
     }
 }
 
-ren::Texture2D &ren::Texture2D::operator=(ren::Texture2D &&rhs) {
+Ren::Texture2D &Ren::Texture2D::operator=(Ren::Texture2D &&rhs) {
     if (this == &rhs) return *this;
 
     if (params_.format != Undefined) {
@@ -56,7 +56,7 @@ ren::Texture2D &ren::Texture2D::operator=(ren::Texture2D &&rhs) {
     return *this;
 }
 
-void ren::Texture2D::Init(const char *name, const void *data, int size,
+void Ren::Texture2D::Init(const char *name, const void *data, int size,
                           const Texture2DParams &p, eTexLoadStatus *load_status) {
     strcpy(name_, name);
 
@@ -84,7 +84,7 @@ void ren::Texture2D::Init(const char *name, const void *data, int size,
     }
 }
 
-void ren::Texture2D::Init(const char *name, const void *data[6], const int size[6],
+void Ren::Texture2D::Init(const char *name, const void *data[6], const int size[6],
                           const Texture2DParams &p, eTexLoadStatus *load_status) {
     strcpy(name_, name);
 
@@ -116,7 +116,7 @@ void ren::Texture2D::Init(const char *name, const void *data[6], const int size[
     }
 }
 
-void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p) {
+void Ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p) {
     GLuint tex_id;
 
     if (params_.format == Undefined) {
@@ -175,7 +175,7 @@ void ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
     CheckError("create texture");
 }
 
-void ren::Texture2D::InitFromTGAFile(const void *data, const Texture2DParams &p) {
+void Ren::Texture2D::InitFromTGAFile(const void *data, const Texture2DParams &p) {
     int w = 0, h = 0;
     eTex2DFormat format = Undefined;
     auto image_data = ReadTGAFile(data, w, h, format);
@@ -188,7 +188,7 @@ void ren::Texture2D::InitFromTGAFile(const void *data, const Texture2DParams &p)
     InitFromRAWData(image_data.get(), _p);
 }
 
-void ren::Texture2D::InitFromDDSFile(const void *data, int size, const Texture2DParams &p) {
+void Ren::Texture2D::InitFromDDSFile(const void *data, int size, const Texture2DParams &p) {
     GLuint tex_id;
     if (params_.format == Undefined) {
         glGenTextures(1, &tex_id);
@@ -206,7 +206,7 @@ void ren::Texture2D::InitFromDDSFile(const void *data, int size, const Texture2D
     ChangeFilter(p.filter, p.repeat);
 }
 
-void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams &p) {
+void Ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams &p) {
     assert(p.w > 0 && p.h > 0);
     GLuint tex_id;
     if (params_.format == Undefined) {
@@ -270,7 +270,7 @@ void ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
     }
 }
 
-void ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams &p) {
+void Ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams &p) {
     std::unique_ptr<uint8_t[]> image_data[6];
     const void *_image_data[6] = {};
     int w = 0, h = 0;
@@ -290,7 +290,7 @@ void ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams 
     InitFromRAWData(_image_data, _p);
 }
 
-void ren::Texture2D::ChangeFilter(eTexFilter f, eTexRepeat r) {
+void Ren::Texture2D::ChangeFilter(eTexFilter f, eTexRepeat r) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex_id_);
 

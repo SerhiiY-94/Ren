@@ -10,7 +10,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-namespace ren {
+namespace Ren {
 enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, Compressed };
 enum eTexFilter { NoFilter, Bilinear, Trilinear, BilinearNoMipmap };
 enum eTexRepeat { Repeat, ClampToEdge };

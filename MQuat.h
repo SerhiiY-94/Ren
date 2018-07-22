@@ -2,7 +2,7 @@
 
 #include "MVec.h"
 
-namespace ren {
+namespace Ren {
     template <typename T>
     class Quat {
     public:

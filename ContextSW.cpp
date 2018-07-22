@@ -7,13 +7,13 @@
 #pragma warning(disable : 4996)
 #endif
 
-ren::Context::~Context() {
+Ren::Context::~Context() {
     ReleaseAll();
 
     swDeleteContext(sw_ctx_);
 }
 
-void ren::Context::Init(int w, int h) {
+void Ren::Context::Init(int w, int h) {
     w_ = w;
     h_ = h;
 
@@ -47,7 +47,7 @@ void ren::Context::Init(int w, int h) {
     printf("===========================================\n\n");
 }
 
-void ren::Context::Resize(int w, int h) {
+void Ren::Context::Resize(int w, int h) {
     w_ = w;
     h_ = h;
 
@@ -57,7 +57,7 @@ void ren::Context::Resize(int w, int h) {
     swCreateFramebuffer(SW_BGRA8888, w, h, true);
 }
 
-ren::ProgramRef ren::Context::LoadProgramSW(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
+Ren::ProgramRef Ren::Context::LoadProgramSW(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
         const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *load_status) {
     ProgramRef ref;
     for (auto it = programs_.begin(); it != programs_.end(); ++it) {
