@@ -24,7 +24,7 @@ namespace Ren {
         template<typename S>
         explicit Vec(const Vec<S, N> &rhs) {
             for (int i = 0; i < N; i++) {
-                data_[i] = (T)rhs.data_[i];
+                data_[i] = (T)rhs[i];
             }
         }
 
