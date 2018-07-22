@@ -24,6 +24,8 @@ ENDIF(WIN32)
 
 set(SOURCE_FILES Anim.h
                  Anim.cpp
+                 Camera.h
+                 Camera.cpp
                  Context.h
                  Context.cpp
                  Fwd.h

@@ -1,5 +1,6 @@
 
 #include "Anim.cpp"
+#include "Camera.cpp"
 #include "Context.cpp"
 #include "Material.cpp"
 #include "Mesh.cpp"

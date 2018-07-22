@@ -186,6 +186,12 @@ namespace ren {
         return Dot(temp, temp);
     }
 
+    template <typename T, int N>
+    Vec<T, N> Normalize(const Vec<T, N> &v) {
+        T len = std::sqrt(Dot(v, v));
+        return v / len;
+    }
+
     template <typename T, typename S>
     T Mix(const T &x, const T &y, const S &a) { return x * (S(1) - a) + y * a; }
 

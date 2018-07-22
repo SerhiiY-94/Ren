@@ -387,6 +387,47 @@ namespace ren {
         return res;
     }
 
+    template <typename T>
+    Mat<T, 4, 4> Rotate(const Mat<T, 4, 4> &m, T angle_rad, const Vec<T, 3> &_axis) {
+        const T a = angle_rad;
+        const T c = std::cos(a);
+        const T s = std::sin(a);
+
+        Vec<T, 3> axis = Normalize(_axis);
+        Vec<T, 3> temp = (T(1) - c) * axis;
+
+        Mat<T, 4, 4> rot(Uninitialize);
+        rot[0][0] = c + temp[0] * axis[0];
+        rot[0][1] = 0 + temp[0] * axis[1] + s * axis[2];
+        rot[0][2] = 0 + temp[0] * axis[2] - s * axis[1];
+
+        rot[1][0] = 0 + temp[1] * axis[0] - s * axis[2];
+        rot[1][1] = c + temp[1] * axis[1];
+        rot[1][2] = 0 + temp[1] * axis[2] + s * axis[0];
+
+        rot[2][0] = 0 + temp[2] * axis[0] + s * axis[1];
+        rot[2][1] = 0 + temp[2] * axis[1] - s * axis[0];
+        rot[2][2] = c + temp[2] * axis[2];
+
+        Mat<T, 4, 4> res(Uninitialize);
+        res[0] = m[0] * rot[0][0] + m[1] * rot[0][1] + m[2] * rot[0][2];
+        res[1] = m[0] * rot[1][0] + m[1] * rot[1][1] + m[2] * rot[1][2];
+        res[2] = m[0] * rot[2][0] + m[1] * rot[2][1] + m[2] * rot[2][2];
+        res[3] = m[3];
+
+        return res;
+    }
+
+    template <typename T>
+    Mat<T, 4, 4> Scale(const Mat<T, 4, 4> &m, const Vec<T, 3> &v) {
+        Mat<T, 4, 4> res(Uninitialize);
+        res[0] = m[0] * v[0];
+        res[1] = m[1] * v[1];
+        res[2] = m[2] * v[2];
+        res[3] = m[3];
+        return res;
+    }
+
     template <typename T, int M, int N>
     const T *ValuePtr(const Mat<T, M, N> &v) {
         return &v[0][0];
@@ -406,4 +447,87 @@ namespace ren {
                              Vec<T, 4>{ T(0), T(0), v,    T(0) },
                              Vec<T, 4>{ T(0), T(0), T(0), v    } };
     }*/
+
+    template <typename T>
+    void LookAt(Mat<T, 4, 4> &m, const Vec<T, 3> &src, const Vec<T, 3> &trg, const Vec<T, 3> &up) {
+        Vec<T, 3> f = Normalize(trg - src);
+        Vec<T, 3> s = Normalize(Cross(f, up));
+        Vec<T, 3> u = Cross(s, f);
+
+        m[0][0] = s[0];
+        m[0][1] = u[0];
+        m[0][2] = -f[0];
+        m[0][3] = T(0);
+        m[1][0] = s[1];
+        m[1][1] = u[1];
+        m[1][2] = -f[1];
+        m[1][3] = T(0);
+        m[2][0] = s[2];
+        m[2][1] = u[2];
+        m[2][2] = -f[2];
+        m[2][3] = T(0);
+        m[3][0] = T(0);
+        m[3][1] = T(0);
+        m[3][2] = T(0);
+        m[3][3] = T(1);
+
+        m = Translate(m, -src);
+    }
+
+    template <typename T>
+    void PerspectiveProjection(Mat<T, 4, 4> &m, float fov, T aspect, T znear, T zfar) {
+        const T Pi = T(3.1415926535897932384626433832795);
+
+        T xymax = znear * std::tan(fov * Pi / 360);
+        T ymin = -xymax;
+        T xmin = -xymax;
+
+        T width = xymax - xmin;
+        T height = xymax - ymin;
+
+        T depth = zfar - znear;
+        T q = -(zfar + znear) / depth;
+        T qn = -2 * (zfar * znear) / depth;
+
+        T w = 2 * znear / width;
+        w = w / aspect;
+        T h = 2 * znear / height;
+
+        m[0][0] = w;
+        m[0][1] = m[0][2] = m[0][3] = T(0);
+
+        m[1][1] = h;
+        m[1][0] = m[1][2] = m[1][3] = T(0);
+
+        m[2][0] = m[2][1] = T(0);
+        m[2][2] = q;
+        m[2][3] = T(-1);
+
+        m[3][0] = m[3][1] = T(0);
+        m[3][2] = qn;
+        m[3][3] = T(0);
+    }
+
+    template <typename T>
+    void OrthographicProjection(Mat<T, 4, 4> &m, T left, T right, T bottom, T top, T nnear, T ffar) {
+        T r_width = T(1) / (right - left);
+        T r_height = T(1) / (top - bottom);
+        T r_depth = T(1) / (nnear - ffar);
+        T x = T(2) * (nnear * r_width);
+        T y = T(2) * (nnear * r_height);
+        T A = ((right + left) * r_width);
+        T B = (top + bottom) * r_height;
+        T C = (ffar + nnear) * r_depth;
+        T D = T(2) * (ffar * nnear * r_depth);
+
+        m = Mat<T, 4, 4>{ T(0) };
+
+        m[0][0] = x;
+        m[1][1] = y;
+        m[2][0] = A;
+        m[2][1] = B;
+        m[2][2] = C;
+        m[3][2] = D;
+        m[2][3] = -T(1);
+    }
 }
