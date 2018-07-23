@@ -6,10 +6,6 @@ image:
 clone_folder: c:\projects\Ren
 shallow_clone: true
 
-branches:
-    only:
-      - test
-
 matrix:
     fast_finish: true
 
@@ -28,13 +24,13 @@ init:
     - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
 
 before_build:
-    - mkdir build
-    - cd build
-    - cmake .. -G %generator%
+    - mkdir build_GL
+    - cd build_GL
+    - cmake .. -G %generator% -DRENDERER=GL
     - cd ..
 
 build_script:
-  - msbuild build\ALL_BUILD.vcxproj
+  - msbuild build_GL\ALL_BUILD.vcxproj
 
 test_script:
-    - build\tests\%CONFIGURATION%\test_Ren
+    - build_GL\tests\%CONFIGURATION%\test_Ren
