@@ -1,8 +1,6 @@
 
 #include <cstdio>
 
-#include <math/math.hpp>
-
 void test_anim();
 void test_mat();
 void test_material();
