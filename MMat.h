@@ -24,6 +24,14 @@ namespace Ren {
             data_[M - 1][N - 1] = T(1);
         }
 
+        explicit Mat(const Mat<T, M + 1, N + 1> &v) {
+            for (int i = 0; i < M; i++) {
+                for (int j = 0; j < N; j++) {
+                    data_[i][j] = v[i][j];
+                }
+            }
+        }
+
         template <typename... Tail>
         Mat(typename std::enable_if<sizeof...(Tail)+1 == M, Vec<T, N>>::type head, Tail... tail)
             : Vec{ head, tail... } {
@@ -157,7 +165,7 @@ namespace Ren {
 
     template <typename T, int M, int N>
     Vec<T, N> operator*(const Vec<T, M> &lhs, const Mat<T, M, N> &rhs) {
-        Vec<T, N> res = { uninitialize };
+        Vec<T, N> res = { Uninitialize };
         for (int n = 0; n < N; n++) {
             T sum = (T)0;
             for (int m = 0; m < M; m++) {
