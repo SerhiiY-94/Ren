@@ -6,6 +6,10 @@ image:
 clone_folder: c:\projects\Ren
 shallow_clone: true
 
+branches:
+    only:
+      - test
+
 matrix:
     fast_finish: true
 
