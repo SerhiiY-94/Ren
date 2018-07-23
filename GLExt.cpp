@@ -71,13 +71,13 @@ void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean tra
 bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
-#define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name); assert(name)
+#define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name);
 
 	if (wglGetCurrentContext() == NULL) {
 		return false;
 	}
 #elif defined(__linux__)
-#define GetProcAddress(name) (decltype(name))glXGetProcAddress((const GLubyte *) #name); assert(name)
+#define GetProcAddress(name) (decltype(name))glXGetProcAddress((const GLubyte *) #name);
 #endif
 
     glCreateProgram = GetProcAddress(glCreateProgram);
