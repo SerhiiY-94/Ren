@@ -8,6 +8,7 @@ void test_mesh();
 void test_program();
 void test_storage();
 void test_sparse_array();
+void test_texture();
 void test_vec();
 
 int main() {
@@ -18,6 +19,7 @@ int main() {
     test_program();
     test_storage();
     test_sparse_array();
+    test_texture();
     test_vec();
     puts("OK");
 }

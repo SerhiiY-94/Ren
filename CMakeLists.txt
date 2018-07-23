@@ -2,14 +2,7 @@ cmake_minimum_required(VERSION 2.8.4)
 project(Ren)
 
 if(WIN32)
-    if(SDL_STATIC)
-    else(SDL_STATIC)
-        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-            set(LIBS opengl32 SDL2 SDL2_mixer)
-        elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-            set(LIBS opengl32 SDL2 SDL2_mixer)
-        endif()
-    endif(SDL_STATIC)
+    
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR)
 else(WIN32)
     set(CMAKE_CXX_STANDARD 11)
@@ -47,6 +40,7 @@ set(SOURCE_FILES Anim.h
                  Utils.cpp)
 
 if(${RENDERER} STREQUAL "GL")
+	add_definitions(-DUSE_GL_RENDER)
     set(SOURCE_FILES ${SOURCE_FILES}
                      ContextGL.cpp
                      GL.h
@@ -66,6 +60,7 @@ if(${RENDERER} STREQUAL "GL")
         set(LIBS ${LIBS} SOIL2)
     ENDIF(WIN32)
 elseif(${RENDERER} STREQUAL "SW")
+	add_definitions(-DUSE_SW_RENDER)
     set(SOURCE_FILES ${SOURCE_FILES}
                      ContextSW.cpp
                      ProgramSW.h
@@ -79,6 +74,7 @@ elseif(${RENDERER} STREQUAL "VK")
 endif()
 
 add_subdirectory(SW)
+add_subdirectory(SOIL2)
 
 list(APPEND ALL_SOURCE_FILES ${SOURCE_FILES})
 set_source_files_properties(${SOURCE_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)

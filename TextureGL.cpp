@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <SOIL2/SOIL2.h>
+#include "SOIL2/SOIL2.h"
 
 #include "GL.h"
 

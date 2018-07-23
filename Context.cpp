@@ -2,8 +2,6 @@
 
 #include <algorithm>
 
-#include <Sys/Log.h>
-
 Ren::MeshRef Ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load) {
     MeshRef ref;
     for (auto it = meshes_.begin(); it != meshes_.end(); ++it) {
@@ -88,9 +86,8 @@ Ren::Texture2DRef Ren::Context::LoadTexture2D(const char *name, const void *data
     if (!ref) {
         ref = textures_.Add(name, data, size, p, load_status);
     } else {
-        if (ref->ready()) {
-            if (load_status) *load_status = TexFound;
-        } else if (!ref->ready() && data) {
+        if (load_status) *load_status = TexFound;
+        if (!ref->ready() && data) {
             ref->Init(name, data, size, p, load_status);
         }
     }
