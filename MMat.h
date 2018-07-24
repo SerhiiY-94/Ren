@@ -166,10 +166,10 @@ namespace Ren {
     template <typename T, int M, int N>
     Vec<T, N> operator*(const Vec<T, M> &lhs, const Mat<T, M, N> &rhs) {
         Vec<T, N> res = { Uninitialize };
-        for (int n = 0; n < N; n++) {
+        for (int n = 0; n < M; n++) {
             T sum = (T)0;
-            for (int m = 0; m < M; m++) {
-                sum += lhs[m] * rhs[m][n];
+            for (int m = 0; m < N; m++) {
+                sum += lhs[m] * rhs[n][m];
             }
             res[n] = sum;
         }
