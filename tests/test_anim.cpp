@@ -56,6 +56,8 @@ unsigned char __anim[] = {
 unsigned int __anim_len = 508;
 }
 
+#ifdef USE_GL_RENDER
+
 #if defined(_WIN32)
 #include <Windows.h>
 #endif
@@ -145,6 +147,16 @@ public:
 #endif
     }
 };
+
+#else
+#include "../SW/SW.h"
+class AnimTest : public Ren::Context {
+public:
+    AnimTest() {
+        Ren::Context::Init(256, 256);
+    }
+};
+#endif
 
 void test_anim() {
     {

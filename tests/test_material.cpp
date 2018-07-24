@@ -3,6 +3,8 @@
 #include "../Context.h"
 #include "../Material.h"
 
+#ifdef USE_GL_RENDER
+
 #if defined(_WIN32)
 #include <Windows.h>
 #endif
@@ -92,6 +94,16 @@ public:
 #endif
     }
 };
+
+#else
+#include "../SW/SW.h"
+class MaterialTest : public Ren::Context {
+public:
+    MaterialTest() {
+        Ren::Context::Init(256, 256);
+    }
+};
+#endif
 
 static Ren::ProgramRef OnProgramNeeded(const char *name, const char *arg1, const char *arg2) {
     return {};
