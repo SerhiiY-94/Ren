@@ -23,9 +23,9 @@ namespace Ren {
             : data_{ head, T(tail)... } {
         }
         
-        template<typename S>
-        explicit Vec(const Vec<S, N> &rhs) {
-            for (int i = 0; i < N; i++) {
+        template<typename S, int M>
+        explicit Vec(const Vec<S, M> &rhs) {
+            for (int i = 0; i < std::min(N, M); i++) {
                 data_[i] = (T)rhs[i];
             }
         }
