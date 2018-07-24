@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.2)
 project(test_Ren)
 
 IF(WIN32)
-
+	set(LIBS opengl32)
 ELSE(WIN32)
-    #set(LIBS X11 :libSDL2.a dl pthread GL glut c)
+    #set(LIBS X11 dl pthread GL glut c)
     IF(APPLE)
         set(LIBS SDL2 dl pthread c)
     ELSE(APPLE)
