@@ -34,7 +34,7 @@ namespace Ren {
 
         template <typename... Tail>
         Mat(typename std::enable_if<sizeof...(Tail)+1 == M, Vec<T, N>>::type head, Tail... tail)
-            : Vec{ head, tail... } {
+            : Vec<Vec<T, N>, M>{ head, tail... } {
         }
 
         Vec<T, N> &operator[](int i) { return data_[i]; }
