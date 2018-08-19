@@ -11,23 +11,23 @@ namespace Ren {
         Mat() : Mat(T(1)) {}
         explicit Mat(T v) {
             for (int i = 0; i < M; i++) {
-                data_[i][i] = v;
+                this->data_[i][i] = v;
             }
         }
 
         explicit Mat(const Mat<T, M - 1, N - 1> &v) {
             for (int i = 0; i < M - 1; i++) {
                 for (int j = 0; j < N - 1; j++) {
-                    data_[i][j] = v[i][j];
+                    this->data_[i][j] = v[i][j];
                 }
             }
-            data_[M - 1][N - 1] = T(1);
+            this->data_[M - 1][N - 1] = T(1);
         }
 
         explicit Mat(const Mat<T, M + 1, N + 1> &v) {
             for (int i = 0; i < M; i++) {
                 for (int j = 0; j < N; j++) {
-                    data_[i][j] = v[i][j];
+                    this->data_[i][j] = v[i][j];
                 }
             }
         }
@@ -37,8 +37,8 @@ namespace Ren {
             : Vec<Vec<T, N>, M>{ head, tail... } {
         }
 
-        Vec<T, N> &operator[](int i) { return data_[i]; }
-        const Vec<T, N> &operator[](int i) const { return data_[i]; }
+        Vec<T, N> &operator[](int i) { return this->data_[i]; }
+        const Vec<T, N> &operator[](int i) const { return this->data_[i]; }
 
         friend bool operator==(const Mat<T, M, N> &lhs, const Mat<T, M, N> &rhs) {
             bool res = true;
@@ -53,14 +53,14 @@ namespace Ren {
 
         Mat<T, M, N> &operator+=(const Mat<T, M, N> &rhs) {
             for (int i = 0; i < M; i++) {
-                data_[i] += rhs.data_[i];
+                this->data_[i] += rhs.data_[i];
             }
             return *this;
         }
 
         Mat<T, M, N> &operator-=(const Mat<T, M, N> &rhs) {
             for (int i = 0; i < M; i++) {
-                data_[i] -= rhs.data_[i];
+                this->data_[i] -= rhs.data_[i];
             }
             return *this;
         }
@@ -72,21 +72,21 @@ namespace Ren {
 
         Mat<T, M, N> &operator/=(const Mat<T, M, N> &rhs) {
             for (int i = 0; i < M; i++) {
-                data_[i] /= rhs.data_[i];
+                this->data_[i] /= rhs.data_[i];
             }
             return *this;
         }
 
         Mat<T, M, N> &operator*=(T rhs) {
             for (int i = 0; i < M; i++) {
-                data_[i] *= rhs;
+                this->data_[i] *= rhs;
             }
             return *this;
         }
 
         Mat<T, M, N> &operator/=(T rhs) {
             for (int i = 0; i < M; i++) {
-                data_[i] /= rhs;
+                this->data_[i] /= rhs;
             }
             return *this;
         }
@@ -202,7 +202,7 @@ namespace Ren {
 
     template <typename T, int M, int N>
     Mat<T, N, M> Transpose(const Mat<T, M, N> &mat) {
-        Mat<N, M> res = { Uninitialize };
+        Mat<T, N, M> res = { Uninitialize };
         for (int m = 0; m < M; m++) {
             for (int n = 0; n < N; n++) {
                 res[n][m] = mat[m][n];
@@ -216,7 +216,7 @@ namespace Ren {
 
     template <typename T, int N>
     T Minor(const Mat<T, N, N> &mat, int row, int col) {
-        Mat<T, N - 1, N - 1> res = { uninitialize };
+        Mat<T, N - 1, N - 1> res = { Uninitialize };
         int dst_row, dst_col;
         dst_row = 0;
         for (int src_row = 0; src_row < N; src_row++) {
@@ -279,7 +279,7 @@ namespace Ren {
 
     template <typename T, int N>
     Mat<T, N, N> Adj(const Mat<T, N, N> &mat) {
-        Mat<T, N, N> res = { uninitialize };
+        Mat<T, N, N> res = { Uninitialize };
         for (int row = 0; row < N; row++) {
             for (int col = 0; col < N; col++) {
                 T minor = Minor(mat, row, col);
@@ -300,7 +300,7 @@ namespace Ren {
     Mat<T, 2, 2> Inverse(const Mat<T, 2, 2> &mat) {
         T det = Det(mat);
         T inv_det = T(1) / det;
-        Mat<T, 2, 2> res = { uninitialize };
+        Mat<T, 2, 2> res = { Uninitialize };
         res[0][0] = inv_det * mat[1][1];
         res[0][1] = inv_det * -mat[0][1];
         res[1][0] = inv_det * -mat[1][0];
@@ -317,7 +317,7 @@ namespace Ren {
         T det = mat[0][0] * minor0 - mat[1][0] * minor1 + mat[2][0] * minor2;
         T inv_det = T(1) / det;
 
-        Mat<T, 3, 3> res = { uninitialize };
+        Mat<T, 3, 3> res = { Uninitialize };
         res[0][0] = inv_det * minor0;
         res[0][1] = inv_det * -minor1;
         res[0][2] = inv_det * minor2;
@@ -327,7 +327,7 @@ namespace Ren {
         res[2][0] = inv_det * (mat[1][0] * mat[2][1] - mat[2][0] * mat[1][1]);
         res[2][1] = inv_det * (mat[2][0] * mat[0][1] - mat[0][0] * mat[2][1]);
         res[2][2] = inv_det * (mat[0][0] * mat[1][1] - mat[1][0] * mat[0][1]);
-        return ret;
+        return res;
     }
 
     template <typename T>
@@ -343,7 +343,8 @@ namespace Ren {
         T minor1 = mat[0][1] * r2r3 - mat[2][1] * r0r3 + mat[3][1] * r0r2;
         T minor2 = mat[0][1] * r1r3 - mat[1][1] * r0r3 + mat[3][1] * r0r1;
         T minor3 = mat[0][1] * r1r2 - mat[1][1] * r0r2 + mat[2][1] * r0r1;
-        T det = mat[0][0] * minor0 - mat[1][0] * minor1 + mat[2][0] * minor2 - mat[3][0] * minor3;        T inv_det = T(1) / det;
+        T det = mat[0][0] * minor0 - mat[1][0] * minor1 + mat[2][0] * minor2 - mat[3][0] * minor3;
+        T inv_det = T(1) / det;
 
         Mat<T, 4, 4> res = { Uninitialize };
         res[0][0] = inv_det * minor0;

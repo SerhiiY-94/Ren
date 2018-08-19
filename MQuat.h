@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 #include "MVec.h"
 
 namespace Ren {
@@ -14,11 +16,6 @@ namespace Ren {
 
         Quat(eUninitialized) {}
         Quat() : data_{ (T)0 } {}
-        explicit Quat(T v) {
-            for (int i = 0; i < N; i++) {
-                data_[i] = v;
-            }
-        }
 
         Quat(T x, T y, T z, T w) : data_{ x, y, z, w } {}
 
