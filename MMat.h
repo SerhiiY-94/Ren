@@ -224,7 +224,7 @@ namespace Ren {
             dst_col = 0;
             for (int src_col = 0; src_col < N; src_col++) {
                 if (src_col == col) continue;
-                res[dst_row][dst_col] = mat[src_row, src_col];
+                res[dst_row][dst_col] = mat[src_row][src_col];
                 dst_col++;
             }
             dst_row++;
