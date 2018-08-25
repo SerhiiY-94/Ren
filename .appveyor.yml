@@ -33,9 +33,14 @@ before_build:
     - cd build_GL
     - cmake .. -G %generator% -DRENDERER=GL
     - cd ..
+    - mkdir build_SW
+    - cd build_SW
+    - cmake .. -G %generator% -DRENDERER=SW
+    - cd ..
 
 build_script:
   - msbuild build_GL\ALL_BUILD.vcxproj
+  - msbuild build_SW\ALL_BUILD.vcxproj
 
 test_script:
-    - build_GL\tests\%CONFIGURATION%\test_Ren
+    - build_SW\tests\%CONFIGURATION%\test_Ren
