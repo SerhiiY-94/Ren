@@ -52,7 +52,10 @@ void (APIENTRY *glBindRenderbuffer)(GLenum target, GLuint renderbuffer);
 void (APIENTRY *glRenderbufferStorage)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
 
 void (APIENTRY *glFramebufferRenderbuffer)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
-GLenum(APIENTRY *glCheckFramebufferStatus)(GLenum target);
+GLenum (APIENTRY *glCheckFramebufferStatus)(GLenum target);
+
+void (APIENTRY *glDrawBuffers)(GLsizei n, const GLenum *bufs);
+void (APIENTRY *glBindFragDataLocation)(GLuint program, GLuint colorNumber, const char * name);
 
 void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);
@@ -125,6 +128,9 @@ bool Ren::InitGLExtentions() {
 
     glFramebufferRenderbuffer = GetProcAddress(glFramebufferRenderbuffer);
     glCheckFramebufferStatus = GetProcAddress(glCheckFramebufferStatus);
+
+    glDrawBuffers = GetProcAddress(glDrawBuffers);
+    glBindFragDataLocation = GetProcAddress(glBindFragDataLocation);
 
     glUniform1f = GetProcAddress(glUniform1f);
     glUniform2f = GetProcAddress(glUniform2f);

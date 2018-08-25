@@ -184,6 +184,9 @@ extern void (APIENTRY *glRenderbufferStorage)(GLenum target, GLenum internalform
 extern void (APIENTRY *glFramebufferRenderbuffer)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
 extern GLenum(APIENTRY *glCheckFramebufferStatus)(GLenum target);
 
+extern void (APIENTRY *glDrawBuffers)(GLsizei n, const GLenum *bufs);
+extern void (APIENTRY *glBindFragDataLocation)(GLuint program, GLuint colorNumber, const char * name);
+
 extern void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 extern void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);
 extern void (APIENTRY *glUniform3f)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
