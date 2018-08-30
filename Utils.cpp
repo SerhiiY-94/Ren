@@ -351,8 +351,8 @@ void Ren::ComputeTextureBasis(std::vector<vertex_t> &vertices, std::vector<uint3
         Vec3f dp1 = MakeVec3(v1->p) - MakeVec3(v0->p);
         Vec3f dp2 = MakeVec3(v2->p) - MakeVec3(v0->p);
 
-        Vec2f dt1 = MakeVec2(v1->t0) - MakeVec2(v0->t0);
-        Vec2f dt2 = MakeVec2(v2->t0) - MakeVec2(v0->t0);
+        Vec2f dt1 = MakeVec2(v1->t[0]) - MakeVec2(v0->t[0]);
+        Vec2f dt2 = MakeVec2(v2->t[0]) - MakeVec2(v0->t[0]);
 
         float det = dt1[0] * dt2[1] - dt1[1] * dt2[0];
         float inv_det = std::abs(det) > flt_eps ? 1.0f / det : 0;
