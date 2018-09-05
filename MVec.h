@@ -207,6 +207,15 @@ namespace Ren {
     }
 
     template <typename T, int N>
+    Vec<T, N> Abs(const Vec<T, N> &v) {
+        Vec<T, N> ret(Uninitialize);
+        for (int i = 0; i < N; i++) {
+            ret[i] = std::abs(v[i]);
+        }
+        return ret;
+    }
+
+    template <typename T, int N>
     Vec<T, N> Max(const Vec<T, N> &v1, const Vec<T, N> &v2) {
         Vec<T, N> ret(Uninitialize);
         for (int i = 0; i < N; i++) {
