@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include <algorithm>
 #include <type_traits>
 
 namespace Ren {
@@ -194,6 +195,24 @@ namespace Ren {
     Vec<T, N> Normalize(const Vec<T, N> &v) {
         T len = std::sqrt(Dot(v, v));
         return v / len;
+    }
+
+    template <typename T, int N>
+    Vec<T, N> Min(const Vec<T, N> &v1, const Vec<T, N> &v2) {
+        Vec<T, N> ret(Uninitialize);
+        for (int i = 0; i < N; i++) {
+            ret[i] = std::min(v1[i], v2[i]);
+        }
+        return ret;
+    }
+
+    template <typename T, int N>
+    Vec<T, N> Max(const Vec<T, N> &v1, const Vec<T, N> &v2) {
+        Vec<T, N> ret(Uninitialize);
+        for (int i = 0; i < N; i++) {
+            ret[i] = std::max(v1[i], v2[i]);
+        }
+        return ret;
     }
 
     template <typename T, typename S>
