@@ -131,3 +131,18 @@ bool Ren::Camera::IsInFrustum(const float bbox[8][3]) const {
     }
     return true;
 }
+
+bool Ren::Camera::IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) const {
+    const float bbox_points[8][3] = {
+        bbox_min[0], bbox_min[1], bbox_min[2],
+        bbox_max[0], bbox_min[1], bbox_min[2],
+        bbox_min[0], bbox_min[1], bbox_max[2],
+        bbox_max[0], bbox_min[1], bbox_max[2],
+        bbox_min[0], bbox_max[1], bbox_min[2],
+        bbox_max[0], bbox_max[1], bbox_min[2],
+        bbox_min[0], bbox_max[1], bbox_max[2],
+        bbox_max[0], bbox_max[1], bbox_max[2]
+    };
+
+    return IsInFrustum(bbox_points);
+}

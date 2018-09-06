@@ -519,7 +519,7 @@ namespace Ren {
 
     template <typename T>
     void OrthographicProjection(Mat<T, 4, 4> &m, T left, T right, T bottom, T top, T nnear, T ffar) {
-        T r_width = T(1) / (right - left);
+        /*T r_width = T(1) / (right - left);
         T r_height = T(1) / (top - bottom);
         T r_depth = T(1) / (nnear - ffar);
         T x = T(2) * (nnear * r_width);
@@ -537,6 +537,20 @@ namespace Ren {
         m[2][1] = B;
         m[2][2] = C;
         m[3][2] = D;
-        m[2][3] = -T(1);
+        m[2][3] = -T(1);*/
+
+        T r_width = T(1) / (right - left);
+        T r_height = T(1) / (top - bottom);
+        T r_depth = T(1) / (nnear - ffar);
+
+        m = Mat<T, 4, 4>{ T(0) };
+
+        m[0][0] = T(2) * r_width;
+        m[1][1] = T(2) * r_height;
+        m[2][2] = -T(1) * r_depth;
+        m[3][0] = -(right + left) * r_width;
+        m[3][1] = -(top + bottom) * r_height;
+        m[3][2] = -nnear * r_depth;
+        m[3][3] = T(1);
     }
 }
