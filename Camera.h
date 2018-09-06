@@ -49,6 +49,7 @@ public:
 
     void UpdatePlanes();
     bool IsInFrustum(const float bbox[8][3]) const;
+    bool IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) const;
 
     void Move(const Vec3f &v, float delta_time);
     void Rotate(float rx, float ry, float delta_time);
