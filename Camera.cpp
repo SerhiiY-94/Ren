@@ -26,6 +26,10 @@ void Ren::Camera::SetupView(const Vec3f &center, const Vec3f &target, const Vec3
 
 void Ren::Camera::Perspective(float angle, float aspect, float nearr, float farr) {
     is_orthographic_ = false;
+    angle_ = angle;
+    aspect_ = aspect;
+    near_ = nearr;
+    far_ = farr;
     PerspectiveProjection(projection_matrix_, angle, aspect, nearr, farr);
 }
 

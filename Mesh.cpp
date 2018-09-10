@@ -153,7 +153,7 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
         data.read((char *)&num_indices, 4);
         data.read((char *)&alpha, 4);
 
-        strips_[i].offset = (int)(index * sizeof(unsigned short));
+        strips_[i].offset = (int)(index * sizeof(uint32_t));
         strips_[i].num_indices = (int)num_indices;
         strips_[i].flags = 0;
 

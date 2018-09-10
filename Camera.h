@@ -26,6 +26,7 @@ protected:
     Plane frustum_planes_[6];
     bool is_orthographic_;
 
+    float angle_, aspect_, near_, far_;
 public:
     Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up);
 
@@ -33,6 +34,11 @@ public:
     const Mat4f &projection_matrix() const { return projection_matrix_; }
 
     const Vec3f &world_position() const { return world_position_; }
+
+    float angle() const { return angle_; }
+    float aspect() const { return aspect_; }
+    float near() const { return near_; }
+    float far() const { return far_; }
 
     const Plane* const frustum_planes() const {
         return frustum_planes_;
