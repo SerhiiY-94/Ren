@@ -44,14 +44,15 @@ std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eT
     const uint8_t *image_data = (const uint8_t *)data + 18;
 
     std::unique_ptr<uint8_t[]> image_ret(new uint8_t[img_size]);
+    uint8_t *_image_ret = &image_ret[0];
 
     if (!compressed) {
         for (unsigned i = 0; i < img_size; i += bytes_per_pixel) {
-            image_ret[i] = image_data[i + 2];
-            image_ret[i + 1] = image_data[i + 1];
-            image_ret[i + 2] = image_data[i];
+            _image_ret[i] = image_data[i + 2];
+            _image_ret[i + 1] = image_data[i + 1];
+            _image_ret[i + 2] = image_data[i];
             if (bytes_per_pixel == 4) {
-                image_ret[i + 3] = image_data[i + 3];
+                _image_ret[i + 3] = image_data[i + 3];
             }
         }
     } else {
@@ -65,22 +66,22 @@ std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eT
                     color[i] = *image_data++;
                 }
                 for (unsigned i = 0; i < size; i += bytes_per_pixel, num += bytes_per_pixel) {
-                    image_ret[num] = color[2];
-                    image_ret[num + 1] = color[1];
-                    image_ret[num + 2] = color[0];
+                    _image_ret[num] = color[2];
+                    _image_ret[num + 1] = color[1];
+                    _image_ret[num + 2] = color[0];
                     if (bytes_per_pixel == 4) {
-                        image_ret[num + 3] = color[3];
+                        _image_ret[num + 3] = color[3];
                     }
                 }
             } else {
                 unsigned size = (packet_header & ~(1 << 7)) + 1;
                 size *= bytes_per_pixel;
                 for (unsigned i = 0; i < size; i += bytes_per_pixel, num += bytes_per_pixel) {
-                    image_ret[num] = image_data[i + 2];
-                    image_ret[num + 1] = image_data[i + 1];
-                    image_ret[num + 2] = image_data[i];
+                    _image_ret[num] = image_data[i + 2];
+                    _image_ret[num + 1] = image_data[i + 1];
+                    _image_ret[num + 2] = image_data[i];
                     if (bytes_per_pixel == 4) {
-                        image_ret[num + 3] = image_data[i + 3];
+                        _image_ret[num + 3] = image_data[i + 3];
                     }
                 }
                 image_data += size;
