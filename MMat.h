@@ -3,6 +3,10 @@
 #include "MVec.h"
 
 namespace Ren {
+    template <typename T>
+    T Pi() {
+        return T(3.1415926535897932384626433832795);
+    }
 
     template <typename T, int M, int N>
     class Mat : public Vec<Vec<T, N>, M> {
@@ -485,9 +489,7 @@ namespace Ren {
 
     template <typename T>
     void PerspectiveProjection(Mat<T, 4, 4> &m, T fov, T aspect, T znear, T zfar) {
-        const T Pi = T(3.1415926535897932384626433832795);
-
-        T xymax = znear * std::tan(fov * Pi / T(360));
+        T xymax = znear * std::tan(fov * Pi<T>() / T(360));
         T ymin = -xymax;
         T xmin = -xymax;
 

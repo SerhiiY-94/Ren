@@ -150,3 +150,20 @@ bool Ren::Camera::IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) cons
 
     return IsInFrustum(bbox_points);
 }
+
+float Ren::Camera::GetBoundingSphere(Vec3f &out_center) const {
+    float f = far_,
+          n = near_;
+
+    Vec3f fwd = Vec3f{ -view_matrix_[0][2], -view_matrix_[1][2], -view_matrix_[2][2] };
+
+    float k = std::sqrt(1 + (1.0f / (aspect_ * aspect_))) * std::tan(0.5f * angle_ * Ren::Pi<float>() / 180.0f);
+    float k_sqr = k * k;
+    if (k_sqr >= (f - n) / (f + n)) {
+        out_center = world_position_ + fwd * f;
+        return f * k;
+    } else {
+        out_center = world_position_ + fwd * 0.5f * (f + n) * (1 + k_sqr);
+        return 0.5f * std::sqrt((f - n) * (f - n) + 2.0f * (f * f + n * n) * k_sqr + (f + n) * (f + n) * k_sqr * k_sqr);
+    }
+}

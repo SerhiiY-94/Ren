@@ -28,6 +28,7 @@ protected:
 
     float angle_, aspect_, near_, far_;
 public:
+    Camera() {}
     Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up);
 
     const Mat4f &view_matrix() const { return view_matrix_; }
@@ -57,8 +58,10 @@ public:
     bool IsInFrustum(const float bbox[8][3]) const;
     bool IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) const;
 
+    // returns radius
+    float GetBoundingSphere(Vec3f &out_center) const;
+
     void Move(const Vec3f &v, float delta_time);
     void Rotate(float rx, float ry, float delta_time);
-
 };
 }
