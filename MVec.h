@@ -232,6 +232,11 @@ namespace Ren {
         return &v[0];
     }
 
+    template <typename T, int N>
+    const T *ValuePtr(const Vec<T, N> *v) {
+        return &(*v)[0];
+    }
+
     template <typename T>
     Vec<T, 2> MakeVec2(const T *v) { return Vec<T, 2>(v[0], v[1]); }
     template <typename T>

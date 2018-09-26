@@ -446,6 +446,11 @@ namespace Ren {
         return &v[0][0];
     }
 
+    template <typename T, int M, int N>
+    const T *ValuePtr(const Mat<T, M, N> *v) {
+        return &(*v)[0][0];
+    }
+
     /*template <typename T>
     Mat<T, 3, 3> MakeMat3(T v) {
         return Mat<T, 3, 3>{ Vec<T, 3>{ v, T(0), T(0) },
