@@ -11,7 +11,7 @@
 #endif
 
 namespace Ren {
-enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, Compressed };
+enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, Compressed, None };
 enum eTexFilter { NoFilter, Bilinear, Trilinear, BilinearNoMipmap };
 enum eTexRepeat { Repeat, ClampToEdge };
 
