@@ -4,7 +4,7 @@
 
 #include "Texture.h"
 
-std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format) {
+std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eTexColorFormat &format) {
     uint8_t tga_header[12] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     const uint8_t *tga_compare = (const uint8_t *)data;
     const uint8_t *img_header = (const uint8_t *)data + sizeof(tga_header);

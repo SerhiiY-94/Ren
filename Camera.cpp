@@ -157,7 +157,7 @@ float Ren::Camera::GetBoundingSphere(Vec3f &out_center) const {
 
     Vec3f fwd = Vec3f{ -view_matrix_[0][2], -view_matrix_[1][2], -view_matrix_[2][2] };
 
-    float k = std::sqrt(1 + (1.0f / (aspect_ * aspect_))) * std::tan(0.5f * angle_ * Ren::Pi<float>() / 180.0f);
+    float k = std::sqrt(1 + (1.0f / (aspect_ * aspect_))) * aspect_ * std::tan(0.5f * angle_ * Ren::Pi<float>() / 180.0f);
     float k_sqr = k * k;
     if (k_sqr >= (f - n) / (f + n)) {
         out_center = world_position_ + fwd * f;

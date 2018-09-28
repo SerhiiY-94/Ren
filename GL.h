@@ -100,6 +100,8 @@
 
 #define GL_MULTISAMPLE 0x809D
 
+#define GL_TEXTURE_2D_MULTISAMPLE 0x9100
+
 #ifndef APIENTRY
 #if defined(WIN32)
 #define WINAPI      __stdcall
@@ -200,6 +202,11 @@ extern void (APIENTRY *glUniform3fv)(GLint location, GLsizei count, const GLfloa
 extern void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloat *value);
 
 extern void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+
+extern void (APIENTRY *glTexImage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
+                                                GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+extern void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
+                                                         GLsizei width, GLsizei height);
 
 namespace Ren {
 bool InitGLExtentions();

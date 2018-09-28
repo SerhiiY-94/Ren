@@ -11,13 +11,13 @@
 #endif
 
 namespace Ren {
-enum eTex2DFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, Compressed, None };
+enum eTexColorFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, Compressed, None };
 enum eTexFilter { NoFilter, Bilinear, Trilinear, BilinearNoMipmap };
 enum eTexRepeat { Repeat, ClampToEdge };
 
 struct Texture2DParams {
     int w = 0, h = 0;
-    eTex2DFormat format = Undefined;
+    eTexColorFormat format = Undefined;
     eTexFilter filter = NoFilter;
     eTexRepeat repeat = Repeat;
 };

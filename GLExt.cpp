@@ -71,6 +71,11 @@ void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloat *valu
 
 void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
+void (APIENTRY *glTexImage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
+                                         GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
+                                                  GLsizei width, GLsizei height);
+
 bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
@@ -145,6 +150,9 @@ bool Ren::InitGLExtentions() {
     glUniform4fv = GetProcAddress(glUniform4fv);
 
     glUniformMatrix4fv = GetProcAddress(glUniformMatrix4fv);
+
+    glTexImage2DMultisample = GetProcAddress(glTexImage2DMultisample);
+    glRenderbufferStorageMultisample = GetProcAddress(glRenderbufferStorageMultisample);
 
     return true;
 }

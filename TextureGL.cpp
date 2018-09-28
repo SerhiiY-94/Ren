@@ -12,7 +12,7 @@
 #endif
 
 namespace Ren {
-std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTex2DFormat &format);
+std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTexColorFormat &format);
 void CheckError(const char *op);
 }
 
@@ -177,7 +177,7 @@ void Ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
 
 void Ren::Texture2D::InitFromTGAFile(const void *data, const Texture2DParams &p) {
     int w = 0, h = 0;
-    eTex2DFormat format = Undefined;
+    eTexColorFormat format = Undefined;
     auto image_data = ReadTGAFile(data, w, h, format);
 
     Texture2DParams _p = p;
@@ -274,7 +274,7 @@ void Ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams 
     std::unique_ptr<uint8_t[]> image_data[6];
     const void *_image_data[6] = {};
     int w = 0, h = 0;
-    eTex2DFormat format = Undefined;
+    eTexColorFormat format = Undefined;
     for (int i = 0; i < 6; i++) {
         if (data[i]) {
             image_data[i] = ReadTGAFile(data[i], w, h, format);
