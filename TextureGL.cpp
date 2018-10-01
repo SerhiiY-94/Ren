@@ -322,6 +322,15 @@ void Ren::Texture2D::ChangeFilter(eTexFilter f, eTexRepeat r) {
     }
 }
 
+void Ren::Texture2D::ReadTextureData(eTexColorFormat format, void *out_data) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex_id_);
+
+    if (format == RawRGBA8888) {
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, out_data);
+    }
+}
+
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
