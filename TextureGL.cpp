@@ -72,7 +72,9 @@ void Ren::Texture2D::Init(const char *name, const void *data, int size,
         ready_ = false;
         if (load_status) *load_status = TexCreatedDefault;
     } else {
-        if (strstr(name, ".tga") != 0 || strstr(name, ".TGA") != 0) {
+        if (strstr(name, ".tga_rgbe") != 0 || strstr(name, ".TGA_RGBE") != 0) {
+            InitFromTGA_RGBEFile(data, p);
+        } else if (strstr(name, ".tga") != 0 || strstr(name, ".TGA") != 0) {
             InitFromTGAFile(data, p);
         } else if (strstr(name, ".dds") != 0 || strstr(name, ".DDS") != 0) {
             InitFromDDSFile(data, size, p);
@@ -137,6 +139,10 @@ void Ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, p.w, p.h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     } else if (p.format == RawLUM8) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, p.w, p.h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
+    } else if (p.format == RawRGB16F) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, p.w, p.h, 0, GL_RGB, GL_HALF_FLOAT, data);
+    } else if (p.format == RawRGB32F) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, p.w, p.h, 0, GL_RGB, GL_FLOAT, data);
     }
 
     float anisotropy = 0.0f;
@@ -185,7 +191,47 @@ void Ren::Texture2D::InitFromTGAFile(const void *data, const Texture2DParams &p)
     _p.h = h;
     _p.format = format;
 
+
     InitFromRAWData(image_data.get(), _p);
+}
+
+void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data, const Texture2DParams &p) {
+    int w = 0, h = 0;
+    eTexColorFormat format = Undefined;
+    auto image_data = ReadTGAFile(data, w, h, format);
+
+    Texture2DParams _p = p;
+    _p.w = w;
+    _p.h = h;
+    _p.format = RawRGB16F;
+
+    std::unique_ptr<int16_t[]> fp_data(new int16_t[_p.w * _p.h * 3]);
+
+    auto f32_to_f16 = [](float value) -> int16_t {
+        int16_t   fltInt16;
+        int32_t   fltInt32;
+        memcpy(&fltInt32, &value, sizeof(float));
+        fltInt16 = ((fltInt32 & 0x7fffffff) >> 13) - (0x38000000 >> 13);
+        fltInt16 |= ((fltInt32 & 0x80000000) >> 16);
+
+        return fltInt32 ? fltInt16 : 0;
+    };
+
+    for (int i = 0; i < w * h; i++) {
+        uint8_t r = image_data[4 * i + 0];
+        uint8_t g = image_data[4 * i + 1];
+        uint8_t b = image_data[4 * i + 2];
+        uint8_t a = image_data[4 * i + 3];
+
+        float f = std::exp2(float(a) - 128.0f);
+        float k = 1.0f / 255;
+
+        fp_data[3 * i + 0] = f32_to_f16(k * r * f);
+        fp_data[3 * i + 1] = f32_to_f16(k * g * f);
+        fp_data[3 * i + 2] = f32_to_f16(k * b * f);
+    }
+
+    InitFromRAWData(fp_data.get(), _p);
 }
 
 void Ren::Texture2D::InitFromDDSFile(const void *data, int size, const Texture2DParams &p) {

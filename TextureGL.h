@@ -11,7 +11,7 @@
 #endif
 
 namespace Ren {
-enum eTexColorFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, RawRGBA32F, Compressed, None };
+enum eTexColorFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawRGB32F, RawRGBA32F, RawRGBE8888, RawRGB16F, Compressed, None };
 enum eTexFilter { NoFilter, Bilinear, Trilinear, BilinearNoMipmap };
 enum eTexRepeat { Repeat, ClampToEdge };
 
@@ -33,6 +33,7 @@ class Texture2D : public RefCounter {
 
     void InitFromRAWData(const void *data, const Texture2DParams &p);
     void InitFromTGAFile(const void *data, const Texture2DParams &p);
+    void InitFromTGA_RGBEFile(const void *data, const Texture2DParams &p);
     void InitFromDDSFile(const void *data, int size, const Texture2DParams &p);
 
     void InitFromRAWData(const void *data[6], const Texture2DParams &p);
