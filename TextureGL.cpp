@@ -208,13 +208,61 @@ void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data, const Texture2DParam
     std::unique_ptr<int16_t[]> fp_data(new int16_t[_p.w * _p.h * 3]);
 
     auto f32_to_f16 = [](float value) -> int16_t {
-        int16_t   fltInt16;
-        int32_t   fltInt32;
-        memcpy(&fltInt32, &value, sizeof(float));
-        fltInt16 = ((fltInt32 & 0x7fffffff) >> 13) - (0x38000000 >> 13);
-        fltInt16 |= ((fltInt32 & 0x80000000) >> 16);
+        int32_t i;
+        memcpy(&i, &value, sizeof(float));
 
-        return fltInt32 ? fltInt16 : 0;
+        int32_t s = (i >> 16) & 0x00008000;
+        int32_t e = ((i >> 23) & 0x000000ff) - (127 - 15);
+        int32_t m = i & 0x007fffff;
+        if (e <= 0) {
+            if (e < -10) {
+                return reinterpret_cast<const uint16_t &>(s);
+            }
+
+            m = (m | 0x00800000) >> (1 - e);
+
+            if (m & 0x00001000)
+                m += 0x00002000;
+
+            s = s | (m >> 13);
+            uint16_t ret;
+            memcpy(&ret, &s, sizeof(uint16_t));
+            return ret;
+        } else if (e == 0xff - (127 - 15)) {
+            if (m == 0) {
+                s = s | 0x7c00;
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+            } else {
+                m >>= 13;
+
+                s = s | 0x7c00 | m | (m == 0);
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
+            }
+        } else {
+            if (m & 0x00001000) {
+                m += 0x00002000;
+
+                if (m & 0x00800000) {
+                    m = 0;     // overflow in significand,
+                    e += 1;     // adjust exponent
+                }
+            }
+
+            if (e > 30) {
+                s = s | 0x7c00;
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
+            }
+
+            s = s | (e << 10) | (m >> 13);
+            uint16_t ret;
+            memcpy(&ret, &s, sizeof(uint16_t));
+            return ret;
+        }
     };
 
     for (int i = 0; i < w * h; i++) {
