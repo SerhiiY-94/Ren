@@ -1,8 +1,15 @@
 #pragma once
 
 #if defined(__ANDROID__) || defined(__native_client__) || defined(EMSCRIPTEN)
-#include <GLES2/gl2.h>
+//#if __ANDROID_API__ >= 24
+#include <GLES3/gl32.h>
+/*#elif __ANDROID_API__ >= 21
+#include <GLES3/gl31.h>
+#else
+#include <GLES3/gl3.h>
+#endif*/
 #include <GLES2/gl2ext.h>
+#include <GLES3/gl3ext.h>
 #else
 //#include <GL/glew.h>
 
@@ -207,8 +214,8 @@ extern void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloa
 
 extern void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
-extern void (APIENTRY *glTexImage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
-                                                GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+extern void (APIENTRY *glTexStorage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
+                                                  GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 extern void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
                                                          GLsizei width, GLsizei height);
 

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.4)
 project(Ren)
 
 if(WIN32)
-    
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR)
 else(WIN32)
     set(CMAKE_CXX_STANDARD 11)
@@ -14,6 +13,10 @@ elseif(${RENDERER} STREQUAL "VK")
     add_definitions(-DVK_PROTOTYPES -DVK_USE_PLATFORM_XCB_KHR)
 endif()
 ENDIF(WIN32)
+
+if(CMAKE_SYSTEM_NAME MATCHES "Android")
+	set(LIBS GLESv2 GLESv3 EGL)
+endif()
 
 set(SOURCE_FILES Anim.h
                  Anim.cpp

@@ -233,6 +233,7 @@ void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data, const Texture2DParam
                 s = s | 0x7c00;
                 uint16_t ret;
                 memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
             } else {
                 m >>= 13;
 
@@ -417,12 +418,15 @@ void Ren::Texture2D::ChangeFilter(eTexFilter f, eTexRepeat r) {
 }
 
 void Ren::Texture2D::ReadTextureData(eTexColorFormat format, void *out_data) {
+#if defined(__ANDROID__)
+#else
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex_id_);
 
     if (format == RawRGBA8888) {
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, out_data);
     }
+#endif
 }
 
 #ifdef _MSC_VER
