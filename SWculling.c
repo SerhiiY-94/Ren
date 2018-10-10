@@ -376,10 +376,6 @@ sw_inline SWint _swTestTriangle(const SWzbuffer *zbuf, const SWfloat *v0, const 
     return 0;
 }
 
-sw_inline SWint _swTestBbox(SWzbuffer *zbuf, const SWfloat min[3], const SWfloat max[3]) {
-
-}
-
 SWint swCullCtxCullTrianglesIndexed_Ubyte(SWcull_ctx *ctx, const void *attribs, const SWubyte *indices,
         SWuint stride, SWuint count, const SWfloat *xform, SWint is_occluder) {
     SWint res = 0;
