@@ -106,6 +106,7 @@
 #define GL_RGB32F 0x8815
 
 #define GL_RGB16F 0x881B
+#define GL_RGBA16F 0x881A
 
 #define GL_HALF_FLOAT 5131
 

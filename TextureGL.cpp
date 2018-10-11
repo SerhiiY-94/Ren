@@ -145,9 +145,9 @@ void Ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, p.w, p.h, 0, GL_RGB, GL_FLOAT, data);
     }
 
-    float anisotropy = 0.0f;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
-    if (anisotropy > 0) {
+    float anisotropy = 4.0f;
+    //glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+    if (anisotropy > 0.0f) {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
     }
 
