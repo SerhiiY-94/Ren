@@ -16,7 +16,8 @@ class TextureTest : public Ren::Context {
     HDC hDC;
     HGLRC hRC;
 #else
-    SDL_Window *window_;    void *gl_ctx_;
+    SDL_Window *window_;
+    void *gl_ctx_;
 #endif
 public:
     TextureTest() {
@@ -39,8 +40,8 @@ public:
         }
 
         hWnd = CreateWindow("TextureTest", "!!", WS_OVERLAPPEDWINDOW |
-            WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-            0, 0, 100, 100, NULL, NULL, hInstance, NULL);
+                            WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                            0, 0, 100, 100, NULL, NULL, hInstance, NULL);
 
         if (hWnd == NULL) {
             throw std::runtime_error("Cannot create window!");

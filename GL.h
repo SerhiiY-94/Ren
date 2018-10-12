@@ -129,11 +129,11 @@
 #if defined(WIN32)
 #include <GL/GL.h>
 #else
-    #if defined(__APPLE__)
-        #include <OpenGL/gl.h>
-    #else
-        #include <GL/gl.h>
-    #endif
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 #endif
 
 typedef unsigned int GLenum;
@@ -216,9 +216,9 @@ extern void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloa
 extern void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
 extern void (APIENTRY *glTexStorage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
-                                                  GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+        GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 extern void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
-                                                         GLsizei width, GLsizei height);
+        GLsizei width, GLsizei height);
 
 namespace Ren {
 bool InitGLExtentions();

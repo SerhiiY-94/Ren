@@ -31,15 +31,29 @@ public:
     Camera() {}
     Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up);
 
-    const Mat4f &view_matrix() const { return view_matrix_; }
-    const Mat4f &projection_matrix() const { return projection_matrix_; }
+    const Mat4f &view_matrix() const {
+        return view_matrix_;
+    }
+    const Mat4f &projection_matrix() const {
+        return projection_matrix_;
+    }
 
-    const Vec3f &world_position() const { return world_position_; }
+    const Vec3f &world_position() const {
+        return world_position_;
+    }
 
-    float angle() const { return angle_; }
-    float aspect() const { return aspect_; }
-    float near() const { return near_; }
-    float far() const { return far_; }
+    float angle() const {
+        return angle_;
+    }
+    float aspect() const {
+        return aspect_;
+    }
+    float near() const {
+        return near_;
+    }
+    float far() const {
+        return far_;
+    }
 
     const Plane* const frustum_planes() const {
         return frustum_planes_;

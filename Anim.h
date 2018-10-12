@@ -48,14 +48,30 @@ public:
 
     AnimSequence(const char *name, std::istream &data);
 
-    const char *name() const { return name_; }
-    int fps() const { return fps_; }
-    int len() const { return len_; }
-    int frame_size() const { return frame_size_; }
-    float frame_dur() const { return frame_dur_; }
-    float anim_dur() const { return anim_dur_; }
-    size_t num_bones() const { return bones_.size(); }
-    bool ready() const { return ready_; }
+    const char *name() const {
+        return name_;
+    }
+    int fps() const {
+        return fps_;
+    }
+    int len() const {
+        return len_;
+    }
+    int frame_size() const {
+        return frame_size_;
+    }
+    float frame_dur() const {
+        return frame_dur_;
+    }
+    float anim_dur() const {
+        return anim_dur_;
+    }
+    size_t num_bones() const {
+        return bones_.size();
+    }
+    bool ready() const {
+        return ready_;
+    }
 
     const float *frames() const {
         return &frames_[0];

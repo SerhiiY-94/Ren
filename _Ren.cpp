@@ -14,7 +14,7 @@ extern "C" {
 #if defined(USE_GL_RENDER)
 #if defined(__ANDROID__) || defined(__native_client__) || defined(EMSCRIPTEN)
 #else
-    #include "GLExt.cpp"
+#include "GLExt.cpp"
 #endif
 #include "ContextGL.cpp"
 #include "ProgramGL.cpp"

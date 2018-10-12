@@ -16,7 +16,8 @@ class MaterialTest : public Ren::Context {
     HDC hDC;
     HGLRC hRC;
 #else
-    SDL_Window *window_;    void *gl_ctx_;
+    SDL_Window *window_;
+    void *gl_ctx_;
 #endif
 public:
     MaterialTest() {
@@ -36,11 +37,11 @@ public:
 
         if (!RegisterClass(&wc)) {
             throw std::runtime_error("Cannot register window class!");
-    }
+        }
 
         hWnd = CreateWindow("MaterialTest", "!!", WS_OVERLAPPEDWINDOW |
-            WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-            0, 0, 100, 100, NULL, NULL, hInstance, NULL);
+                            WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                            0, 0, 100, 100, NULL, NULL, hInstance, NULL);
 
         if (hWnd == NULL) {
             throw std::runtime_error("Cannot create window!");
@@ -76,7 +77,7 @@ public:
         gl_ctx_ = SDL_GL_CreateContext(window_);
 #endif
         Context::Init(256, 256);
-}
+    }
 
     ~MaterialTest() {
 #if defined(_WIN32)

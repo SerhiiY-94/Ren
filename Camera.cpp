@@ -18,7 +18,7 @@ Ren::Camera::Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
 
 void Ren::Camera::SetupView(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
     LookAt(view_matrix_, center, target, up);
-    
+
     world_position_[0] = -Dot(view_matrix_[0], view_matrix_[3]);
     world_position_[1] = -Dot(view_matrix_[1], view_matrix_[3]);
     world_position_[2] = -Dot(view_matrix_[2], view_matrix_[3]);

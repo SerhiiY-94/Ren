@@ -35,7 +35,7 @@ private:
     }
 
     std::streampos seekoff(std::streamoff off, std::ios_base::seekdir way,
-        std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) {
+                           std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) {
         if (way == std::ios_base::beg) {
             cur_ = beg_ + off;
         } else if (way == std::ios_base::cur) {
@@ -52,7 +52,7 @@ private:
     }
 
     std::streampos seekpos(std::streampos sp,
-        std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) {
+                           std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) {
         cur_ = beg_ + sp;
 
         if (cur_ < beg_ || cur_ > end_) {

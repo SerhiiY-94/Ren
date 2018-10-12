@@ -72,18 +72,18 @@ void (APIENTRY *glUniform4fv)(GLint location, GLsizei count, const GLfloat *valu
 void (APIENTRY *glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
 void (APIENTRY *glTexStorage2DMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
-                                           GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
+        GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
-                                                  GLsizei width, GLsizei height);
+        GLsizei width, GLsizei height);
 
 bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
 #define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name);
 
-	if (wglGetCurrentContext() == NULL) {
-		return false;
-	}
+    if (wglGetCurrentContext() == NULL) {
+        return false;
+    }
 #elif defined(__linux__)
 #define GetProcAddress(name) (decltype(name))glXGetProcAddress((const GLubyte *) #name);
 #endif
