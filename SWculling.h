@@ -37,6 +37,6 @@ SWint swCullCtxCullTrianglesIndexed_Ubyte(SWcull_ctx *ctx, const void *attribs, 
         SWuint stride, SWuint count, const SWfloat *xform, SWint is_occluder);
 
 SWint swCullCtxCullTrianglesIndexed_Uint(SWcull_ctx *ctx, const void *attribs, const SWuint *indices,
-    SWuint stride, SWuint count, const SWfloat *xform, SWint is_occluder);
+        SWuint stride, SWuint count, const SWfloat *xform, SWint is_occluder);
 
 #endif /* SW_CULLING_H */

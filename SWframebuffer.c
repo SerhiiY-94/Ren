@@ -82,8 +82,8 @@ void swFbufBlitPixels(SWframebuffer *f, SWint x, SWint y, SWint pitch, SWenum ty
     SWint i, j;
 
     if (type == SW_UNSIGNED_BYTE) {
-		SWfloat v = 0;
-		
+        SWfloat v = 0;
+
 #define LOOP(__fun__) \
     for (j = beg_y; j < end_y; j++) {                                   \
         SWfloat u = 0;                                                  \
@@ -104,7 +104,7 @@ void swFbufBlitPixels(SWframebuffer *f, SWint x, SWint y, SWint pitch, SWenum ty
                 LOOP(swPx_RGBA8888_GetColor_BGRA8888_UV_norepeat_unsafe)
             }
         }
-		
+
 #undef LOOP
     } else if (type == SW_FLOAT) {
         assert(scale == 1.0f);
