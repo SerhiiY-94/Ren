@@ -417,7 +417,7 @@ void Ren::Texture2D::ChangeFilter(eTexFilter f, eTexRepeat r) {
     }
 }
 
-void Ren::Texture2D::ReadTextureData(eTexColorFormat format, void *out_data) {
+void Ren::Texture2D::ReadTextureData(eTexColorFormat format, void *out_data) const {
 #if defined(__ANDROID__)
 #else
     glActiveTexture(GL_TEXTURE0);

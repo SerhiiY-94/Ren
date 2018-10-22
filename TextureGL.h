@@ -74,7 +74,7 @@ public:
 
     void ChangeFilter(eTexFilter f, eTexRepeat r);
 
-    void ReadTextureData(eTexColorFormat format, void *out_data);
+    void ReadTextureData(eTexColorFormat format, void *out_data) const;
 };
 
 typedef StorageRef<Texture2D> Texture2DRef;
