@@ -2,7 +2,7 @@
 # SW
 Simple software rasterizer with OpenGL-like interface.
 It's neither fast nor good, created for learning purposes.
-Inspired by this article: http://forum.devmaster.net/t/advanced-rasterization/6145
+Inspired by this article: https://web.archive.org/web/20180129085015/http://forum.devmaster.net/t/advanced-rasterization/6145
 
 - Full Application: https://bitbucket.org/Apfel1994/swdemo
 
