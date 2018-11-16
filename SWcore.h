@@ -121,7 +121,6 @@ SWint swGetInteger(SWenum what);
 SWfloat swGetFloat(SWenum what);
 const char *swGetString(SWenum what);
 
-void swSetInteger(SWenum what, SWint val);
 void swSetFloat(SWenum what, SWfloat val);
 
 #endif /* SW_CORE_H */

@@ -8,6 +8,8 @@ static SWubyte _1byte_tmp_buf[] = { 0 };
 static SWubyte _1px_tmp_tex[] = { 0, 200, 200 };
 
 sw_inline SWint _swBufferIndex(SWcontext *ctx, SWenum type) {
+    ((void)ctx);
+
     SWint i = type - SW_ARRAY_BUFFER;
     assert(i < sizeof(ctx->binded_buffers) / sizeof(SWint));
     return i;
@@ -216,7 +218,7 @@ void swCtxTexImage2DMove_malloced(SWcontext *ctx, SWenum mode, SWenum type, SWin
     swTexInitMove_malloced(t, mode, type, w, h, pixels);
 }
 
-static void _sw_null_free(void *p) {}
+static void _sw_null_free(void *p) { ((void)p); }
 void swCtxTexImage2DConst(SWcontext *ctx, SWenum mode, SWenum type, SWint w, SWint h, void *pixels) {
     SWtexture *t = &ctx->textures[ctx->binded_textures[ctx->active_tex_slot]];
     swTexInitMove(t, mode, type, w, h, pixels, _sw_null_free);
@@ -224,8 +226,18 @@ void swCtxTexImage2DConst(SWcontext *ctx, SWenum mode, SWenum type, SWint w, SWi
 
 /*************************************************************************************************/
 
-static VSHADER empty_vshader(VS_IN, VS_OUT) {}
-static FSHADER empty_fshader(FS_IN, FS_OUT) {}
+static VSHADER empty_vshader(VS_IN, VS_OUT) {
+    ((void)attribs);
+    ((void)index);
+    ((void)uniforms);
+    ((void)out_data);
+}
+static FSHADER empty_fshader(FS_IN, FS_OUT) {
+    ((void)f_in_data);
+    ((void)uniforms);
+    ((void)f_out_data);
+    ((void)b_discard);
+}
 
 SWint swCtxCreateProgram(SWcontext *ctx) {
     assert(ctx->num_programs < sizeof(ctx->programs) / sizeof(SWprogram) - 1);

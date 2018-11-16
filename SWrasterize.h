@@ -114,10 +114,10 @@ sw_inline void _swProcessCurve(SWprogram *p, SWframebuffer *f, SWfloat vs_out[4]
 /******* Perspective correct interpolation *******/
 
 sw_inline SWint _swIntepolateTri_correct(SWprogram *p, SWframebuffer *f,
-        SWint b_depth_test, SWfloat *depth,
-        SWint x, SWint y,
-        SWfloat *RESTRICT f0, SWfloat *RESTRICT f1, SWfloat *RESTRICT f2,
-        SWfloat uvw[3], SWfloat *ff) {
+                                         SWint b_depth_test, SWfloat *depth,
+                                         SWint x, SWint y,
+                                         SWfloat *RESTRICT f0, SWfloat *RESTRICT f1, SWfloat *RESTRICT f2,
+                                         SWfloat uvw[3], SWfloat *ff) {
     SWint i;
 
     /* test against depth boundaries */
@@ -301,9 +301,9 @@ sw_inline void _swProcessTriangle_correct(SWprogram *p, SWframebuffer *f, SWfloa
 
 /******* Affine interpolation *******/
 
-sw_inline SWint _swIntepolateTri_nocorrect(SWprogram *p, SWframebuffer *f,
-        SWint b_depth_test, SWfloat *depth,
-        SWint x, SWint y, SWfloat *ff) {
+sw_inline SWint _swIntepolateTri_nocorrect(SWframebuffer *f,
+                                           SWint b_depth_test, SWfloat *depth,
+                                           SWint x, SWint y, SWfloat *ff) {
     /* test against depth boundaries */
     if (ff[2] < 0 || ff[2] > 1) {
         return 0;
@@ -320,7 +320,7 @@ sw_inline void _swProcessPixel_nocorrect(SWprogram *p, SWframebuffer *f, SWint i
         SWfloat vs_interpolated[SW_MAX_VTX_ATTRIBS],
         SWint b_depth_test, SWint b_depth_write, SWint b_blend) {
     SWfloat depth;
-    if (_swIntepolateTri_nocorrect(p, f, b_depth_test, &depth, ix, iy, vs_interpolated)) {
+    if (_swIntepolateTri_nocorrect(f, b_depth_test, &depth, ix, iy, vs_interpolated)) {
         SWfloat f_out[4];
         SWint b_discard = 0;
         (*p->f_proc)(vs_interpolated, p->uniforms, f_out, &b_discard);
@@ -343,8 +343,8 @@ sw_inline void _swProcessTriangle_nocorrect(SWprogram *p, SWframebuffer *f, SWfl
     SWint i, x, y, p0[2], p1[2], p2[2];
     SWint min[2], max[2];
     SWfloat *pos0 = vs_out[_0],
-             *pos1 = vs_out[_1],
-              *pos2 = vs_out[_2];
+            *pos1 = vs_out[_1],
+            *pos2 = vs_out[_2];
 
     SWint d01[2], d12[2], d20[2];
     SWint area;
@@ -519,7 +519,7 @@ sw_inline void _swProcessTriangle_nocorrect(SWprogram *p, SWframebuffer *f, SWfl
 
 /*******************************/
 
-sw_inline SWint _swIntepolateTri_fast(SWprogram *p, SWframebuffer *f,
+sw_inline SWint _swIntepolateTri_fast(SWframebuffer *f,
                                       SWint b_depth_test, SWfloat *depth,
                                       SWint x, SWint y, SWfloat *ff) {
     /* test against depth boundaries */
@@ -539,7 +539,7 @@ sw_inline void _swProcessPixel_fast(SWprogram *p, SWframebuffer *f, SWint ix, SW
                                     SWfloat vs_interpolated[SW_MAX_VTX_ATTRIBS],
                                     SWint b_depth_test, SWint b_depth_write, SWint b_blend) {
     SWfloat depth;
-    if (_swIntepolateTri_fast(p, f, b_depth_test, &depth, ix, iy, vs_interpolated)) {
+    if (_swIntepolateTri_fast(f, b_depth_test, &depth, ix, iy, vs_interpolated)) {
         SWfloat f_out[4];
         SWint b_discard = 0;
         (*p->f_proc)(vs_interpolated, p->uniforms, f_out, &b_discard);
@@ -730,10 +730,10 @@ sw_inline void _swProcessTriangle_fast(SWprogram *p, SWframebuffer *f, SWfloat v
             if (full_cover) {
                 SWint ix, iy;
                 for (iy = y; iy < y + SW_TILE_SIZE; iy++) {
-                    SWint i;
-                    for (i = 0; i < num_attributes; i++) {
-                        vs_interpolated[i] = f00[i];
-                        step_x[i] = (f10[i] - f00[i]) * SW_INV_TILE_STEP;
+                    SWint attr;
+                    for (attr = 0; attr < num_attributes; attr++) {
+                        vs_interpolated[attr] = f00[attr];
+                        step_x[attr] = (f10[attr] - f00[attr]) * SW_INV_TILE_STEP;
                     }
 
                     for (ix = x; ix < x + SW_TILE_SIZE; ix++) {
@@ -749,10 +749,10 @@ sw_inline void _swProcessTriangle_fast(SWprogram *p, SWframebuffer *f, SWfloat v
                 SWint ix, iy;
                 for (iy = y; iy <= y1; iy++) {
                     SWint Cx1 = Cy1_00, Cx2 = Cy2_00, Cx3 = Cy3_00;
-                    SWint i;
-                    for (i = 0; i < num_attributes; i++) {
-                        vs_interpolated[i] = f00[i];
-                        step_x[i] = (f10[i] - f00[i]) * SW_INV_TILE_STEP;
+                    SWint attr;
+                    for (attr = 0; attr < num_attributes; attr++) {
+                        vs_interpolated[attr] = f00[attr];
+                        step_x[i] = (f10[attr] - f00[attr]) * SW_INV_TILE_STEP;
                     }
 
                     for (ix = x; ix <= x1; ix++) {

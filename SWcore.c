@@ -225,10 +225,6 @@ const char *swGetString(SWenum what) {
     }
 }
 
-void swSetInteger(SWenum what, SWint val) {
-
-}
-
 void swSetFloat(SWenum what, SWfloat val) {
     if (what == SW_CURVE_TOLERANCE) {
         sw_cur_context->curve_tolerance = val;
