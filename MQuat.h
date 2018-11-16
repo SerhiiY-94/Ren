@@ -8,26 +8,20 @@ namespace Ren {
 template <typename T>
 class Quat {
 public:
-    union {
-        T data_[4];
-        struct {
-            T x, y, z, w;
-        };
-        struct {
-            T i, j, k, r;
-        };
-    };
+    T x, y, z, w;
 
     Quat(eUninitialized) {}
-    Quat() : data_{ (T)0 } {}
+    Quat() : x(0), y(0), z(0), w(0) {}
 
-    Quat(T x, T y, T z, T w) : data_{ x, y, z, w } {}
+    Quat(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) {}
 
     T &operator[](int i) {
-        return data_[i];
+        T *data = &x;
+        return data[i];
     }
     const T &operator[](int i) const {
-        return data_[i];
+        const T *data = &x;
+        return data[i];
     }
 
     Quat<T> &operator+=(const Quat<T> &rhs) {

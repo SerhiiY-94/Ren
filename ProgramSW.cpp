@@ -47,7 +47,7 @@ void Ren::Program::Init(const char *name, void *vs_shader, void *fs_shader, int 
         return;
     }
 
-    InitFromFuncs(name, vs_shader, fs_shader, num_fvars, status);
+    InitFromFuncs(vs_shader, fs_shader, num_fvars, status);
 
     for (int i = 0; i < MAX_NUM_ATTRIBUTES; i++) {
         if (attrs[i].loc == -1) break;
@@ -61,7 +61,7 @@ void Ren::Program::Init(const char *name, void *vs_shader, void *fs_shader, int 
     }
 }
 
-void Ren::Program::InitFromFuncs(const char *name, void *vs_shader, void *fs_shader, int num_fvars, eProgLoadStatus *status) {
+void Ren::Program::InitFromFuncs(void *vs_shader, void *fs_shader, int num_fvars, eProgLoadStatus *status) {
     if (!vs_shader || !fs_shader) {
         if (status) *status = ProgSetToDefault;
         return;

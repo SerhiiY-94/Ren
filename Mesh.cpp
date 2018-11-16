@@ -328,11 +328,13 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
     // Skip name, cant remember why i put it there
     data.seekg(32, std::ios::cur);
 
-    float temp_f[3];
-    data.read((char *)&temp_f[0], sizeof(float) * 3);
-    bbox_min_ = MakeVec3(temp_f);
-    data.read((char *)&temp_f[0], sizeof(float) * 3);
-    bbox_max_ = MakeVec3(temp_f);
+    {   // Read bounding box
+        float temp_f[3];
+        data.read((char *)&temp_f[0], sizeof(float) * 3);
+        bbox_min_ = MakeVec3(temp_f);
+        data.read((char *)&temp_f[0], sizeof(float) * 3);
+        bbox_max_ = MakeVec3(temp_f);
+    }
 
     attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
@@ -381,7 +383,6 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
         Vec3f temp_v;
         Quatf temp_q;
         data.read(bones[i].name, 64);
-        const char *cc = bones[i].name;
         data.read((char *)&bones[i].id, sizeof(int));
         data.read((char *)&bones[i].parent_id, sizeof(int));
 

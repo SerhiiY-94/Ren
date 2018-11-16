@@ -22,7 +22,7 @@ struct Texture2DParams {
     eTexRepeat repeat = Repeat;
 };
 
-enum eTexLoadStatus { TexFound, TexCreatedDefault, TexCreatedFromData };
+enum eTexLoadStatus { TexFound, TexCreatedDefault, TexCreatedFromData, TexNotSupported };
 
 class Texture2D : public RefCounter {
     uint32_t    tex_id_ = 0;

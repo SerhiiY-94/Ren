@@ -36,7 +36,7 @@ class Program : public RefCounter {
     bool        ready_ = false;
     char        name_[32];
 
-    void InitFromFuncs(const char *name, void *vs_shader, void *fs_shader, int num_fvars, eProgLoadStatus *status);
+    void InitFromFuncs(void *vs_shader, void *fs_shader, int num_fvars, eProgLoadStatus *status);
 public:
     Program() {
         name_[0] = '\0';

@@ -30,10 +30,10 @@ Ren::Material &Ren::Material::operator=(Material &&rhs) {
 void Ren::Material::Init(const char *name, const char *mat_src, eMatLoadStatus *status,
                          const program_load_callback &on_prog_load, const texture_load_callback &on_tex_load) {
     strcpy(name_, name);
-    InitFromTXT(name, mat_src, status, on_prog_load, on_tex_load);
+    InitFromTXT(mat_src, status, on_prog_load, on_tex_load);
 }
 
-void Ren::Material::InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status,
+void Ren::Material::InitFromTXT(const char *mat_src, eMatLoadStatus *status,
                                 const program_load_callback &on_prog_load, const texture_load_callback &on_tex_load) {
     if (!mat_src) {
         if (status) *status = MatSetToDefault;

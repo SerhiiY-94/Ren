@@ -27,7 +27,7 @@ class Material : public RefCounter {
     Texture2DRef    textures_[4];
     Vec4f           params_[8];
 
-    void InitFromTXT(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
+    void InitFromTXT(const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
                      const texture_load_callback &on_tex_load);
 public:
     Material() {
