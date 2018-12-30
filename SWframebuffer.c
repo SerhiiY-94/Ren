@@ -113,7 +113,7 @@ void swFbufBlitPixels(SWframebuffer *f, SWint x, SWint y, SWint pitch, SWenum ty
             if (f->type == SW_BGRA8888) {
                 for (j = beg_y; j < end_y; j++) {
                     for (i = beg_x; i < end_x; i++) {
-                        swPx_BGRA8888_SetColor_FRGBA(f->w, f->h, (f->pixels), i, j, &fp[i * 4]);
+                        swPx_BGRA8888_SetColor_FRGBA(f->w, f->h, (f->pixels), i, j, &fp[(i - beg_x) * 4]);
                     }
                     fp += pitch * 4;
                 }
