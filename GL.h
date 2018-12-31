@@ -188,6 +188,7 @@ extern void (APIENTRY *glBindBuffer)(GLenum target, GLuint buffer);
 extern void (APIENTRY *glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 extern void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data);
 extern void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
+extern void (APIENTRY *glBindVertexBuffer)(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
 
 extern void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 extern void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
@@ -204,6 +205,10 @@ extern GLenum(APIENTRY *glCheckFramebufferStatus)(GLenum target);
 
 extern void (APIENTRY *glDrawBuffers)(GLsizei n, const GLenum *bufs);
 extern void (APIENTRY *glBindFragDataLocation)(GLuint program, GLuint colorNumber, const char * name);
+
+extern void (APIENTRY *glGenVertexArrays)(GLsizei n, GLuint *arrays);
+extern void (APIENTRY *glBindVertexArray)(GLuint array);
+extern void (APIENTRY *glDeleteVertexArrays)(GLsizei n, const GLuint *arrays);
 
 extern void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 extern void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);

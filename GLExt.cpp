@@ -43,6 +43,7 @@ void (APIENTRY *glBindBuffer)(GLenum target, GLuint buffer);
 void (APIENTRY *glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data);
 void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
+void (APIENTRY *glBindVertexBuffer)(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
 
 void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
@@ -59,6 +60,10 @@ GLenum (APIENTRY *glCheckFramebufferStatus)(GLenum target);
 
 void (APIENTRY *glDrawBuffers)(GLsizei n, const GLenum *bufs);
 void (APIENTRY *glBindFragDataLocation)(GLuint program, GLuint colorNumber, const char * name);
+
+void (APIENTRY *glGenVertexArrays)(GLsizei n, GLuint *arrays);
+void (APIENTRY *glBindVertexArray)(GLuint array);
+void (APIENTRY *glDeleteVertexArrays)(GLsizei n, const GLuint *arrays);
 
 void (APIENTRY *glUniform1f)(GLint location, GLfloat v0);
 void (APIENTRY *glUniform2f)(GLint location, GLfloat v0, GLfloat v1);
@@ -127,6 +132,7 @@ bool Ren::InitGLExtentions() {
     glBufferData = GetProcAddress(glBufferData);
     glBufferSubData = GetProcAddress(glBufferSubData);
     glBindBufferBase = GetProcAddress(glBindBufferBase);
+    glBindVertexBuffer = GetProcAddress(glBindVertexBuffer);
 
     glGenFramebuffers = GetProcAddress(glGenFramebuffers);
     glDeleteFramebuffers = GetProcAddress(glDeleteFramebuffers);
@@ -143,6 +149,10 @@ bool Ren::InitGLExtentions() {
 
     glDrawBuffers = GetProcAddress(glDrawBuffers);
     glBindFragDataLocation = GetProcAddress(glBindFragDataLocation);
+    glDeleteVertexArrays = GetProcAddress(glDeleteVertexArrays);
+
+    glGenVertexArrays = GetProcAddress(glGenVertexArrays);
+    glBindVertexArray = GetProcAddress(glBindVertexArray);
 
     glUniform1f = GetProcAddress(glUniform1f);
     glUniform2f = GetProcAddress(glUniform2f);
