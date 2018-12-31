@@ -16,12 +16,14 @@
 namespace Ren {
 const int MAX_NUM_ATTRIBUTES = 16;
 const int MAX_NUM_UNIFORMS = 16;
+const int MAX_NUM_UNIFORM_BLOCKS = 16;
 struct Descr {
     std::string name;
     int loc = -1;
 };
-typedef Descr Uniform;
 typedef Descr Attribute;
+typedef Descr Uniform;
+typedef Descr UniformBlock;
 
 enum eProgLoadStatus { ProgFound, ProgSetToDefault, ProgCreatedFromData };
 
@@ -29,6 +31,7 @@ class Program : public RefCounter {
     uint32_t    prog_id_ = 0;
     std::array<Attribute, MAX_NUM_ATTRIBUTES>   attributes_;
     std::array<Uniform, MAX_NUM_UNIFORMS>       uniforms_;
+    std::array<UniformBlock, MAX_NUM_UNIFORM_BLOCKS> uniform_blocks_;
     bool        ready_ = false;
     char        name_[32];
 
@@ -37,7 +40,7 @@ public:
     Program() {
         name_[0] = '\0';
     }
-    Program(const char *name, uint32_t prog_id, const Attribute *attrs, const Uniform *unifs) : prog_id_(prog_id) {
+    Program(const char *name, uint32_t prog_id, const Attribute *attrs, const Uniform *unifs, const UniformBlock *unif_blocks) : prog_id_(prog_id) {
         for (int i = 0; i < MAX_NUM_ATTRIBUTES; i++) {
             if (attrs[i].loc == -1) break;
             attributes_[i] = attrs[i];
@@ -45,6 +48,10 @@ public:
         for (int i = 0; i < MAX_NUM_UNIFORMS; i++) {
             if (unifs[i].loc == -1) break;
             uniforms_[i] = unifs[i];
+        }
+        for (int i = 0; i < MAX_NUM_UNIFORM_BLOCKS; i++) {
+            if (unif_blocks[i].loc == -1) break;
+            uniform_blocks_[i] = unif_blocks[i];
         }
         ready_ = true;
         strcpy(name_, name);
@@ -93,6 +100,19 @@ public:
             }
         }
         return uniforms_[0];
+    }
+
+    const UniformBlock &uniform_block(int i) const {
+        return uniform_blocks_[i];
+    }
+
+    const UniformBlock &uniform_block(const char *name) const {
+        for (int i = 0; i < MAX_NUM_UNIFORM_BLOCKS; i++) {
+            if (uniform_blocks_[i].name == name) {
+                return uniform_blocks_[i];
+            }
+        }
+        return uniform_blocks_[0];
     }
 
     void Init(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status);

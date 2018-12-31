@@ -34,6 +34,7 @@ Ren::Program &Ren::Program::operator=(Program &&rhs) {
     rhs.prog_id_ = 0;
     attributes_ = std::move(rhs.attributes_);
     uniforms_ = std::move(rhs.uniforms_);
+    uniform_blocks_ = std::move(rhs.uniform_blocks_);
     ready_ = rhs.ready_;
     rhs.ready_ = false;
     strcpy(name_, rhs.name_);
@@ -100,7 +101,7 @@ void Ren::Program::InitFromGLSL(const char *name, const char *vs_source, const c
         std::string name;
         int loc;
     };
-    std::vector<Binding> attr_bindings, uniform_bindings;
+    std::vector<Binding> attr_bindings, uniform_bindings, uniform_block_bindings;
     std::vector<Binding> *cur_bind_target = nullptr;
 
     const char *delims = " \r\n\t";
@@ -124,6 +125,8 @@ SECOND_PASS:
             cur_bind_target = &attr_bindings;
         } else if (item == "UNIFORMS") {
             cur_bind_target = &uniform_bindings;
+        } else if (item == "UNIFORM_BLOCKS") {
+            cur_bind_target = &uniform_block_bindings;
         } else if (cur_bind_target) {
             p = q + 1;
             q = strpbrk(p, delims);
@@ -158,6 +161,14 @@ SECOND_PASS:
     for (auto &b : uniform_bindings) {
         auto &u = uniforms_[b.loc];
         u.loc = glGetUniformLocation(program, b.name.c_str());
+        if (u.loc != -1) {
+            u.name = b.name;
+        }
+    }
+
+    for (auto &b : uniform_block_bindings) {
+        auto &u = uniform_blocks_[b.loc];
+        u.loc = glGetUniformBlockIndex(program, b.name.c_str());
         if (u.loc != -1) {
             u.name = b.name;
         }

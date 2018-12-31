@@ -20,6 +20,8 @@ GLint(APIENTRY *glGetUniformLocation)(GLuint program, const GLchar *name);
 void (APIENTRY *glGetActiveAttrib)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
 void (APIENTRY *glGetActiveUniform)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
 void (APIENTRY *glVertexAttribPointer)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
+GLuint (APIENTRY *glGetUniformBlockIndex)(GLuint program, const GLchar *uniformBlockName);
+void (APIENTRY *glUniformBlockBinding)(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 void (APIENTRY *glEnableVertexAttribArray)(GLuint index);
 void (APIENTRY *glDisableVertexAttribArray)(GLuint index);
 
@@ -40,6 +42,7 @@ void (APIENTRY *glDeleteBuffers)(GLsizei n, const GLuint * buffers);
 void (APIENTRY *glBindBuffer)(GLenum target, GLuint buffer);
 void (APIENTRY *glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data);
+void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
 
 void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
@@ -100,6 +103,8 @@ bool Ren::InitGLExtentions() {
     glGetUniformLocation = GetProcAddress(glGetUniformLocation);
     glGetActiveAttrib = GetProcAddress(glGetActiveAttrib);
     glGetActiveUniform = GetProcAddress(glGetActiveUniform);
+    glGetUniformBlockIndex = GetProcAddress(glGetUniformBlockIndex);
+    glUniformBlockBinding = GetProcAddress(glUniformBlockBinding);
     glVertexAttribPointer = GetProcAddress(glVertexAttribPointer);
     glEnableVertexAttribArray = GetProcAddress(glEnableVertexAttribArray);
     glDisableVertexAttribArray = GetProcAddress(glDisableVertexAttribArray);
@@ -121,6 +126,7 @@ bool Ren::InitGLExtentions() {
     glBindBuffer = GetProcAddress(glBindBuffer);
     glBufferData = GetProcAddress(glBufferData);
     glBufferSubData = GetProcAddress(glBufferSubData);
+    glBindBufferBase = GetProcAddress(glBindBufferBase);
 
     glGenFramebuffers = GetProcAddress(glGenFramebuffers);
     glDeleteFramebuffers = GetProcAddress(glDeleteFramebuffers);

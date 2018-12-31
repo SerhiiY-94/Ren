@@ -58,6 +58,7 @@
 
 #define GL_ARRAY_BUFFER 0x8892
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
+#define GL_UNIFORM_BUFFER 0x8A11
 
 #define GL_STATIC_DRAW 0x88E4
 #define GL_DYNAMIC_DRAW 0x88E8
@@ -161,6 +162,8 @@ extern GLint(APIENTRY *glGetAttribLocation)(GLuint program, const GLchar *name);
 extern GLint(APIENTRY *glGetUniformLocation)(GLuint program, const GLchar *name);
 extern void (APIENTRY *glGetActiveAttrib)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
 extern void (APIENTRY *glGetActiveUniform)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
+extern GLuint (APIENTRY *glGetUniformBlockIndex)(GLuint program, const GLchar *uniformBlockName);
+extern void (APIENTRY *glUniformBlockBinding)(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 extern void (APIENTRY *glVertexAttribPointer)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
 extern void (APIENTRY *glEnableVertexAttribArray)(GLuint index);
 extern void (APIENTRY *glDisableVertexAttribArray)(GLuint index);
@@ -184,6 +187,7 @@ extern void (APIENTRY *glDeleteBuffers)(GLsizei n, const GLuint * buffers);
 extern void (APIENTRY *glBindBuffer)(GLenum target, GLuint buffer);
 extern void (APIENTRY *glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 extern void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data);
+extern void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
 
 extern void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 extern void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
