@@ -57,6 +57,7 @@ endif()
 set(SOURCE_FILES main.cpp
 				 membuf.h
                  test_anim.cpp
+                 test_buffer.cpp
                  test_common.h
 				 test_mat.cpp
                  test_material.cpp

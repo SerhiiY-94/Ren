@@ -44,6 +44,7 @@ void (APIENTRY *glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * dat
 void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data);
 void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
 void (APIENTRY *glBindVertexBuffer)(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
+void (APIENTRY *glCopyBufferSubData)(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
 
 void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
@@ -84,6 +85,8 @@ void (APIENTRY *glTexStorage2DMultisample)(GLenum target, GLsizei samples, GLenu
         GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
         GLsizei width, GLsizei height);
+
+void (APIENTRY *glDrawElementsBaseVertex)(GLenum mode, GLsizei count, GLenum type, GLvoid *indices, GLint basevertex);
 
 bool Ren::InitGLExtentions() {
 
@@ -133,6 +136,7 @@ bool Ren::InitGLExtentions() {
     glBufferSubData = GetProcAddress(glBufferSubData);
     glBindBufferBase = GetProcAddress(glBindBufferBase);
     glBindVertexBuffer = GetProcAddress(glBindVertexBuffer);
+    glCopyBufferSubData = GetProcAddress(glCopyBufferSubData);
 
     glGenFramebuffers = GetProcAddress(glGenFramebuffers);
     glDeleteFramebuffers = GetProcAddress(glDeleteFramebuffers);
@@ -171,6 +175,8 @@ bool Ren::InitGLExtentions() {
     glTexStorage2D = GetProcAddress(glTexStorage2D);
     glTexStorage2DMultisample = GetProcAddress(glTexStorage2DMultisample);
     glRenderbufferStorageMultisample = GetProcAddress(glRenderbufferStorageMultisample);
+
+    glDrawElementsBaseVertex = GetProcAddress(glDrawElementsBaseVertex);
 
     return true;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Anim.h"
+#include "Buffer.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "Program.h"
@@ -19,6 +20,9 @@ protected:
     ProgramStorage   programs_;
     Texture2DStorage textures_;
     AnimSeqStorage   anims_;
+    BufferStorage    buffers_;
+
+    BufferRef       default_vertex_buf_, default_indices_buf_;
 
 #if defined(USE_SW_RENDER)
     SWcontext       *sw_ctx_;
@@ -39,10 +43,15 @@ public:
         return h_;
     }
 
+    BufferRef default_vertex_buf() const { return default_vertex_buf_; }
+    BufferRef default_indices_buf() const { return default_indices_buf_; }
+
     void Resize(int w, int h);
 
     /*** Mesh ***/
     MeshRef LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load);
+    MeshRef LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load,
+                     const BufferRef &vertex_buf, const BufferRef &index_buf);
 
     /*** Material ***/
     MaterialRef LoadMaterial(const char *name, const char *mat_src, eMatLoadStatus *status, const program_load_callback &on_prog_load,
@@ -71,6 +80,10 @@ public:
     AnimSeqRef LoadAnimSequence(const char *name, std::istream &data);
     int NumAnimsNotReady();
     void ReleaseAnims();
+
+    /*** Buffers ***/
+    BufferRef CreateBuffer(eBufferType type, uint32_t initial_size);
+    void ReleaseBuffers();
 
     void ReleaseAll();
 

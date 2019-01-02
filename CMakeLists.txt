@@ -20,6 +20,8 @@ endif()
 
 set(SOURCE_FILES Anim.h
                  Anim.cpp
+                 Buffer.h
+                 Buffer.cpp
                  Camera.h
                  Camera.cpp
                  Context.h

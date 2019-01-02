@@ -3,6 +3,11 @@
 #include <algorithm>
 
 Ren::MeshRef Ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load) {
+    return LoadMesh(name, data, on_mat_load, default_vertex_buf_, default_indices_buf_);
+}
+
+Ren::MeshRef Ren::Context::LoadMesh(const char *name, std::istream &data, material_load_callback on_mat_load,
+                                    const BufferRef &vertex_buf, const BufferRef &index_buf) {
     MeshRef ref;
     for (auto it = meshes_.begin(); it != meshes_.end(); ++it) {
         if (strcmp(it->name(), name) == 0) {
@@ -11,7 +16,7 @@ Ren::MeshRef Ren::Context::LoadMesh(const char *name, std::istream &data, materi
     }
 
     if (!ref) {
-        ref = meshes_.Add(name, data, on_mat_load);
+        ref = meshes_.Add(name, data, on_mat_load, vertex_buf, index_buf);
     }
 
     return ref;
@@ -171,10 +176,27 @@ void Ren::Context::ReleaseAnims() {
     anims_.Clear();
 }
 
+Ren::BufferRef Ren::Context::CreateBuffer(eBufferType type, uint32_t initial_size) {
+    return buffers_.Add(type, initial_size);
+}
+
+void Ren::Context::ReleaseBuffers() {
+    if (!buffers_.Size()) return;
+    fprintf(stderr, "---------REMAINING BUFFERS--------\n");
+    for (const auto &b : buffers_) {
+        fprintf(stderr, "%i : %u\n", (int)b.type(), b.size());
+    }
+    fprintf(stderr, "-----------------------------------\n");
+    buffers_.Clear();
+}
+
 void Ren::Context::ReleaseAll() {
     meshes_.Clear();
+    default_vertex_buf_ = {};
+    default_indices_buf_ = {};
 
     ReleaseAnims();
     ReleaseMaterials();
     ReleaseTextures();
+    ReleaseBuffers();
 }

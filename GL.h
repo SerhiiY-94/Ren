@@ -63,6 +63,8 @@
 #define GL_STATIC_DRAW 0x88E4
 #define GL_DYNAMIC_DRAW 0x88E8
 
+#define GL_COPY_WRITE_BUFFER 0x8f37
+
 #define GL_DEPTH_COMPONENT16 0x81A5
 #define GL_DEPTH_COMPONENT24 0x81A6
 
@@ -189,6 +191,7 @@ extern void (APIENTRY *glBufferData)(GLenum target, GLsizeiptr size, const GLvoi
 extern void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data);
 extern void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
 extern void (APIENTRY *glBindVertexBuffer)(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
+extern void (APIENTRY *glCopyBufferSubData)(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
 
 extern void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 extern void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
@@ -229,6 +232,8 @@ extern void (APIENTRY *glTexStorage2DMultisample)(GLenum target, GLsizei samples
         GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 extern void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat,
         GLsizei width, GLsizei height);
+
+extern void (APIENTRY *glDrawElementsBaseVertex)(GLenum mode, GLsizei count, GLenum type, GLvoid *indices, GLint basevertex);
 
 namespace Ren {
 bool InitGLExtentions();

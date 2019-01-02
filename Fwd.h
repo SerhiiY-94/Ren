@@ -4,6 +4,7 @@
 
 namespace Ren {
 class Anim;
+class Buffer;
 class Camera;
 class Material;
 class Mesh;
@@ -11,6 +12,7 @@ class Program;
 class Texture2D;
 
 typedef StorageRef<Anim> AnimRef;
+typedef StorageRef<Buffer> BufferRef;
 typedef StorageRef<Material> MaterialRef;
 typedef StorageRef<Mesh> MeshRef;
 typedef StorageRef<Program> ProgramRef;

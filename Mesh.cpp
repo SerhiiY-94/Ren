@@ -16,69 +16,13 @@
 
 int Ren::Mesh::max_gpu_bones = 16;
 
-Ren::Mesh::Mesh(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
-    Init(name, data, on_mat_load);
+Ren::Mesh::Mesh(const char *name, std::istream &data, const material_load_callback &on_mat_load,
+                const BufferRef &vertex_buf, const BufferRef &index_buf) {
+    Init(name, data, on_mat_load, vertex_buf, index_buf);
 }
 
-Ren::Mesh::~Mesh() {
-#if defined(USE_GL_RENDER)
-    if (type_ != MeshUndefined) {
-        GLuint buf = (GLuint)attribs_buf_id_;
-        glDeleteBuffers(1, &buf);
-        buf = (GLuint)indices_buf_id_;
-        glDeleteBuffers(1, &buf);
-    }
-#endif
-}
-
-Ren::Mesh &Ren::Mesh::operator=(Mesh &&rhs) {
-    RefCounter::operator=(std::move(rhs));
-
-#if defined(USE_GL_RENDER)
-    if (type_ != MeshUndefined) {
-        GLuint buf = (GLuint)attribs_buf_id_;
-        glDeleteBuffers(1, &buf);
-        buf = (GLuint)indices_buf_id_;
-        glDeleteBuffers(1, &buf);
-    }
-#endif
-
-    type_ = rhs.type_;
-    rhs.type_ = MeshUndefined;
-    flags_ = rhs.flags_;
-    rhs.flags_ = 0;
-#if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
-    attribs_buf_id_ = rhs.attribs_buf_id_;
-    rhs.attribs_buf_id_ = 0;
-    indices_buf_id_ = rhs.indices_buf_id_;
-    rhs.indices_buf_id_ = 0;
-#endif
-    attribs_ = std::move(rhs.attribs_);
-    attribs_size_ = rhs.attribs_size_;
-    rhs.attribs_size_ = 0;
-    indices_ = std::move(rhs.indices_);
-    indices_size_ = rhs.indices_size_;
-    rhs.indices_size_ = 0;
-
-    // this does not work properly in vs2013
-    //strips_ = std::move(rhs.strips_);
-
-    for (size_t i = 0; i < strips_.size(); i++) {
-        strips_[i] = std::move(rhs.strips_[i]);
-    }
-
-    bbox_min_ = rhs.bbox_min_;
-    rhs.bbox_min_ = {};
-    bbox_max_ = rhs.bbox_max_;
-    rhs.bbox_max_ = {};
-    strcpy(name_, rhs.name_);
-    rhs.name_[0] = '\0';
-    skel_ = std::move(rhs.skel_);
-
-    return *this;
-}
-
-void Ren::Mesh::Init(const char *name, std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::Init(const char *name, std::istream &data, const material_load_callback &on_mat_load,
+                     const BufferRef &vertex_buf, const BufferRef &index_buf) {
     strcpy(name_, name);
 
     char mesh_type_str[12];
@@ -87,15 +31,16 @@ void Ren::Mesh::Init(const char *name, std::istream &data, const material_load_c
     data.seekg(pos, std::ios::beg);
 
     if (strcmp(mesh_type_str, "STATIC_MESH\0") == 0) {
-        InitMeshSimple(data, on_mat_load);
+        InitMeshSimple(data, on_mat_load, vertex_buf, index_buf);
     } else if (strcmp(mesh_type_str, "TERRAI_MESH\0") == 0) {
-        InitMeshTerrain(data, on_mat_load);
+        InitMeshTerrain(data, on_mat_load, vertex_buf, index_buf);
     } else if (strcmp(mesh_type_str, "SKELET_MESH\0") == 0) {
-        InitMeshSkeletal(data, on_mat_load);
+        InitMeshSkeletal(data, on_mat_load, vertex_buf, index_buf);
     }
 }
 
-void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback &on_mat_load,
+                               const BufferRef &vertex_buf, const BufferRef &index_buf) {
     char mesh_type_str[12];
     data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "STATIC_MESH\0") == 0);
@@ -131,11 +76,11 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
     data.read((char *)&temp_f[0], sizeof(float) * 3);
     bbox_max_ = MakeVec3(temp_f);
 
-    attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
+    attribs_size_ = (uint32_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
     data.read((char *)attribs_.get(), attribs_size_);
 
-    indices_size_ = (size_t)file_header.p[VTX_NDX_CHUNK].length;
+    indices_size_ = (uint32_t)file_header.p[VTX_NDX_CHUNK].length;
     indices_.reset(new char[indices_size_], std::default_delete<char[]>());
     data.read((char *)indices_.get(), indices_size_);
 
@@ -169,8 +114,14 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
         strips_[num_strips].offset = -1;
     }
 
+    attribs_buf_ = vertex_buf;
+    attribs_offset_ = attribs_buf_->Alloc(attribs_size_, attribs_.get());
+
+    indices_buf_ = index_buf;
+    indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
+
 #if defined(USE_GL_RENDER)
-    GLuint gl_buf;
+    /*GLuint gl_buf;
     glGenBuffers(1, &gl_buf);
     glBindBuffer(GL_ARRAY_BUFFER, gl_buf);
     glBufferData(GL_ARRAY_BUFFER, attribs_size_, attribs_.get(), GL_STATIC_DRAW);
@@ -179,7 +130,7 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
     glGenBuffers(1, &gl_buf);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl_buf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
-    indices_buf_id_ = gl_buf;
+    indices_buf_id_ = gl_buf;*/
 #elif defined(USE_SW_RENDER)
     attribs_buf_id_ = (uint32_t)swCreateBuffer();
     swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
@@ -191,7 +142,8 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
 #endif
 }
 
-void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load,
+                                const BufferRef &vertex_buf, const BufferRef &index_buf) {
     char mesh_type_str[12];
     data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "TERRAI_MESH\0") == 0);
@@ -275,8 +227,14 @@ void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
         strips_[num_strips].offset = -1;
     }
 
+    attribs_buf_ = vertex_buf;
+    attribs_offset_ = attribs_buf_->Alloc(attribs_size_, attribs_.get());
+
+    indices_buf_ = index_buf;
+    indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
+
 #if defined(USE_GL_RENDER)
-    GLuint gl_buf;
+    /*GLuint gl_buf;
     glGenBuffers(1, &gl_buf);
     glBindBuffer(GL_ARRAY_BUFFER, gl_buf);
     glBufferData(GL_ARRAY_BUFFER, attribs_size_, attribs_.get(), GL_STATIC_DRAW);
@@ -285,7 +243,7 @@ void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
     glGenBuffers(1, &gl_buf);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl_buf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
-    indices_buf_id_ = gl_buf;
+    indices_buf_id_ = gl_buf;*/
 #elif defined(USE_SW_RENDER)
     attribs_buf_id_ = (uint32_t)swCreateBuffer();
     swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
@@ -297,7 +255,8 @@ void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
 #endif
 }
 
-void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load) {
+void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load,
+                                 const BufferRef &vertex_buf, const BufferRef &index_buf) {
     char mesh_type_str[12];
     data.read(mesh_type_str, 12);
     assert(strcmp(mesh_type_str, "SKELET_MESH\0") == 0);
@@ -336,11 +295,11 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
         bbox_max_ = MakeVec3(temp_f);
     }
 
-    attribs_size_ = (size_t)file_header.p[VTX_ATTR_CHUNK].length;
+    attribs_size_ = (uint32_t)file_header.p[VTX_ATTR_CHUNK].length;
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
     data.read((char *)attribs_.get(), attribs_size_);
 
-    indices_size_ = (size_t)file_header.p[VTX_NDX_CHUNK].length;
+    indices_size_ = (uint32_t)file_header.p[VTX_NDX_CHUNK].length;
     indices_.reset(new char[indices_size_], std::default_delete<char[]>());
     data.read((char *)indices_.get(), indices_size_);
 
@@ -425,8 +384,14 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
 
     skel_.matr_palette.resize(skel_.bones.size());
 
+    attribs_buf_ = vertex_buf;
+    attribs_offset_ = attribs_buf_->Alloc(attribs_size_, attribs_.get());
+
+    indices_buf_ = index_buf;
+    indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
+
 #if defined(USE_GL_RENDER)
-    GLuint gl_buf;
+    /*GLuint gl_buf;
     glGenBuffers(1, &gl_buf);
     glBindBuffer(GL_ARRAY_BUFFER, gl_buf);
     glBufferData(GL_ARRAY_BUFFER, attribs_size_, attribs_.get(), GL_STATIC_DRAW);
@@ -435,7 +400,7 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
     glGenBuffers(1, &gl_buf);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl_buf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
-    indices_buf_id_ = gl_buf;
+    indices_buf_id_ = gl_buf;*/
 #elif defined(USE_SW_RENDER)
     attribs_buf_id_ = (uint32_t)swCreateBuffer();
     swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
@@ -625,11 +590,11 @@ void Ren::Mesh::SplitMesh(int bones_limit) {
     printf("find_time = %li\n", find_time);
     printf("after bone broups2\n");
 
-    indices_size_ = new_indices.size() * sizeof(unsigned short);
+    indices_size_ = (uint32_t)(new_indices.size() * sizeof(unsigned short));
     indices_.reset(new char[indices_size_], std::default_delete<char[]>());
     memcpy(indices_.get(), &new_indices[0], indices_size_);
 
-    attribs_size_ = new_attribs.size() * sizeof(float);
+    attribs_size_ = (uint32_t)(new_attribs.size() * sizeof(float));
     attribs_.reset(new char[attribs_size_], std::default_delete<char[]>());
     memcpy(attribs_.get(), &new_attribs[0], attribs_size_);
 }

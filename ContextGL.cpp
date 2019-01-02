@@ -61,6 +61,9 @@ void Ren::Context::Init(int w, int h) {
     glsl_defines_ += "\r\n";*/
 
     printf("===========================================\n\n");
+
+    default_vertex_buf_ = buffers_.Add(VertexBuffer, 16 * 1024 * 1024);
+    default_indices_buf_ = buffers_.Add(IndexBuffer, 8 * 1024 * 1024);
 }
 
 void Ren::Context::Resize(int w, int h) {
