@@ -118,7 +118,9 @@ void Ren::Camera::UpdatePlanes() {
     world_position_[2] = -Dot(view_matrix_[2], view_matrix_[3]);
 }
 
-bool Ren::Camera::IsInFrustum(const float bbox[8][3]) const {
+Ren::eVisibilityResult Ren::Camera::CheckFrustumVisibility(const float bbox[8][3]) const {
+    eVisibilityResult res = FullyVisible;
+
     for (int plane = LeftPlane; plane <= FarPlane; plane++) {
         int in_count = 8;
 
@@ -130,13 +132,19 @@ bool Ren::Camera::IsInFrustum(const float bbox[8][3]) const {
             }
         }
         if (in_count == 0) {
-            return false;
+            res = NotVisible;
+            break;
+        }
+
+        if (in_count != 8) {
+            res = PartiallyVisible;
         }
     }
-    return true;
+
+    return res;
 }
 
-bool Ren::Camera::IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) const {
+Ren::eVisibilityResult Ren::Camera::CheckFrustumVisibility(const Vec3f &bbox_min, const Vec3f &bbox_max) const {
     const float bbox_points[8][3] = {
         bbox_min[0], bbox_min[1], bbox_min[2],
         bbox_max[0], bbox_min[1], bbox_min[2],
@@ -148,7 +156,7 @@ bool Ren::Camera::IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) cons
         bbox_max[0], bbox_max[1], bbox_max[2]
     };
 
-    return IsInFrustum(bbox_points);
+    return CheckFrustumVisibility(bbox_points);
 }
 
 float Ren::Camera::GetBoundingSphere(Vec3f &out_center) const {

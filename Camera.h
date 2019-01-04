@@ -16,6 +16,8 @@ enum eCamPlane {
     LeftPlane, RightPlane, TopPlane, BottomPlane, NearPlane, FarPlane
 };
 
+enum eVisibilityResult { NotVisible, FullyVisible, PartiallyVisible };
+
 class Camera {
 protected:
     Mat4f view_matrix_;
@@ -69,8 +71,9 @@ public:
     void SetupView(const Vec3f &center, const Vec3f &target, const Vec3f &up);
 
     void UpdatePlanes();
-    bool IsInFrustum(const float bbox[8][3]) const;
-    bool IsInFrustum(const Vec3f &bbox_min, const Vec3f &bbox_max) const;
+
+    eVisibilityResult CheckFrustumVisibility(const float bbox[8][3]) const;
+    eVisibilityResult CheckFrustumVisibility(const Vec3f &bbox_min, const Vec3f &bbox_max) const;
 
     // returns radius
     float GetBoundingSphere(Vec3f &out_center) const;
