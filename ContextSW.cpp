@@ -45,6 +45,9 @@ void Ren::Context::Init(int w, int h) {
     printf("\tBones per pass\t: %i\n", Mesh::max_gpu_bones);
 
     printf("===========================================\n\n");
+
+    default_vertex_buf_ = buffers_.Add(32 * 1024 * 1024);
+    default_indices_buf_ = buffers_.Add(32 * 1024 * 1024);
 }
 
 void Ren::Context::Resize(int w, int h) {

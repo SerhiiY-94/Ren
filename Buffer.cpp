@@ -175,6 +175,9 @@ uint32_t Ren::Buffer::Alloc(uint32_t req_size, void *init_data) {
 #if defined(USE_GL_RENDER)
             glBindBuffer(GL_ARRAY_BUFFER, (GLuint)buf_id_);
             glBufferSubData(GL_ARRAY_BUFFER, n.offset, n.size, init_data);
+#elif defined(USE_SW_RENDER)
+            swBindBuffer(SW_ARRAY_BUFFER, (SWuint)buf_id_);
+            swBufferSubData(SW_ARRAY_BUFFER, n.offset, n.size, init_data);
 #endif
         }
         
@@ -220,7 +223,23 @@ void Ren::Buffer::Resize(uint32_t new_size) {
     }
 
     buf_id_ = (uint32_t)gl_buffer;
-#else
+#elif defined(USE_SW_RENDER)
+    SWuint sw_buffer = swCreateBuffer();
+    swBindBuffer(SW_ARRAY_BUFFER, sw_buffer);
+    swBufferData(SW_ARRAY_BUFFER, size_, nullptr);
 
+    if (buf_id_ != 0xffffffff) {
+        swBindBuffer(SW_ARRAY_BUFFER, (SWuint)buf_id_);
+
+        void *_temp = malloc(old_size);
+        swGetBufferSubData(SW_ARRAY_BUFFER, 0, old_size, _temp);
+
+        swBindBuffer(SW_ARRAY_BUFFER, sw_buffer);
+        swBufferSubData(SW_ARRAY_BUFFER, 0, old_size, _temp);
+
+        free(_temp);
+    }
+
+    buf_id_ = (uint32_t)sw_buffer;
 #endif
 }

@@ -119,27 +119,6 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
 
     indices_buf_ = index_buf;
     indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
-
-#if defined(USE_GL_RENDER)
-    /*GLuint gl_buf;
-    glGenBuffers(1, &gl_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, gl_buf);
-    glBufferData(GL_ARRAY_BUFFER, attribs_size_, attribs_.get(), GL_STATIC_DRAW);
-    attribs_buf_id_ = (uint32_t)gl_buf;
-
-    glGenBuffers(1, &gl_buf);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl_buf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
-    indices_buf_id_ = gl_buf;*/
-#elif defined(USE_SW_RENDER)
-    attribs_buf_id_ = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
-    swBufferData(SW_ARRAY_BUFFER, (SWuint)attribs_size_, attribs_.get());
-
-    indices_buf_id_ = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_INDEX_BUFFER, indices_buf_id_);
-    swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
-#endif
 }
 
 void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback &on_mat_load,
@@ -232,27 +211,6 @@ void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
 
     indices_buf_ = index_buf;
     indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
-
-#if defined(USE_GL_RENDER)
-    /*GLuint gl_buf;
-    glGenBuffers(1, &gl_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, gl_buf);
-    glBufferData(GL_ARRAY_BUFFER, attribs_size_, attribs_.get(), GL_STATIC_DRAW);
-    attribs_buf_id_ = gl_buf;
-
-    glGenBuffers(1, &gl_buf);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl_buf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
-    indices_buf_id_ = gl_buf;*/
-#elif defined(USE_SW_RENDER)
-    attribs_buf_id_ = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
-    swBufferData(SW_ARRAY_BUFFER, (SWuint)attribs_size_, attribs_.get());
-
-    indices_buf_id_ = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_INDEX_BUFFER, indices_buf_id_);
-    swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
-#endif
 }
 
 void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callback &on_mat_load,
@@ -389,27 +347,6 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
 
     indices_buf_ = index_buf;
     indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
-
-#if defined(USE_GL_RENDER)
-    /*GLuint gl_buf;
-    glGenBuffers(1, &gl_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, gl_buf);
-    glBufferData(GL_ARRAY_BUFFER, attribs_size_, attribs_.get(), GL_STATIC_DRAW);
-    attribs_buf_id_ = gl_buf;
-
-    glGenBuffers(1, &gl_buf);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl_buf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size_, indices_.get(), GL_STATIC_DRAW);
-    indices_buf_id_ = gl_buf;*/
-#elif defined(USE_SW_RENDER)
-    attribs_buf_id_ = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_ARRAY_BUFFER, attribs_buf_id_);
-    swBufferData(SW_ARRAY_BUFFER, (SWuint)attribs_size_, attribs_.get());
-
-    indices_buf_id_ = (uint32_t)swCreateBuffer();
-    swBindBuffer(SW_INDEX_BUFFER, indices_buf_id_);
-    swBufferData(SW_INDEX_BUFFER, (SWuint)indices_size_, indices_.get());
-#endif
 }
 
 #undef max
