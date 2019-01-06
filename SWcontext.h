@@ -49,6 +49,7 @@ SWint swCtxCreateBuffer(SWcontext *ctx);
 void swCtxDeleteBuffer(SWcontext *ctx, SWint buf);
 void swCtxBindBuffer(SWcontext *ctx, SWenum type, SWint buf);
 void swCtxBufferData(SWcontext *ctx, SWenum type, SWuint size, const void *data);
+void swCtxBufferSubData(SWcontext *ctx, SWenum type, SWuint offset, SWuint size, const void *data);
 void swCtxGetBufferSubData(SWcontext *ctx, SWenum type, SWuint offset, SWuint size, void *data);
 
 /* Framebuffer operations */

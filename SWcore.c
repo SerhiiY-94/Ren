@@ -49,6 +49,10 @@ void swBufferData(SWenum type, SWuint size, const void *data) {
     swCtxBufferData(sw_cur_context, type, size, data);
 }
 
+void swBufferSubData(SWenum type, SWuint offset, SWuint size, const void *data) {
+    swCtxBufferSubData(sw_cur_context, type, offset, size, data);
+}
+
 void swGetBufferSubData(SWenum type, SWuint offset, SWuint size, void *data) {
     swCtxGetBufferSubData(sw_cur_context, type, offset, size, data);
 }

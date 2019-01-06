@@ -101,9 +101,14 @@ void swCtxBindBuffer(SWcontext *ctx, SWenum type, SWint buf) {
 }
 
 void swCtxBufferData(SWcontext *ctx, SWenum type, SWuint size, const void *data) {
-    assert(data);
     SWbuffer *b = _swBindedBuffer(ctx, type);
     swBufInit(b, size, data);
+}
+
+void swCtxBufferSubData(SWcontext *ctx, SWenum type, SWuint offset, SWuint size, const void *data) {
+    assert(data);
+    SWbuffer *b = _swBindedBuffer(ctx, type);
+    swBufSetData(b, offset, size, data);
 }
 
 void swCtxGetBufferSubData(SWcontext *ctx, SWenum type, SWuint offset, SWuint size, void *data) {

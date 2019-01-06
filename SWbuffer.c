@@ -5,10 +5,11 @@
 #include <string.h>
 
 void swBufInit(SWbuffer *b, SWuint size, const void *data) {
-    assert(data);
     void *_data = malloc(size);
     assert(_data);
-    memcpy(_data, data, size);
+    if (data) {
+        memcpy(_data, data, size);
+    }
     b->size = size;
     b->data = _data;
 }
@@ -16,6 +17,11 @@ void swBufInit(SWbuffer *b, SWuint size, const void *data) {
 void swBufDestroy(SWbuffer *b) {
     free(b->data);
     memset(b, 0, sizeof(SWbuffer));
+}
+
+void swBufSetData(SWbuffer *b, SWuint offset, SWuint size, const void *data) {
+    assert(b->data);
+    memcpy((char *)b->data + offset, data, size);
 }
 
 void swBufGetData(SWbuffer *b, SWuint offset, SWuint size, void *data) {

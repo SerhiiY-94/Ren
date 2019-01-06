@@ -75,6 +75,7 @@ SWint swCreateBuffer();
 void swDeleteBuffer(SWint buf);
 void swBindBuffer(SWenum type, SWint buf);
 void swBufferData(SWenum type, SWuint size, const void *data);
+void swBufferSubData(SWenum type, SWuint offset, SWuint size, const void *data);
 void swGetBufferSubData(SWenum type, SWuint offset, SWuint size, void *data);
 
 /* Framebuffer operations */
