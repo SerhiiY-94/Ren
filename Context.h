@@ -62,6 +62,7 @@ public:
     /*** Program ***/
 #if defined(USE_GL_RENDER)
     ProgramRef LoadProgramGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *load_status);
+    ProgramRef LoadProgramGLSL(const char *name, const char *cs_source, eProgLoadStatus *load_status);
 #elif defined(USE_SW_RENDER)
     ProgramRef LoadProgramSW(const char *name, void *vs_shader, void *fs_shader, int num_fvars,
                              const Attribute *attrs, const Uniform *unifs, eProgLoadStatus *load_status);
@@ -82,7 +83,7 @@ public:
     void ReleaseAnims();
 
     /*** Buffers ***/
-    BufferRef CreateBuffer(eBufferType type, uint32_t initial_size);
+    BufferRef CreateBuffer(uint32_t initial_size);
     void ReleaseBuffers();
 
     void ReleaseAll();

@@ -113,7 +113,7 @@ void test_buffer() {
     {
         BufferTest test;
 
-        Ren::Buffer buf = { Ren::VertexBuffer, 256 };
+        Ren::Buffer buf = { 256 };
 
         require(buf.Alloc(16) == 0);
         require(buf.Alloc(32) == 16);

@@ -9,10 +9,20 @@
 
 namespace Ren {
 GLuint LoadShader(GLenum shader_type, const char *source);
+
+struct Binding {
+    std::string name;
+    int loc;
+};
+void ParseGLSLBindings(const std::string &shader_str, std::vector<Binding> &attr_bindings, std::vector<Binding> &uniform_bindings, std::vector<Binding> &uniform_block_bindings);
 }
 
 Ren::Program::Program(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
     Init(name, vs_source, fs_source, status);
+}
+
+Ren::Program::Program(const char *name, const char *cs_source, eProgLoadStatus *status) {
+    Init(name, cs_source, status);
 }
 
 Ren::Program::~Program() {
@@ -45,109 +55,104 @@ Ren::Program &Ren::Program::operator=(Program &&rhs) {
 
 void Ren::Program::Init(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
     strcpy(name_, name);
-    InitFromGLSL(name, vs_source, fs_source, status);
+    InitFromGLSL(name, { vs_source, fs_source, nullptr }, status);
 }
 
-void Ren::Program::InitFromGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status) {
-    if (!vs_source || !fs_source) {
+void Ren::Program::Init(const char *name, const char *cs_source, eProgLoadStatus *status) {
+    strcpy(name_, name);
+    InitFromGLSL(name, { nullptr, nullptr, cs_source }, status);
+}
+
+void Ren::Program::InitFromGLSL(const char *name, const Shaders shaders, eProgLoadStatus *status) {
+    if ((!shaders.vs_source || !shaders.fs_source) && !shaders.cs_source) {
         if (status) *status = ProgSetToDefault;
         return;
     }
 
     assert(!ready_);
 
-    std::string vs_source_str = vs_source,
-                fs_source_str = fs_source;
-
-    GLuint v_shader = LoadShader(GL_VERTEX_SHADER, vs_source_str.c_str());
-    if (!v_shader) {
-        fprintf(stderr, "VertexShader %s error", name);
-    }
-
-    GLuint f_shader = LoadShader(GL_FRAGMENT_SHADER, fs_source_str.c_str());
-    if (!f_shader) {
-        fprintf(stderr, "FragmentShader %s error", name);
-    }
-
-    GLuint program = glCreateProgram();
-    if (program) {
-        glAttachShader(program, v_shader);
-        glAttachShader(program, f_shader);
-        glLinkProgram(program);
-        GLint link_status = GL_FALSE;
-        glGetProgramiv(program, GL_LINK_STATUS, &link_status);
-        if (link_status != GL_TRUE) {
-            GLint buf_len = 0;
-            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &buf_len);
-            if (buf_len) {
-                char *buf = (char *)malloc((size_t)buf_len);
-                if (buf) {
-                    glGetProgramInfoLog(program, buf_len, NULL, buf);
-                    fprintf(stderr, "Could not link program: %s", buf);
-                    free(buf);
-                    throw;
-                }
-            }
-            glDeleteProgram(program);
-            program = 0;
-        }
-    } else {
-        fprintf(stderr, "error");
-        throw;
-    }
-
-    // Parse attribute and uniform bindings
-    struct Binding {
-        std::string name;
-        int loc;
-    };
     std::vector<Binding> attr_bindings, uniform_bindings, uniform_block_bindings;
     std::vector<Binding> *cur_bind_target = nullptr;
 
-    const char *delims = " \r\n\t";
-    char const* p = vs_source_str.c_str() + vs_source_str.find("/*");
-    char const* q = strpbrk(p + 2, delims);
-    int pass = 0;
+    GLuint program = 0;
 
-SECOND_PASS:
-    for (; p != NULL && q != NULL; q = strpbrk(p, delims)) {
-        if (p == q) {
-            p = q + 1;
-            continue;
+    if (shaders.vs_source && shaders.fs_source) {
+        std::string vs_source_str = shaders.vs_source, fs_source_str = shaders.fs_source;
+
+        GLuint v_shader = LoadShader(GL_VERTEX_SHADER, vs_source_str.c_str());
+        if (!v_shader) {
+            fprintf(stderr, "VertexShader %s error", name);
         }
 
-        std::string item(p, q);
-        if (item == "/*") {
-            cur_bind_target = nullptr;
-        } else if (item == "*/") {
-            break;
-        } else if (item == "ATTRIBUTES") {
-            cur_bind_target = &attr_bindings;
-        } else if (item == "UNIFORMS") {
-            cur_bind_target = &uniform_bindings;
-        } else if (item == "UNIFORM_BLOCKS") {
-            cur_bind_target = &uniform_block_bindings;
-        } else if (cur_bind_target) {
-            p = q + 1;
-            q = strpbrk(p, delims);
-            if (*p != ':') {
-                fprintf(stderr, "Error parsing material %s", name);
+        GLuint f_shader = LoadShader(GL_FRAGMENT_SHADER, fs_source_str.c_str());
+        if (!f_shader) {
+            fprintf(stderr, "FragmentShader %s error", name);
+        }
+
+        program = glCreateProgram();
+        if (program) {
+            glAttachShader(program, v_shader);
+            glAttachShader(program, f_shader);
+            glLinkProgram(program);
+            GLint link_status = GL_FALSE;
+            glGetProgramiv(program, GL_LINK_STATUS, &link_status);
+            if (link_status != GL_TRUE) {
+                GLint buf_len = 0;
+                glGetProgramiv(program, GL_INFO_LOG_LENGTH, &buf_len);
+                if (buf_len) {
+                    char *buf = (char *)malloc((size_t)buf_len);
+                    if (buf) {
+                        glGetProgramInfoLog(program, buf_len, NULL, buf);
+                        fprintf(stderr, "Could not link program: %s", buf);
+                        free(buf);
+                        throw;
+                    }
+                }
+                glDeleteProgram(program);
+                program = 0;
             }
-            p = q + 1;
-            q = strpbrk(p, delims);
-            int loc = atoi(p);
-            cur_bind_target->push_back({ item, loc });
+        } else {
+            fprintf(stderr, "error");
+            throw std::runtime_error("Program creation error!");
         }
 
-        if (!q) break;
-        p = q + 1;
-    }
+        ParseGLSLBindings(vs_source_str, attr_bindings, uniform_bindings, uniform_block_bindings);
+        ParseGLSLBindings(fs_source_str, attr_bindings, uniform_bindings, uniform_block_bindings);
+    } else if (shaders.cs_source) {
+        std::string cs_source_str = shaders.cs_source;
 
-    if (pass++ == 0) {
-        p = fs_source_str.c_str() + fs_source_str.find("/*");
-        q = strpbrk(p + 1, delims);
-        cur_bind_target = nullptr;
-        goto SECOND_PASS;
+        GLuint c_shader = LoadShader(GL_COMPUTE_SHADER, cs_source_str.c_str());
+        if (!c_shader) {
+            fprintf(stderr, "ComputeShader %s error", name);
+        }
+
+        program = glCreateProgram();
+        if (program) {
+            glAttachShader(program, c_shader);
+            glLinkProgram(program);
+            GLint link_status = GL_FALSE;
+            glGetProgramiv(program, GL_LINK_STATUS, &link_status);
+            if (link_status != GL_TRUE) {
+                GLint buf_len = 0;
+                glGetProgramiv(program, GL_INFO_LOG_LENGTH, &buf_len);
+                if (buf_len) {
+                    char *buf = (char *)malloc((size_t)buf_len);
+                    if (buf) {
+                        glGetProgramInfoLog(program, buf_len, NULL, buf);
+                        fprintf(stderr, "Could not link program: %s", buf);
+                        free(buf);
+                        throw;
+                    }
+                }
+                glDeleteProgram(program);
+                program = 0;
+            }
+        } else {
+            fprintf(stderr, "error");
+            throw std::runtime_error("Program creation error!");
+        }
+
+        ParseGLSLBindings(cs_source_str, attr_bindings, uniform_bindings, uniform_block_bindings);
     }
 
     for (auto &b : attr_bindings) {
@@ -286,6 +291,48 @@ GLuint Ren::LoadShader(GLenum shader_type, const char *source) {
     }
 
     return shader;
+}
+
+void Ren::ParseGLSLBindings(const std::string &shader_str, std::vector<Binding> &attr_bindings, std::vector<Binding> &uniform_bindings, std::vector<Binding> &uniform_block_bindings) {
+    const char *delims = " \r\n\t";
+    char const* p = shader_str.c_str() + shader_str.find("/*");
+    char const* q = strpbrk(p + 2, delims);
+    int pass = 0;
+
+    std::vector<Binding> *cur_bind_target = nullptr;
+
+    for (; p != NULL && q != NULL; q = strpbrk(p, delims)) {
+        if (p == q) {
+            p = q + 1;
+            continue;
+        }
+
+        std::string item(p, q);
+        if (item == "/*") {
+            cur_bind_target = nullptr;
+        } else if (item == "*/") {
+            break;
+        } else if (item == "ATTRIBUTES") {
+            cur_bind_target = &attr_bindings;
+        } else if (item == "UNIFORMS") {
+            cur_bind_target = &uniform_bindings;
+        } else if (item == "UNIFORM_BLOCKS") {
+            cur_bind_target = &uniform_block_bindings;
+        } else if (cur_bind_target) {
+            p = q + 1;
+            q = strpbrk(p, delims);
+            if (*p != ':') {
+                fprintf(stderr, "Error parsing shader!");
+            }
+            p = q + 1;
+            q = strpbrk(p, delims);
+            int loc = atoi(p);
+            cur_bind_target->push_back({ item, loc });
+        }
+
+        if (!q) break;
+        p = q + 1;
+    }
 }
 
 #ifdef _MSC_VER

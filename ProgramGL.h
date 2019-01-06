@@ -35,7 +35,12 @@ class Program : public RefCounter {
     bool        ready_ = false;
     char        name_[32];
 
-    void InitFromGLSL(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status);
+    struct Shaders {
+        const char *vs_source, *fs_source;
+        const char *cs_source;
+    };
+
+    void InitFromGLSL(const char *name, const Shaders shaders, eProgLoadStatus *status);
 public:
     Program() {
         name_[0] = '\0';
@@ -57,6 +62,7 @@ public:
         strcpy(name_, name);
     }
     Program(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status = nullptr);
+    Program(const char *name, const char *cs_source, eProgLoadStatus *status = nullptr);
     Program(const Program &rhs) = delete;
     Program(Program &&rhs) {
         *this = std::move(rhs);
@@ -116,6 +122,7 @@ public:
     }
 
     void Init(const char *name, const char *vs_source, const char *fs_source, eProgLoadStatus *status);
+    void Init(const char *name, const char *cs_source, eProgLoadStatus *status);
 };
 
 typedef StorageRef<Program> ProgramRef;

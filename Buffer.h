@@ -19,7 +19,6 @@ class Buffer : public RefCounter {
         }
     };
 
-    eBufferType type_ = UndefinedBuffer;
     uint32_t size_ = 0;
     std::vector<Node> nodes_;
 
@@ -33,7 +32,7 @@ class Buffer : public RefCounter {
     bool Free_Node(int i);
 public:
     Buffer() {}
-    Buffer(eBufferType type, uint32_t initial_size);
+    Buffer(uint32_t initial_size);
     Buffer(const Buffer &rhs) = delete;
     Buffer(Buffer &&rhs) {
         *this = std::move(rhs);
@@ -43,7 +42,6 @@ public:
     Buffer &operator=(const Buffer &rhs) = delete;
     Buffer &operator=(Buffer &&rhs);
 
-    eBufferType type() const { return type_; }
     uint32_t size() const { return size_; }
 
 #if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)

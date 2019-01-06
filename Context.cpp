@@ -176,15 +176,15 @@ void Ren::Context::ReleaseAnims() {
     anims_.Clear();
 }
 
-Ren::BufferRef Ren::Context::CreateBuffer(eBufferType type, uint32_t initial_size) {
-    return buffers_.Add(type, initial_size);
+Ren::BufferRef Ren::Context::CreateBuffer(uint32_t initial_size) {
+    return buffers_.Add(initial_size);
 }
 
 void Ren::Context::ReleaseBuffers() {
     if (!buffers_.Size()) return;
     fprintf(stderr, "---------REMAINING BUFFERS--------\n");
     for (const auto &b : buffers_) {
-        fprintf(stderr, "%i : %u\n", (int)b.type(), b.size());
+        fprintf(stderr, "%u\n", b.size());
     }
     fprintf(stderr, "-----------------------------------\n");
     buffers_.Clear();

@@ -100,66 +100,144 @@ void test_program() {
         // Load program
         ProgramTest test;
 
-        const char vs_src[] =   \
-                                " \
-            /*\n \
-            ATTRIBUTES\n \
-                aVertexPosition : 0\n \
-                aVertexPosition1 : 1\n \
-            UNIFORMS\n \
-                uMVPMatrix : 0\n \
-            */\n \
-            \n \
-            attribute vec3 aVertexPosition;\n \
-            uniform mat4 uMVPMatrix;\n \
-            \n \
-            void main(void) {\n \
-                gl_Position = uMVPMatrix * vec4(aVertexPosition, 1.0);\n \
-            } ";
+        const char vs_src[] =
+R"(
+/*
+ATTRIBUTES
+    aVertexPosition : 0
+    aVertexPosition1 : 1
+UNIFORMS
+    uMVPMatrix : 0
+*/
+
+attribute vec3 aVertexPosition;
+uniform mat4 uMVPMatrix;
+
+void main(void) {
+    gl_Position = uMVPMatrix * vec4(aVertexPosition, 1.0);
+})";
 
         const char fs_src[] =
-            " \
-            #ifdef GL_ES\n \
-				precision mediump float;\n \
-			#else\n \
-				#define lowp\n \
-				#define mediump\n \
-				#define highp\n \
-			#endif\n \
-            /*\n \
-            UNIFORMS\n \
-                asdasd : 1\n \
-            */\n \
-            uniform vec3 col;\n \
-            \n\
-            void main(void) {\n \
-                gl_FragColor = vec4(col, 1.0);\n \
-            }";
+R"(
+#ifdef GL_ES
+	precision mediump float;
+#else
+	#define lowp
+	#define mediump
+	#define highp
+#endif
+/*
+UNIFORMS
+    asdasd : 1
+*/
+uniform vec3 col;
+
+void main(void) {
+    gl_FragColor = vec4(col, 1.0);
+})";
 
         Ren::eProgLoadStatus status;
         Ren::ProgramRef p = test.LoadProgramGLSL("constant", nullptr, nullptr, &status);
 
-        assert(status == Ren::ProgSetToDefault);
-        assert(std::string(p->name()) == "constant");
-        assert(p->prog_id() == 0); // not initialized
-        assert(p->ready() == false);
+        require(status == Ren::ProgSetToDefault);
+        require(std::string(p->name()) == "constant");
+        require(p->prog_id() == 0); // not initialized
+        require(p->ready() == false);
 
         test.LoadProgramGLSL("constant", vs_src, fs_src, &status);
 
-        assert(status == Ren::ProgCreatedFromData);
+        require(status == Ren::ProgCreatedFromData);
 
-        assert(std::string(p->name()) == "constant");
+        require(std::string(p->name()) == "constant");
 
-        assert(p->ready() == true);
+        require(p->ready() == true);
 
-        assert(p->attribute(0).name == "aVertexPosition");
-        assert(p->attribute(0).loc != -1);
-        assert(p->attribute(1).name.empty());
-        assert(p->attribute(1).loc == -1);
+        require(p->attribute(0).name == "aVertexPosition");
+        require(p->attribute(0).loc != -1);
+        require(p->attribute(1).name.empty());
+        require(p->attribute(1).loc == -1);
 
-        assert(p->uniform(0).name == "uMVPMatrix");
-        assert(p->uniform(0).loc != -1);
-        assert(p->uniform(1).name == "col");
-        assert(p->uniform(1).loc != -1);
+        require(p->uniform(0).name == "uMVPMatrix");
+        require(p->uniform(0).loc != -1);
+        require(p->uniform(1).name == "col");
+        require(p->uniform(1).loc != -1);
+    }
+
+    {
+        // Load compute
+        ProgramTest test;
+
+        const char cs_source[] =
+R"(
+#version 310 es
+
+/*
+UNIFORMS
+    delta : 0
+*/
+
+uniform vec4 delta;
+
+struct AttribData {
+	vec4 p;
+	vec4 c;
+};
+
+layout(std430, binding = 0) buffer dest_buffer {
+	AttribData data[];
+} inout_buffer;
+
+layout (local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+
+void main() {
+	uint global_index = gl_GlobalInvocationID.x;
+	uint work_size = gl_WorkGroupSize.x * gl_NumWorkGroups.x;
+
+	inout_buffer.data[global_index].p = inout_buffer.data[global_index].p + delta;
+	inout_buffer.data[global_index].c = vec4(1.0, 0.0, 1.0, 1.0);
+})";
+
+        Ren::eProgLoadStatus status;
+        Ren::ProgramRef p = test.LoadProgramGLSL("sample", cs_source, &status);
+
+        require(p->uniform(0).name == "delta");
+        require(p->uniform(0).loc != -1);
+
+        struct AttribData {
+            Ren::Vec4f p, c;
+        };
+
+        Ren::Buffer buf = { sizeof(AttribData) * 128 };
+
+        std::vector<AttribData> _data;
+        for (int i = 0; i < 128; i++) {
+            _data.push_back({ { 0.0f, float(i), 0.0f, 0.0f }, Ren::Vec4f{ 0.0f } });
+        }
+
+        uint32_t offset = buf.Alloc(128 * sizeof(AttribData), _data.data());
+        require(offset == 0);
+
+        glUseProgram(p->prog_id());
+        glUniform4f(p->uniform("delta").loc, 0.0f, -0.1f, 0.0f, 0.0f);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buf.buf_id());
+
+        glDispatchCompute(2, 1, 1);
+
+        glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+        glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, 128 * sizeof(AttribData), _data.data());
+
+        for (int i = 0; i < 128; i++) {
+            require(_data[i].p[0] == Approx(0.0));
+            require(_data[i].p[1] == Approx(double(i) - 0.1f));
+            require(_data[i].p[2] == Approx(0.0));
+            require(_data[i].p[3] == Approx(0.0));
+
+            require(_data[i].c[0] == Approx(1.0));
+            require(_data[i].c[1] == Approx(0.0));
+            require(_data[i].c[2] == Approx(1.0));
+            require(_data[i].c[3] == Approx(1.0));
+        }
+
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
     }
 }

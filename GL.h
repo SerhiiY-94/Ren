@@ -26,96 +26,112 @@
 
 #endif
 
-#define GL_MAJOR_VERSION 33307
-#define GL_SHADING_LANGUAGE_VERSION 0x8B8C
+#define GL_MAJOR_VERSION                    33307
+#define GL_SHADING_LANGUAGE_VERSION         0x8B8C
 
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT       0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT   0x84FF
 
-#define GL_MAX_VERTEX_UNIFORM_COMPONENTS 0x8B4A
+#define GL_MAX_VERTEX_UNIFORM_COMPONENTS    0x8B4A
 //#define GL_MAX_VERTEX_UNIFORM_VECTORS 0x8DFB
 
-#define GL_FRAGMENT_SHADER 0x8B30
-#define GL_VERTEX_SHADER 0x8B31
+#define GL_FRAGMENT_SHADER                  0x8B30
+#define GL_VERTEX_SHADER                    0x8B31
+#define GL_COMPUTE_SHADER                   0x91B9
 
-#define GL_COMPILE_STATUS 0x8B81
-#define GL_LINK_STATUS 0x8B82
+#define GL_COMPILE_STATUS                   0x8B81
+#define GL_LINK_STATUS                      0x8B82
 
-#define GL_INFO_LOG_LENGTH 0x8B84
+#define GL_INFO_LOG_LENGTH                  0x8B84
 
-#define GL_ACTIVE_ATTRIBUTES 0x8B89
-#define GL_ACTIVE_UNIFORMS 0x8B86
+#define GL_ACTIVE_ATTRIBUTES                0x8B89
+#define GL_ACTIVE_UNIFORMS                  0x8B86
 
-#define GL_TEXTURE0 0x84C0
-#define GL_TEXTURE1 0x84C1
-#define GL_TEXTURE_CUBE_MAP 0x8513
+#define GL_TEXTURE0                         0x84C0
+#define GL_TEXTURE1                         0x84C1
+#define GL_TEXTURE_CUBE_MAP                 0x8513
 
-#define GL_CLAMP_TO_EDGE 0x812F
-#define GL_GENERATE_MIPMAP_HINT 0x8192
+#define GL_CLAMP_TO_EDGE                    0x812F
+#define GL_GENERATE_MIPMAP_HINT             0x8192
 
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_X 0x8515
-#define GL_TEXTURE_WRAP_R 0x8072
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X      0x8515
+#define GL_TEXTURE_WRAP_R                   0x8072
 
-#define GL_ARRAY_BUFFER 0x8892
-#define GL_ELEMENT_ARRAY_BUFFER 0x8893
-#define GL_UNIFORM_BUFFER 0x8A11
+#define GL_ARRAY_BUFFER                     0x8892
+#define GL_ELEMENT_ARRAY_BUFFER             0x8893
+#define GL_UNIFORM_BUFFER                   0x8A11
+#define GL_SHADER_STORAGE_BUFFER            0x90D2
 
-#define GL_STATIC_DRAW 0x88E4
-#define GL_DYNAMIC_DRAW 0x88E8
+#define GL_STATIC_DRAW                      0x88E4
+#define GL_DYNAMIC_DRAW                     0x88E8
 
-#define GL_COPY_WRITE_BUFFER 0x8f37
+#define GL_COPY_WRITE_BUFFER                0x8f37
 
-#define GL_DEPTH_COMPONENT16 0x81A5
-#define GL_DEPTH_COMPONENT24 0x81A6
+#define GL_DEPTH_COMPONENT16                0x81A5
+#define GL_DEPTH_COMPONENT24                0x81A6
 
-#define GL_COLOR_ATTACHMENT0 0x8CE0
-#define GL_COLOR_ATTACHMENT1 0x8CE1
-#define GL_DEPTH_ATTACHMENT 0x8D00
-#define GL_STENCIL_ATTACHMENT 0x8D20
+#define GL_COLOR_ATTACHMENT0                0x8CE0
+#define GL_COLOR_ATTACHMENT1                0x8CE1
+#define GL_DEPTH_ATTACHMENT                 0x8D00
+#define GL_STENCIL_ATTACHMENT               0x8D20
 
-#define GL_FRAMEBUFFER 0x8D40
-#define GL_RENDERBUFFER 0x8D41
+#define GL_FRAMEBUFFER                      0x8D40
+#define GL_RENDERBUFFER                     0x8D41
 
-#define GL_FRAMEBUFFER_COMPLETE 0x8CD5
+#define GL_FRAMEBUFFER_COMPLETE             0x8CD5
 
-#define GL_FRAMEBUFFER_BINDING 0x8CA6
+#define GL_FRAMEBUFFER_BINDING              0x8CA6
 
-#define GL_COMPRESSED_RED 0x8225
-#define GL_COMPRESSED_RG 0x8226
-#define GL_RG 0x8227
-#define GL_RG_INTEGER 0x8228
-#define GL_R8 0x8229
-#define GL_R16 0x822A
-#define GL_RG8 0x822B
-#define GL_RG16 0x822C
-#define GL_R16F 0x822D
-#define GL_R32F 0x822E
-#define GL_RG16F 0x822F
-#define GL_RG32F 0x8230
-#define GL_R8I 0x8231
-#define GL_R8UI 0x8232
-#define GL_R16I 0x8233
-#define GL_R16UI 0x8234
-#define GL_R32I 0x8235
-#define GL_R32UI 0x8236
-#define GL_RG8I 0x8237
-#define GL_RG8UI 0x8238
-#define GL_RG16I 0x8239
-#define GL_RG16UI 0x823A
-#define GL_RG32I 0x823B
-#define GL_RG32UI 0x823C
+#define GL_COMPRESSED_RED       0x8225
+#define GL_COMPRESSED_RG        0x8226
+#define GL_RG                   0x8227
+#define GL_RG_INTEGER           0x8228
+#define GL_R8                   0x8229
+#define GL_R16                  0x822A
+#define GL_RG8                  0x822B
+#define GL_RG16                 0x822C
+#define GL_R16F                 0x822D
+#define GL_R32F                 0x822E
+#define GL_RG16F                0x822F
+#define GL_RG32F                0x8230
+#define GL_R8I                  0x8231
+#define GL_R8UI                 0x8232
+#define GL_R16I                 0x8233
+#define GL_R16UI                0x8234
+#define GL_R32I                 0x8235
+#define GL_R32UI                0x8236
+#define GL_RG8I                 0x8237
+#define GL_RG8UI                0x8238
+#define GL_RG16I                0x8239
+#define GL_RG16UI               0x823A
+#define GL_RG32I                0x823B
+#define GL_RG32UI               0x823C
 
-#define GL_RGBA32F 0x8814
-#define GL_RGB32F 0x8815
+#define GL_RGBA32F      0x8814
+#define GL_RGB32F       0x8815
 
-#define GL_RGB16F 0x881B
-#define GL_RGBA16F 0x881A
+#define GL_RGB16F       0x881B
+#define GL_RGBA16F      0x881A
 
-#define GL_HALF_FLOAT 5131
+#define GL_HALF_FLOAT   5131
 
-#define GL_MULTISAMPLE 0x809D
+#define GL_MULTISAMPLE  0x809D
 
 #define GL_TEXTURE_2D_MULTISAMPLE 0x9100
+
+#define GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT  0x00000001
+#define GL_ELEMENT_ARRAY_BARRIER_BIT        0x00000002
+#define GL_UNIFORM_BARRIER_BIT              0x00000004
+#define GL_TEXTURE_FETCH_BARRIER_BIT        0x00000008
+#define GL_SHADER_IMAGE_ACCESS_BARRIER_BIT  0x00000020
+#define GL_COMMAND_BARRIER_BIT              0x00000040
+#define GL_PIXEL_BUFFER_BARRIER_BIT         0x00000080
+#define GL_TEXTURE_UPDATE_BARRIER_BIT       0x00000100
+#define GL_BUFFER_UPDATE_BARRIER_BIT        0x00000200
+#define GL_FRAMEBUFFER_BARRIER_BIT          0x00000400
+#define GL_TRANSFORM_FEEDBACK_BARRIER_BIT   0x00000800
+#define GL_ATOMIC_COUNTER_BARRIER_BIT       0x00001000
+#define GL_ALL_BARRIER_BITS                 0xFFFFFFFF
 
 #ifndef APIENTRY
 #if defined(WIN32)
@@ -234,6 +250,10 @@ extern void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei 
         GLsizei width, GLsizei height);
 
 extern void (APIENTRY *glDrawElementsBaseVertex)(GLenum mode, GLsizei count, GLenum type, GLvoid *indices, GLint basevertex);
+
+extern void (APIENTRY *glDispatchCompute)(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+extern void (APIENTRY *glMemoryBarrier)(GLbitfield barriers);
+extern void (APIENTRY *glGetBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, GLvoid * data);
 
 namespace Ren {
 bool InitGLExtentions();

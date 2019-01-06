@@ -88,6 +88,10 @@ void (APIENTRY *glRenderbufferStorageMultisample)(GLenum target, GLsizei samples
 
 void (APIENTRY *glDrawElementsBaseVertex)(GLenum mode, GLsizei count, GLenum type, GLvoid *indices, GLint basevertex);
 
+void (APIENTRY *glDispatchCompute)(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+void (APIENTRY *glMemoryBarrier)(GLbitfield barriers);
+void (APIENTRY *glGetBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, GLvoid * data);
+
 bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
@@ -177,6 +181,10 @@ bool Ren::InitGLExtentions() {
     glRenderbufferStorageMultisample = GetProcAddress(glRenderbufferStorageMultisample);
 
     glDrawElementsBaseVertex = GetProcAddress(glDrawElementsBaseVertex);
+
+    glDispatchCompute = GetProcAddress(glDispatchCompute);
+    glMemoryBarrier = GetProcAddress(glMemoryBarrier);
+    glGetBufferSubData = GetProcAddress(glGetBufferSubData);
 
     return true;
 }

@@ -62,8 +62,8 @@ void Ren::Context::Init(int w, int h) {
 
     printf("===========================================\n\n");
 
-    default_vertex_buf_ = buffers_.Add(VertexBuffer, 16 * 1024 * 1024);
-    default_indices_buf_ = buffers_.Add(IndexBuffer, 8 * 1024 * 1024);
+    default_vertex_buf_ = buffers_.Add(32 * 1024 * 1024);
+    default_indices_buf_ = buffers_.Add(32 * 1024 * 1024);
 }
 
 void Ren::Context::Resize(int w, int h) {
@@ -81,8 +81,7 @@ Ren::ProgramRef Ren::Context::LoadProgramGLSL(const char *name, const char *vs_s
         }
     }
 
-    std::string vs_source_str = glsl_defines_ + (vs_source ? vs_source : ""),
-                fs_source_str = glsl_defines_ + (fs_source ? fs_source : "");
+    std::string vs_source_str, fs_source_str;
 
     if (vs_source) {
         vs_source_str = glsl_defines_ + vs_source;
@@ -101,6 +100,35 @@ Ren::ProgramRef Ren::Context::LoadProgramGLSL(const char *name, const char *vs_s
             if (load_status) *load_status = ProgFound;
         } else if (!ref->ready() && vs_source && fs_source) {
             ref->Init(name, vs_source, fs_source, load_status);
+        }
+    }
+
+    return ref;
+}
+
+Ren::ProgramRef Ren::Context::LoadProgramGLSL(const char *name, const char *cs_source, eProgLoadStatus *load_status) {
+    ProgramRef ref;
+    for (auto it = programs_.begin(); it != programs_.end(); ++it) {
+        if (strcmp(it->name(), name) == 0) {
+            ref = { &programs_, it.index() };
+            break;
+        }
+    }
+
+    std::string cs_source_str;
+
+    if (cs_source) {
+        cs_source_str = glsl_defines_ + cs_source;
+        cs_source = cs_source_str.c_str();
+    }
+
+    if (!ref) {
+        ref = programs_.Add(name, cs_source, load_status);
+    } else {
+        if (ref->ready()) {
+            if (load_status) *load_status = ProgFound;
+        } else if (!ref->ready() && cs_source) {
+            ref->Init(name, cs_source, load_status);
         }
     }
 

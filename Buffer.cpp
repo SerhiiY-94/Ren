@@ -10,7 +10,7 @@
 #include "SW/SW.h"
 #endif
 
-Ren::Buffer::Buffer(eBufferType type, uint32_t initial_size) : type_(type), size_(0) {
+Ren::Buffer::Buffer(uint32_t initial_size) : size_(0) {
     nodes_.emplace_back();
     nodes_.back().size = initial_size;
 
@@ -23,7 +23,7 @@ Ren::Buffer::Buffer(eBufferType type, uint32_t initial_size) : type_(type), size
 
 Ren::Buffer::~Buffer() {
 #if defined(USE_GL_RENDER)
-    if (type_ != UndefinedBuffer) {
+    if (buf_id_ != 0xffffffff) {
         GLuint gl_buf = (GLuint)buf_id_;
         glDeleteBuffers(1, &gl_buf);
     }
@@ -33,18 +33,16 @@ Ren::Buffer::~Buffer() {
 Ren::Buffer &Ren::Buffer::operator=(Buffer &&rhs) {
     RefCounter::operator=(std::move(rhs));
 
-    if (type_ != UndefinedBuffer) {
+    if (buf_id_ == 0xffffffff) {
 #if defined(USE_GL_RENDER)
         GLuint buf = (GLuint)buf_id_;
         glDeleteBuffers(1, &buf);
 #endif
     }
-    
-    type_ = rhs.type_;
-    rhs.type_ = UndefinedBuffer;
 
 #if defined(USE_GL_RENDER) || defined(USE_SW_RENDER)
     buf_id_ = rhs.buf_id_;
+    rhs.buf_id_ = 0xffffffff;
 #endif
 
     nodes_ = std::move(rhs.nodes_);
@@ -175,10 +173,8 @@ uint32_t Ren::Buffer::Alloc(uint32_t req_size, void *init_data) {
 
         if (init_data) {
 #if defined(USE_GL_RENDER)
-            GLenum target = (type_ == VertexBuffer) ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER;
-
-            glBindBuffer(target, (GLuint)buf_id_);
-            glBufferSubData(target, n.offset, n.size, init_data);
+            glBindBuffer(GL_ARRAY_BUFFER, (GLuint)buf_id_);
+            glBufferSubData(GL_ARRAY_BUFFER, n.offset, n.size, init_data);
 #endif
         }
         
@@ -206,19 +202,16 @@ void Ren::Buffer::Resize(uint32_t new_size) {
     }
 
 #if defined(USE_GL_RENDER)
-    GLenum target = (type_ == VertexBuffer) ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER;
-
     GLuint gl_buffer;
     glGenBuffers(1, &gl_buffer);
-    glBindBuffer(target, gl_buffer);
-    glBufferData(target, size_, nullptr, GL_STATIC_DRAW);
-
+    glBindBuffer(GL_ARRAY_BUFFER, gl_buffer);
+    glBufferData(GL_ARRAY_BUFFER, size_, nullptr, GL_STATIC_DRAW);
 
     if (buf_id_ != 0xffffffff) {
-        glBindBuffer(target, (GLuint)buf_id_);
+        glBindBuffer(GL_ARRAY_BUFFER, (GLuint)buf_id_);
         glBindBuffer(GL_COPY_WRITE_BUFFER, gl_buffer);
 
-        glCopyBufferSubData(target, GL_COPY_WRITE_BUFFER, 0, 0, old_size);
+        glCopyBufferSubData(GL_ARRAY_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, old_size);
 
         GLuint old_buffer = (GLuint)buf_id_;
         glDeleteBuffers(1, &old_buffer);
