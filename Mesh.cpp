@@ -117,6 +117,15 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
     attribs_buf_ = vertex_buf;
     attribs_offset_ = attribs_buf_->Alloc(attribs_size_, attribs_.get());
 
+    if (attribs_offset_ != 0) {
+        uint32_t offset = attribs_offset_ / (13 * sizeof(float));
+
+        uint32_t *_indices = (uint32_t *)indices_.get();
+        for (uint32_t i = 0; i < indices_size_ / sizeof(uint32_t); i++) {
+            _indices[i] += offset;
+        }
+    }
+
     indices_buf_ = index_buf;
     indices_offset_ = indices_buf_->Alloc(indices_size_, indices_.get());
 }
