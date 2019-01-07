@@ -15,6 +15,7 @@ typedef struct SWcull_surf {
     const void *attribs;
     const void *indices;
     SWuint stride, count;
+    SWint base_vertex;
     SWfloat bbox_min[3], bbox_max[3];
     const SWfloat *xform;
     SWint visible, *dont_skip;
@@ -34,9 +35,9 @@ void swCullCtxClear(SWcull_ctx *ctx);
 void swCullCtxSubmitCullSurfs(SWcull_ctx *ctx, SWcull_surf *surfs, SWuint count);
 
 SWint swCullCtxCullTrianglesIndexed_Ubyte(SWcull_ctx *ctx, const void *attribs, const SWubyte *indices,
-        SWuint stride, SWuint count, const SWfloat *xform, SWint is_occluder);
+        SWuint stride, SWuint count, SWint base_vertex, const SWfloat *xform, SWint is_occluder);
 
 SWint swCullCtxCullTrianglesIndexed_Uint(SWcull_ctx *ctx, const void *attribs, const SWuint *indices,
-        SWuint stride, SWuint count, const SWfloat *xform, SWint is_occluder);
+        SWuint stride, SWuint count, SWint base_vertex, const SWfloat *xform, SWint is_occluder);
 
 #endif /* SW_CULLING_H */
