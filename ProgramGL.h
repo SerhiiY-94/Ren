@@ -14,8 +14,8 @@
 #endif
 
 namespace Ren {
-const int MAX_NUM_ATTRIBUTES = 16;
-const int MAX_NUM_UNIFORMS = 16;
+const int MAX_NUM_ATTRIBUTES = 32;
+const int MAX_NUM_UNIFORMS = 32;
 const int MAX_NUM_UNIFORM_BLOCKS = 16;
 struct Descr {
     std::string name;
