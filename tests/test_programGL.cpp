@@ -119,6 +119,8 @@ void test_program() {
 
         const char vs_src[] =
 R"(
+#version 100
+
 /*
 ATTRIBUTES
     aVertexPosition : 0
@@ -136,6 +138,8 @@ void main(void) {
 
         const char fs_src[] =
 R"(
+#version 100
+
 #ifdef GL_ES
 	precision mediump float;
 #else

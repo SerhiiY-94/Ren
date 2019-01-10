@@ -257,8 +257,8 @@ void test_mesh() {
         require(m_ref->bbox_min() == Ren::Vec3f(-10.389862f, -220.607803f, -441.704651f));
         require(m_ref->bbox_max() == Ren::Vec3f(83.354584f, 179.815552f, 441.704651f));
 
-        require(m_ref->strip(0).offset != -1);
-        require(m_ref->strip(1).offset == -1);
+        require(m_ref->group(0).offset != -1);
+        require(m_ref->group(1).offset == -1);
 
         require(m_ref->attribs() != nullptr);
         require(m_ref->attribs_size() == 192);
@@ -266,14 +266,14 @@ void test_mesh() {
         require(m_ref->indices_size() == 20);
 
         require(m_ref->flags() == Ren::MeshHasAlpha);
-        require(m_ref->strip(0).flags == Ren::MeshHasAlpha);
+        require(m_ref->group(0).flags == Ren::MeshHasAlpha);
 
         {
             Ren::MeshRef m_ref2 = test.LoadMesh("ivy", in, on_material_needed);
             require(m_ref2);
         }
 
-        Ren::MaterialRef mat_ref = m_ref->strip(0).mat;
+        Ren::MaterialRef mat_ref = m_ref->group(0).mat;
         require(!mat_ref->ready());
     }
 
@@ -318,8 +318,8 @@ void test_mesh() {
         require(m_ref->bbox_max()[1] == Approx(20).epsilon(0.01));
         require(m_ref->bbox_max()[2] == Approx(5).epsilon(0.01));
 
-        require(m_ref->strip(0).offset != -1);
-        require(m_ref->strip(1).offset == -1);
+        require(m_ref->group(0).offset != -1);
+        require(m_ref->group(1).offset == -1);
 
         require(m_ref->attribs() != nullptr);
         // attribs have 16 floats for each vertex (3 pos, 3 normal, 2 uvs, 4 bone index-weight pairs)
@@ -328,7 +328,7 @@ void test_mesh() {
         require(m_ref->indices_size() == 22);
 
         require(m_ref->flags() == 0);
-        require(m_ref->strip(0).flags == 0);
+        require(m_ref->group(0).flags == 0);
 
         require(m_ref->skel()->bones.size() == 2);
         require(std::string(m_ref->skel()->bones[0].name) == "Bone01");
@@ -346,7 +346,7 @@ void test_mesh() {
             require(m_ref2);
         }
 
-        Ren::MaterialRef mat_ref = m_ref->strip(0).mat;
+        Ren::MaterialRef mat_ref = m_ref->group(0).mat;
         require(mat_ref);
         require(!mat_ref->ready());
     }

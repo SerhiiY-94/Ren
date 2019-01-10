@@ -10,19 +10,19 @@
 namespace Ren {
 enum eMeshFlags { MeshHasAlpha = 1 };
 
-struct TriStrip {
+struct TriGroup {
     int         offset = -1;
     int         num_indices = 0;
     MaterialRef mat;
     uint32_t    flags = 0;
 
-    TriStrip() {}
-    TriStrip(const TriStrip &rhs) = delete;
-    TriStrip(TriStrip &&rhs) {
+    TriGroup() {}
+    TriGroup(const TriGroup &rhs) = delete;
+    TriGroup(TriGroup &&rhs) {
         (*this) = std::move(rhs);
     }
-    TriStrip &operator=(const TriStrip &rhs) = delete;
-    TriStrip &operator=(TriStrip &&rhs) {
+    TriGroup &operator=(const TriGroup &rhs) = delete;
+    TriGroup &operator=(TriGroup &&rhs) {
         offset = rhs.offset;
         rhs.offset = -1;
         num_indices = rhs.num_indices;
@@ -48,7 +48,7 @@ class Mesh : public RefCounter {
     uint32_t        attribs_size_ = 0;
     std::shared_ptr<void> indices_;
     uint32_t        indices_size_ = 0;
-    std::array<TriStrip, 16>    strips_;
+    std::array<TriGroup, 16>    groups_;
     Vec3f           bbox_min_, bbox_max_;
     char            name_[32];
 
@@ -104,8 +104,8 @@ public:
     uint32_t indices_size() const {
         return indices_size_;
     }
-    const TriStrip &strip(int i) const {
-        return strips_[i];
+    const TriGroup &group(int i) const {
+        return groups_[i];
     }
     const Vec3f &bbox_min() const {
         return bbox_min_;

@@ -98,20 +98,20 @@ void Ren::Mesh::InitMeshSimple(std::istream &data, const material_load_callback 
         data.read((char *)&num_indices, 4);
         data.read((char *)&alpha, 4);
 
-        strips_[i].offset = (int)(index * sizeof(uint32_t));
-        strips_[i].num_indices = (int)num_indices;
-        strips_[i].flags = 0;
+        groups_[i].offset = (int)(index * sizeof(uint32_t));
+        groups_[i].num_indices = (int)num_indices;
+        groups_[i].flags = 0;
 
         if (alpha) {
-            strips_[i].flags |= MeshHasAlpha;
+            groups_[i].flags |= MeshHasAlpha;
             flags_ |= MeshHasAlpha;
         }
 
-        strips_[i].mat = on_mat_load(&material_names[i][0]);
+        groups_[i].mat = on_mat_load(&material_names[i][0]);
     }
 
-    if (num_strips < (int)strips_.size()) {
-        strips_[num_strips].offset = -1;
+    if (num_strips < (int)groups_.size()) {
+        groups_[num_strips].offset = -1;
     }
 
     attribs_buf_ = vertex_buf;
@@ -199,20 +199,20 @@ void Ren::Mesh::InitMeshTerrain(std::istream &data, const material_load_callback
         data.read((char *)&num_indices, 4);
         data.read((char *)&alpha, 4);
 
-        strips_[i].offset = (int)index * sizeof(unsigned short);
-        strips_[i].num_indices = (int)num_indices;
-        strips_[i].flags = 0;
+        groups_[i].offset = (int)index * sizeof(unsigned short);
+        groups_[i].num_indices = (int)num_indices;
+        groups_[i].flags = 0;
 
         if (alpha) {
-            strips_[i].flags |= MeshHasAlpha;
+            groups_[i].flags |= MeshHasAlpha;
             flags_ |= MeshHasAlpha;
         }
 
-        strips_[i].mat = on_mat_load(&material_names[i][0]);
+        groups_[i].mat = on_mat_load(&material_names[i][0]);
     }
 
-    if (num_strips < (int)strips_.size()) {
-        strips_[num_strips].offset = -1;
+    if (num_strips < (int)groups_.size()) {
+        groups_[num_strips].offset = -1;
     }
 
     attribs_buf_ = vertex_buf;
@@ -284,20 +284,20 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
         data.read((char *)&num_indices, 4);
         data.read((char *)&alpha, 4);
 
-        strips_[i].offset = (int)index * sizeof(unsigned short);
-        strips_[i].num_indices = (int)num_indices;
-        strips_[i].flags = 0;
+        groups_[i].offset = (int)index * sizeof(unsigned short);
+        groups_[i].num_indices = (int)num_indices;
+        groups_[i].flags = 0;
 
         if (alpha) {
-            strips_[i].flags |= MeshHasAlpha;
+            groups_[i].flags |= MeshHasAlpha;
             flags_ |= MeshHasAlpha;
         }
 
-        strips_[i].mat = on_mat_load(&material_names[i][0]);
+        groups_[i].mat = on_mat_load(&material_names[i][0]);
     }
 
-    if (num_strips < (int)strips_.size()) {
-        strips_[num_strips].offset = -1;
+    if (num_strips < (int)groups_.size()) {
+        groups_[num_strips].offset = -1;
     }
 
     auto &bones = skel_.bones;
@@ -334,15 +334,15 @@ void Ren::Mesh::InitMeshSkeletal(std::istream &data, const material_load_callbac
 
     assert(max_gpu_bones);
     if (bones.size() <= (size_t)max_gpu_bones) {
-        for (size_t s = 0; s < strips_.size(); s++) {
-            if (strips_[s].offset == -1) break;
+        for (size_t s = 0; s < groups_.size(); s++) {
+            if (groups_[s].offset == -1) break;
             BoneGroup grp;
             for (size_t i = 0; i < bones.size(); i++) {
                 grp.bone_ids.push_back((uint32_t)i);
             }
             grp.strip_ids.push_back((uint32_t)s);
-            grp.strip_ids.push_back(strips_[s].offset / 2);
-            grp.strip_ids.push_back(strips_[s].num_indices);
+            grp.strip_ids.push_back(groups_[s].offset / 2);
+            grp.strip_ids.push_back(groups_[s].num_indices);
             skel_.bone_groups.push_back(grp);
         }
     } else {
@@ -373,9 +373,9 @@ void Ren::Mesh::SplitMesh(int bones_limit) {
 
     auto t1 = clock();
 
-    for (size_t s = 0; s < strips_.size(); s++) {
-        if (strips_[s].offset == -1) break;
-        for (int i = (int)strips_[s].offset / 2; i < (int)(strips_[s].offset / 2 + strips_[s].num_indices - 2); i += 1) {
+    for (size_t s = 0; s < groups_.size(); s++) {
+        if (groups_[s].offset == -1) break;
+        for (int i = (int)groups_[s].offset / 2; i < (int)(groups_[s].offset / 2 + groups_[s].num_indices - 2); i += 1) {
             bone_ids.clear();
             if (vtx_indices[i] == vtx_indices[i + 1] || vtx_indices[i + 1] == vtx_indices[i + 2]) {
                 continue;
@@ -426,7 +426,7 @@ void Ren::Mesh::SplitMesh(int bones_limit) {
                 best_fit->strip_ids[best_fit->strip_ids.size() - 1]++;
             } else {
                 best_fit->strip_ids.push_back((int)s);
-                if ((i - strips_[s].offset / 2) % 2 == 0) {
+                if ((i - groups_[s].offset / 2) % 2 == 0) {
                     best_fit->strip_ids.push_back(i);
                 } else {
                     best_fit->strip_ids.push_back(-i);
