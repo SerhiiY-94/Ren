@@ -6,6 +6,12 @@
 
 #if defined(_WIN32)
 #include <Windows.h>
+
+#define WGL_CONTEXT_MAJOR_VERSION_ARB     0x2091
+#define WGL_CONTEXT_MINOR_VERSION_ARB     0x2092
+#define WGL_CONTEXT_FLAGS_ARB             0x2094
+#define WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB 0x00000002
+
 #endif
 
 class ProgramTest : public Ren::Context {
@@ -67,8 +73,19 @@ public:
 
         DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 
-        hRC = wglCreateContext(hDC);
+        HGLRC temp_context = wglCreateContext(hDC);
+        wglMakeCurrent(hDC, temp_context);
+
+        typedef HGLRC(APIENTRY * PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC hDC, HGLRC hShareContext, const int *attribList);
+        static PFNWGLCREATECONTEXTATTRIBSARBPROC pfnCreateContextAttribsARB =
+            reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
+
+        int attriblist[] = { WGL_CONTEXT_MAJOR_VERSION_ARB, 4, WGL_CONTEXT_MINOR_VERSION_ARB, 3, WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB, 0, 0 };
+
+        hRC = pfnCreateContextAttribsARB(hDC, 0, attriblist);
         wglMakeCurrent(hDC, hRC);
+
+        wglDeleteContext(temp_context);
 #else
         SDL_Init(SDL_INIT_VIDEO);
 
@@ -169,7 +186,7 @@ void main(void) {
 
         const char cs_source[] =
 R"(
-#version 310 es
+#version 430
 
 /*
 UNIFORMS

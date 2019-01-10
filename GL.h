@@ -133,6 +133,10 @@
 #define GL_ATOMIC_COUNTER_BARRIER_BIT       0x00001000
 #define GL_ALL_BARRIER_BITS                 0xFFFFFFFF
 
+#define GL_TEXTURE_COMPARE_MODE     0x884C
+#define GL_TEXTURE_COMPARE_FUNC     0x884D
+#define GL_COMPARE_REF_TO_TEXTURE   0x884E
+
 #ifndef APIENTRY
 #if defined(WIN32)
 #define WINAPI      __stdcall
