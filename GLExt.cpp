@@ -46,6 +46,10 @@ void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
 void (APIENTRY *glBindVertexBuffer)(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
 void (APIENTRY *glCopyBufferSubData)(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
 
+void* (APIENTRY *glMapBuffer)(GLenum target, GLenum access);
+void* (APIENTRY *glMapBufferRange)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
+GLboolean (APIENTRY *glUnmapBuffer)(GLenum target);
+
 void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
 void (APIENTRY *glBindFramebuffer)(GLenum target, GLuint framebuffer);
@@ -141,6 +145,10 @@ bool Ren::InitGLExtentions() {
     glBindBufferBase = GetProcAddress(glBindBufferBase);
     glBindVertexBuffer = GetProcAddress(glBindVertexBuffer);
     glCopyBufferSubData = GetProcAddress(glCopyBufferSubData);
+
+    glMapBuffer = GetProcAddress(glMapBuffer);
+    glMapBufferRange = GetProcAddress(glMapBufferRange);
+    glUnmapBuffer = GetProcAddress(glUnmapBuffer);
 
     glGenFramebuffers = GetProcAddress(glGenFramebuffers);
     glDeleteFramebuffers = GetProcAddress(glDeleteFramebuffers);

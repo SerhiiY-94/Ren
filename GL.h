@@ -65,6 +65,10 @@
 #define GL_STATIC_DRAW                      0x88E4
 #define GL_DYNAMIC_DRAW                     0x88E8
 
+#define GL_DYNAMIC_COPY                     0x88EA
+
+#define GL_WRITE_ONLY                       0x88B9
+
 #define GL_COPY_WRITE_BUFFER                0x8f37
 
 #define GL_DEPTH_COMPONENT16                0x81A5
@@ -81,6 +85,9 @@
 #define GL_FRAMEBUFFER_COMPLETE             0x8CD5
 
 #define GL_FRAMEBUFFER_BINDING              0x8CA6
+
+#define GL_MAP_READ_BIT                     0x0001
+#define GL_MAP_WRITE_BIT                    0x0002
 
 #define GL_COMPRESSED_RED       0x8225
 #define GL_COMPRESSED_RG        0x8226
@@ -212,6 +219,10 @@ extern void (APIENTRY *glBufferSubData)(GLenum target, GLintptr offset, GLsizeip
 extern void (APIENTRY *glBindBufferBase)(GLenum target, GLuint index, GLuint buffer);
 extern void (APIENTRY *glBindVertexBuffer)(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
 extern void (APIENTRY *glCopyBufferSubData)(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
+
+extern void* (APIENTRY *glMapBuffer)(GLenum target, GLenum access);
+extern void* (APIENTRY *glMapBufferRange)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
+extern GLboolean (APIENTRY *glUnmapBuffer)(GLenum target);
 
 extern void (APIENTRY *glGenFramebuffers)(GLsizei n, GLuint *ids);
 extern void (APIENTRY *glDeleteFramebuffers)(GLsizei n, const GLuint * framebuffers);
