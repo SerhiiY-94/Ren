@@ -96,6 +96,8 @@ void (APIENTRY *glDispatchCompute)(GLuint num_groups_x, GLuint num_groups_y, GLu
 void (APIENTRY *glMemoryBarrier)(GLbitfield barriers);
 void (APIENTRY *glGetBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, GLvoid * data);
 
+void (APIENTRY *glTexBuffer)(GLenum target, GLenum internalformat, GLuint buffer);
+
 bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
@@ -193,6 +195,8 @@ bool Ren::InitGLExtentions() {
     glDispatchCompute = GetProcAddress(glDispatchCompute);
     glMemoryBarrier = GetProcAddress(glMemoryBarrier);
     glGetBufferSubData = GetProcAddress(glGetBufferSubData);
+
+    glTexBuffer = GetProcAddress(glTexBuffer);
 
     return true;
 }

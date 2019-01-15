@@ -176,21 +176,21 @@ using Mat4d = Mat<double, 4, 4>;
 template <typename T, int M, int N>
 Vec<T, M> operator*(const Vec<T, M> &lhs, const Mat<T, M, N> &rhs) {
     Vec<T, M> res = { Uninitialize };
-    for (int n = 0; n < N; n++) {
-        T sum = (T)0;
-        for (int m = 0; m < M; m++) {
-            sum += lhs[m] * rhs[m][n];
-        }
-        res[n] = sum;
+    for (int m = 0; m < M; m++) {
+        res[m] = Dot(lhs, rhs[m]);
     }
     return res;
 }
 
 template <typename T, int M, int N>
-Vec<T, M> operator*(const Mat<T, M, N> &lhs, const Vec<T, N> &rhs) {
+Vec<T, M> operator*(const Mat<T, M, N> &lhs, const Vec<T, M> &rhs) {
     Vec<T, M> res = { Uninitialize };
-    for (int m = 0; m < M; m++) {
-        res[m] = Dot(lhs[m], rhs);
+    for (int n = 0; n < N; n++) {
+        T sum = (T)0;
+        for (int m = 0; m < M; m++) {
+            sum += lhs[m][n] * rhs[m];
+        }
+        res[n] = sum;
     }
     return res;
 }

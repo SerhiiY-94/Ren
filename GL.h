@@ -144,6 +144,9 @@
 #define GL_TEXTURE_COMPARE_FUNC     0x884D
 #define GL_COMPARE_REF_TO_TEXTURE   0x884E
 
+#define GL_TEXTURE_BUFFER                 0x8C2A
+#define GL_MAX_TEXTURE_BUFFER_SIZE        0x8C2B
+
 #ifndef APIENTRY
 #if defined(WIN32)
 #define WINAPI      __stdcall
@@ -269,6 +272,8 @@ extern void (APIENTRY *glDrawElementsBaseVertex)(GLenum mode, GLsizei count, GLe
 extern void (APIENTRY *glDispatchCompute)(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
 extern void (APIENTRY *glMemoryBarrier)(GLbitfield barriers);
 extern void (APIENTRY *glGetBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, GLvoid * data);
+
+extern void (APIENTRY *glTexBuffer)(GLenum target, GLenum internalformat, GLuint buffer);
 
 namespace Ren {
 bool InitGLExtentions();
