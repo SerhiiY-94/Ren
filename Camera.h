@@ -9,11 +9,20 @@ struct Plane {
     Vec3f   n;
     float   d;
 
+    Plane() : d(0.0f) {}
+    Plane(const Ren::Vec3f &v0, const Ren::Vec3f &v1, const Ren::Vec3f &v2);
+    Plane(eUninitialized) : n(Uninitialize) {}
+
     int ClassifyPoint(const float point[3]) const;
 };
 
 enum eCamPlane {
     LeftPlane, RightPlane, TopPlane, BottomPlane, NearPlane, FarPlane
+};
+
+struct Frustum {
+    Ren::Plane planes[6] = { { Ren::Uninitialize },{ Ren::Uninitialize },{ Ren::Uninitialize },
+                             { Ren::Uninitialize },{ Ren::Uninitialize },{ Ren::Uninitialize } };
 };
 
 enum eVisibilityResult { NotVisible, FullyVisible, PartiallyVisible };
@@ -25,7 +34,7 @@ protected:
 
     Vec3f world_position_;
 
-    Plane frustum_planes_[6];
+    Frustum frustum_;
     bool is_orthographic_;
 
     float angle_, aspect_, near_, far_;
@@ -57,8 +66,8 @@ public:
         return far_;
     }
 
-    const Plane* const frustum_planes() const {
-        return frustum_planes_;
+    const Plane &frustum_plane(int i) const {
+        return frustum_.planes[i];
     }
 
     const bool is_orthographic() const {
@@ -77,6 +86,8 @@ public:
 
     // returns radius
     float GetBoundingSphere(Vec3f &out_center) const;
+
+    void ExtractSubFrustums(int resx, int resy, int resz, Frustum *sub_frustums) const;
 
     void Move(const Vec3f &v, float delta_time);
     void Rotate(float rx, float ry, float delta_time);
