@@ -50,7 +50,7 @@ public:
     }
 #endif
 
-    uint32_t Alloc(uint32_t size, void *init_data = nullptr);
+    uint32_t Alloc(uint32_t size, const void *init_data = nullptr);
     bool Free(uint32_t offset);
 
     void Resize(uint32_t new_size);

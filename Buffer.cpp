@@ -165,7 +165,7 @@ bool Ren::Buffer::Free_Node(int i) {
     return true;
 }
 
-uint32_t Ren::Buffer::Alloc(uint32_t req_size, void *init_data) {
+uint32_t Ren::Buffer::Alloc(uint32_t req_size, const void *init_data) {
     int i = Alloc_Recursive(0, req_size);
     if (i != -1) {
         auto &n = nodes_[i];
