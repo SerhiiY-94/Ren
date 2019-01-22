@@ -147,6 +147,10 @@
 #define GL_TEXTURE_BUFFER                 0x8C2A
 #define GL_MAX_TEXTURE_BUFFER_SIZE        0x8C2B
 
+#define GL_TIMESTAMP 0x8E28
+
+#define GL_QUERY_RESULT	0x8866
+
 #ifndef APIENTRY
 #if defined(WIN32)
 #define WINAPI      __stdcall
@@ -175,6 +179,9 @@ typedef int GLint;
 typedef short GLshort;
 typedef unsigned char GLubyte;
 typedef unsigned short GLushort;
+
+typedef int64_t GLint64;
+typedef uint64_t GLuint64;
 
 typedef char GLchar;
 
@@ -274,6 +281,15 @@ extern void (APIENTRY *glMemoryBarrier)(GLbitfield barriers);
 extern void (APIENTRY *glGetBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, GLvoid * data);
 
 extern void (APIENTRY *glTexBuffer)(GLenum target, GLenum internalformat, GLuint buffer);
+
+extern void (APIENTRY *glGenQueries)(GLsizei n, GLuint *ids);
+extern void (APIENTRY *glDeleteQueries)(GLsizei n, const GLuint *ids);
+extern void (APIENTRY *glQueryCounter)(GLuint id, GLenum target);
+
+extern void (APIENTRY *glGetQueryObjectiv)(GLuint id, GLenum pname, GLint * params);
+extern void (APIENTRY *glGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint * params);
+extern void (APIENTRY *glGetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
+extern void (APIENTRY *glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64 *params);
 
 namespace Ren {
 bool InitGLExtentions();

@@ -98,6 +98,15 @@ void (APIENTRY *glGetBufferSubData)(GLenum target, GLintptr offset, GLsizeiptr s
 
 void (APIENTRY *glTexBuffer)(GLenum target, GLenum internalformat, GLuint buffer);
 
+void (APIENTRY *glGenQueries)(GLsizei n, GLuint *ids);
+void (APIENTRY *glDeleteQueries)(GLsizei n, const GLuint *ids);
+void (APIENTRY *glQueryCounter)(GLuint id, GLenum target);
+
+void (APIENTRY *glGetQueryObjectiv)(GLuint id, GLenum pname, GLint * params);
+void (APIENTRY *glGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint * params);
+void (APIENTRY *glGetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
+void (APIENTRY *glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64 *params);
+
 bool Ren::InitGLExtentions() {
 
 #if defined(WIN32)
@@ -197,6 +206,15 @@ bool Ren::InitGLExtentions() {
     glGetBufferSubData = GetProcAddress(glGetBufferSubData);
 
     glTexBuffer = GetProcAddress(glTexBuffer);
+
+    glGenQueries = GetProcAddress(glGenQueries);
+    glDeleteQueries = GetProcAddress(glDeleteQueries);
+    glQueryCounter = GetProcAddress(glQueryCounter);
+
+    glGetQueryObjectiv = GetProcAddress(glGetQueryObjectiv);
+    glGetQueryObjectuiv = GetProcAddress(glGetQueryObjectuiv);
+    glGetQueryObjecti64v = GetProcAddress(glGetQueryObjecti64v);
+    glGetQueryObjectui64v = GetProcAddress(glGetQueryObjectui64v);
 
     return true;
 }
