@@ -229,8 +229,8 @@ void Ren::Camera::ExtractSubFrustums(int resx, int resy, int resz, Frustum *sub_
 
     // Construct cells for the rest slices
     for (int z = 1; z < resz; z++) {
-        const float znear = near_ * std::pow(far_ / near_, float(z) / 24),
-                    zfar = near_ * std::pow(far_ / near_, float(z + 1) / 24);
+        const float znear = near_ * std::pow(far_ / near_, float(z) / resz),
+                    zfar = near_ * std::pow(far_ / near_, float(z + 1) / resz);
 
         memcpy(&sub_frustums[z * resy * resx], &sub_frustums[0], resy * resx * sizeof(Frustum));
 
