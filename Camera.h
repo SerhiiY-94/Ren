@@ -25,7 +25,7 @@ struct Frustum {
                              { Ren::Uninitialize },{ Ren::Uninitialize },{ Ren::Uninitialize } };
 };
 
-enum eVisibilityResult { NotVisible, FullyVisible, PartiallyVisible };
+enum eVisibilityResult { Invisible, FullyVisible, PartiallyVisible };
 
 class Camera {
 protected:

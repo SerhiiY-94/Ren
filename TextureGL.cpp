@@ -14,6 +14,42 @@
 namespace Ren {
 std::unique_ptr<uint8_t[]> ReadTGAFile(const void *data, int &w, int &h, eTexColorFormat &format);
 void CheckError(const char *op);
+
+uint32_t g_gl_formats[] = {
+    0xffffffff,     // Undefined
+    GL_RGB,         // RawRGB888
+    GL_RGBA,        // RawRGBA8888
+    GL_LUMINANCE,   // RawLUM8
+    GL_RED,         // RawR32F
+    GL_RED,         // RawR16F
+    GL_RGB,         // RawRGB32F
+    GL_RGBA,        // RawRGBA32F
+    0xffffffff,     // RawRGBE8888
+    GL_RGB,         // RawRGB16F
+    GL_RGBA,        // RawRGBA16F
+    GL_RG,          // RawRG16F
+    0xffffffff,     // Compressed
+    0xffffffff,     // None
+};
+static_assert(sizeof(g_gl_formats) / sizeof(g_gl_formats[0]) == FormatCount, "!");
+
+uint32_t g_gl_types[] = {
+    0xffffffff,         // Undefined
+    GL_UNSIGNED_BYTE,   // RawRGB888
+    GL_UNSIGNED_BYTE,   // RawRGBA8888
+    GL_UNSIGNED_BYTE,   // RawLUM8
+    GL_FLOAT,           // RawR32F
+    GL_HALF_FLOAT,      // RawR16F
+    GL_FLOAT,           // RawRGB32F
+    GL_FLOAT,           // RawRGBA32F
+    0xffffffff,         // RawRGBE8888
+    GL_HALF_FLOAT,      // RawRGB16F
+    GL_HALF_FLOAT,      // RawRGBA16F
+    GL_HALF_FLOAT,      // RawRG16F
+    0xffffffff,         // Compressed
+    0xffffffff,         // None
+};
+static_assert(sizeof(g_gl_types) / sizeof(g_gl_types[0]) == FormatCount, "!");
 }
 
 Ren::Texture2D::Texture2D(const char *name, const void *data, int size,
@@ -427,6 +463,14 @@ void Ren::Texture2D::ReadTextureData(eTexColorFormat format, void *out_data) con
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, out_data);
     }
 #endif
+}
+
+uint32_t Ren::GLFormatFromTexFormat(eTexColorFormat format) {
+    return g_gl_formats[format];
+}
+
+uint32_t Ren::GLTypeFromTexFormat(eTexColorFormat format) {
+    return g_gl_types[format];
 }
 
 #ifdef _MSC_VER

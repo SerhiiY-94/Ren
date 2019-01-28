@@ -140,7 +140,7 @@ Ren::eVisibilityResult Ren::Camera::CheckFrustumVisibility(const float bbox[8][3
             }
         }
         if (in_count == 0) {
-            res = NotVisible;
+            res = Invisible;
             break;
         }
 

@@ -11,7 +11,7 @@
 #endif
 
 namespace Ren {
-enum eTexColorFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawR16F, RawRGB32F, RawRGBA32F, RawRGBE8888, RawRGB16F, RawRGBA16F, RawRG16F, Compressed, None };
+enum eTexColorFormat { Undefined, RawRGB888, RawRGBA8888, RawLUM8, RawR32F, RawR16F, RawRGB32F, RawRGBA32F, RawRGBE8888, RawRGB16F, RawRGBA16F, RawRG16F, Compressed, None, FormatCount };
 enum eTexFilter { NoFilter, Bilinear, Trilinear, BilinearNoMipmap };
 enum eTexRepeat { Repeat, ClampToEdge };
 
@@ -76,6 +76,9 @@ public:
 
     void ReadTextureData(eTexColorFormat format, void *out_data) const;
 };
+
+uint32_t GLFormatFromTexFormat(eTexColorFormat format);
+uint32_t GLTypeFromTexFormat(eTexColorFormat format);
 
 typedef StorageRef<Texture2D> Texture2DRef;
 typedef Storage<Texture2D> Texture2DStorage;
