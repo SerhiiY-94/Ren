@@ -28,6 +28,7 @@ uint32_t g_gl_formats[] = {
     GL_RGB,         // RawRGB16F
     GL_RGBA,        // RawRGBA16F
     GL_RG,          // RawRG16F
+    GL_RG,          // RawRG32F
     0xffffffff,     // Compressed
     0xffffffff,     // None
 };
@@ -46,6 +47,7 @@ uint32_t g_gl_types[] = {
     GL_HALF_FLOAT,      // RawRGB16F
     GL_HALF_FLOAT,      // RawRGBA16F
     GL_HALF_FLOAT,      // RawRG16F
+    GL_FLOAT,           // RawRG32F
     0xffffffff,         // Compressed
     0xffffffff,         // None
 };

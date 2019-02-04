@@ -52,6 +52,7 @@
 #define GL_TEXTURE_CUBE_MAP                 0x8513
 
 #define GL_CLAMP_TO_EDGE                    0x812F
+#define GL_CLAMP_TO_BORDER                  0x812D
 #define GL_GENERATE_MIPMAP_HINT             0x8192
 
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_X      0x8515
