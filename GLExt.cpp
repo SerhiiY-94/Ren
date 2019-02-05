@@ -2,12 +2,20 @@
 
 #include <cassert>
 
+#if defined(__ANDROID__) || defined(__native_client__) || defined(EMSCRIPTEN)
+#else
 #if defined(WIN32)
 #include <Windows.h>
 #elif defined(__linux__)
 #include <GL/glx.h>
 #endif
+#endif
 
+#if defined(__ANDROID__) || defined(__native_client__) || defined(EMSCRIPTEN)
+void (APIENTRY *glQueryCounterEXT)(GLuint id, GLenum target);
+void (APIENTRY *glGetQueryObjecti64vEXT)(GLuint id, GLenum pname, GLint64 *params);
+void (APIENTRY *glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, GLuint64 *params);
+#else
 GLuint(APIENTRY *glCreateProgram)(void);
 void (APIENTRY *glDeleteProgram)(GLuint program);
 void (APIENTRY *glUseProgram)(GLuint program);
@@ -106,8 +114,17 @@ void (APIENTRY *glGetQueryObjectiv)(GLuint id, GLenum pname, GLint * params);
 void (APIENTRY *glGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint * params);
 void (APIENTRY *glGetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
 void (APIENTRY *glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64 *params);
+#endif
 
 bool Ren::InitGLExtentions() {
+
+#if defined(__ANDROID__) || defined(__native_client__) || defined(EMSCRIPTEN)
+#define GetProcAddress(name) (decltype(name))eglGetProcAddress(#name);
+    
+    glQueryCounterEXT = GetProcAddress(glQueryCounterEXT);
+    glGetQueryObjecti64vEXT = GetProcAddress(glGetQueryObjecti64vEXT);
+    glGetQueryObjectui64vEXT = GetProcAddress(glGetQueryObjectui64vEXT);
+#else
 
 #if defined(WIN32)
 #define GetProcAddress(name) (decltype(name))wglGetProcAddress(#name);
@@ -215,6 +232,7 @@ bool Ren::InitGLExtentions() {
     glGetQueryObjectuiv = GetProcAddress(glGetQueryObjectuiv);
     glGetQueryObjecti64v = GetProcAddress(glGetQueryObjecti64v);
     glGetQueryObjectui64v = GetProcAddress(glGetQueryObjectui64v);
+#endif
 
     return true;
 }

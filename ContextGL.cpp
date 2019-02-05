@@ -12,9 +12,7 @@ Ren::Context::~Context() {
 }
 
 void Ren::Context::Init(int w, int h) {
-#if !defined(__ANDROID__)
     InitGLExtentions();
-#endif
 
     w_ = w;
     h_ = h;

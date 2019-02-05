@@ -1,6 +1,7 @@
 #pragma once
 
 #if defined(__ANDROID__) || defined(__native_client__) || defined(EMSCRIPTEN)
+#include <GLES/egl.h>
 //#if __ANDROID_API__ >= 24
 #include <GLES3/gl32.h>
 /*#elif __ANDROID_API__ >= 21
@@ -10,6 +11,18 @@
 #endif*/
 #include <GLES2/gl2ext.h>
 #include <GLES3/gl3ext.h>
+
+#define GL_TIMESTAMP GL_TIMESTAMP_EXT
+
+#define glQueryCounter glQueryCounterEXT
+#define glGetQueryObjecti64v glGetQueryObjecti64vEXT
+#define glGetQueryObjectui64v glGetQueryObjectui64vEXT
+
+#define APIENTRY
+
+extern void (APIENTRY *glQueryCounterEXT)(GLuint id, GLenum target);
+extern void (APIENTRY *glGetQueryObjecti64vEXT)(GLuint id, GLenum pname, GLint64 *params);
+extern void (APIENTRY *glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, GLuint64 *params);
 #else
 //#include <GL/glew.h>
 
@@ -122,7 +135,7 @@
 #define GL_RGB16F       0x881B
 #define GL_RGBA16F      0x881A
 
-#define GL_HALF_FLOAT   5131
+#define GL_HALF_FLOAT   0x140B
 
 #define GL_MULTISAMPLE  0x809D
 
@@ -292,9 +305,9 @@ extern void (APIENTRY *glGetQueryObjectiv)(GLuint id, GLenum pname, GLint * para
 extern void (APIENTRY *glGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint * params);
 extern void (APIENTRY *glGetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
 extern void (APIENTRY *glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64 *params);
+#endif
+#endif
 
 namespace Ren {
-bool InitGLExtentions();
+    bool InitGLExtentions();
 }
-#endif
-#endif
