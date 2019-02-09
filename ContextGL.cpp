@@ -22,9 +22,11 @@ void Ren::Context::Init(int w, int h) {
 
     // print device info
 #if !defined(EMSCRIPTEN) && !defined(__ANDROID__)
-    GLint gl_version;
-    glGetIntegerv(GL_MAJOR_VERSION, &gl_version);
-    printf("\tOpenGL version\t: %i\n", int(gl_version));
+    GLint gl_major_version;
+    glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
+    GLint gl_minor_version;
+    glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
+    printf("\tOpenGL version\t: %i.%i\n", int(gl_major_version), int(gl_minor_version));
 #endif
 
     printf("\tVendor\t\t: %s\n", glGetString(GL_VENDOR));
@@ -32,7 +34,7 @@ void Ren::Context::Init(int w, int h) {
     printf("\tGLSL version\t: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     printf("Capabilities:\n");
-
+    
     // determine if anisotropy supported
     if (IsExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
         GLfloat f;
@@ -40,7 +42,7 @@ void Ren::Context::Init(int w, int h) {
         anisotropy = f;
         printf("\tAnisotropy\t: %f\n", anisotropy);
     }
-
+    
     // how many uniform vec4 vectors can be used
     GLint i = 0;
     glGetIntegerv(/*GL_MAX_VERTEX_UNIFORM_VECTORS*/ GL_MAX_VERTEX_UNIFORM_COMPONENTS, &i);
@@ -59,6 +61,27 @@ void Ren::Context::Init(int w, int h) {
     glsl_defines_ += "\r\n";*/
 
     printf("===========================================\n\n");
+
+#ifndef NDEBUG
+    if (IsExtensionSupported("GL_KHR_debug") || IsExtensionSupported("ARB_debug_output") ||
+        IsExtensionSupported("AMD_debug_output")) {
+        glEnable(GL_DEBUG_OUTPUT);
+
+        auto gl_debug_proc = [](GLenum source,
+                                GLenum type,
+                                GLuint id,
+                                GLenum severity,
+                                GLsizei length,
+                                const GLchar *message,
+                                const void *userParam) {
+            if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
+                printf("%s\n", message);
+            }
+        };
+
+        glDebugMessageCallback(gl_debug_proc, nullptr);
+    }
+#endif
 
     default_vertex_buf_ = buffers_.Add(32 * 1024 * 1024);
     default_indices_buf_ = buffers_.Add(32 * 1024 * 1024);
@@ -134,6 +157,7 @@ Ren::ProgramRef Ren::Context::LoadProgramGLSL(const char *name, const char *cs_s
 }
 
 bool Ren::Context::IsExtensionSupported(const char *ext) {
+#if 0
     const GLubyte *extensions = NULL;
     const GLubyte *start;
     GLubyte *where, *terminator;
@@ -156,6 +180,19 @@ bool Ren::Context::IsExtensionSupported(const char *ext) {
         start = terminator;
     }
     return 0;
+#else
+    GLint ext_count = 0;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &ext_count);
+
+    for (GLint i = 0; i < ext_count; i++) {
+        const char *extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+        if (strcmp(extension, ext) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+#endif
 }
 
 void Ren::CheckError(const char *op) {

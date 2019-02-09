@@ -114,6 +114,10 @@ void (APIENTRY *glGetQueryObjectiv)(GLuint id, GLenum pname, GLint * params);
 void (APIENTRY *glGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint * params);
 void (APIENTRY *glGetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
 void (APIENTRY *glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64 *params);
+
+const GLubyte *(APIENTRY *glGetStringi)(GLenum name, GLuint index);
+
+void (APIENTRY *glDebugMessageCallback)(DEBUGPROC callback, const void * userParam);
 #endif
 
 bool Ren::InitGLExtentions() {
@@ -232,6 +236,10 @@ bool Ren::InitGLExtentions() {
     glGetQueryObjectuiv = GetProcAddress(glGetQueryObjectuiv);
     glGetQueryObjecti64v = GetProcAddress(glGetQueryObjecti64v);
     glGetQueryObjectui64v = GetProcAddress(glGetQueryObjectui64v);
+
+    glGetStringi = GetProcAddress(glGetStringi);
+
+    glDebugMessageCallback = GetProcAddress(glDebugMessageCallback);
 #endif
 
     return true;

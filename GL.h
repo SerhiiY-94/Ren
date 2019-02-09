@@ -39,8 +39,17 @@ extern void (APIENTRY *glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, GLuint
 
 #endif
 
-#define GL_MAJOR_VERSION                    33307
+#define GL_MAJOR_VERSION                    0x821B
+#define GL_MINOR_VERSION                    0x821C
 #define GL_SHADING_LANGUAGE_VERSION         0x8B8C
+
+#define GL_NUM_EXTENSIONS                   0x821D
+#define GL_DEBUG_OUTPUT                     0x92E0
+
+#define GL_DEBUG_SEVERITY_HIGH              0x9146
+#define GL_DEBUG_SEVERITY_MEDIUM            0x9147
+#define GL_DEBUG_SEVERITY_LOW               0x9148
+#define GL_DEBUG_SEVERITY_NOTIFICATION      0x826B
 
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT       0x84FE
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT   0x84FF
@@ -305,6 +314,17 @@ extern void (APIENTRY *glGetQueryObjectiv)(GLuint id, GLenum pname, GLint * para
 extern void (APIENTRY *glGetQueryObjectuiv)(GLuint id, GLenum pname, GLuint * params);
 extern void (APIENTRY *glGetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
 extern void (APIENTRY *glGetQueryObjectui64v)(GLuint id, GLenum pname, GLuint64 *params);
+
+extern const GLubyte *(APIENTRY *glGetStringi)(GLenum name, GLuint index);
+
+typedef void (APIENTRY *DEBUGPROC)(GLenum source,
+                                   GLenum type,
+                                   GLuint id,
+                                   GLenum severity,
+                                   GLsizei length,
+                                   const GLchar *message,
+                                   const void *userParam);
+extern void (APIENTRY *glDebugMessageCallback)(DEBUGPROC callback, const void * userParam);
 #endif
 #endif
 
