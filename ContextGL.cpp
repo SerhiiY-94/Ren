@@ -65,7 +65,6 @@ void Ren::Context::Init(int w, int h) {
 #ifndef NDEBUG
     if (IsExtensionSupported("GL_KHR_debug") || IsExtensionSupported("ARB_debug_output") ||
         IsExtensionSupported("AMD_debug_output")) {
-        glEnable(GL_DEBUG_OUTPUT);
 
         auto gl_debug_proc = [](GLenum source,
                                 GLenum type,
@@ -79,6 +78,7 @@ void Ren::Context::Init(int w, int h) {
             }
         };
 
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(gl_debug_proc, nullptr);
     }
 #endif

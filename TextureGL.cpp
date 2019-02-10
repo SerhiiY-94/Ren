@@ -22,6 +22,7 @@ uint32_t g_gl_formats[] = {
     GL_LUMINANCE,   // RawLUM8
     GL_RED,         // RawR32F
     GL_RED,         // RawR16F
+    GL_RED,         // RawR8
     GL_RGB,         // RawRGB32F
     GL_RGBA,        // RawRGBA32F
     0xffffffff,     // RawRGBE8888
@@ -41,6 +42,7 @@ uint32_t g_gl_types[] = {
     GL_UNSIGNED_BYTE,   // RawLUM8
     GL_FLOAT,           // RawR32F
     GL_HALF_FLOAT,      // RawR16F
+    GL_UNSIGNED_BYTE,   // RawR8
     GL_FLOAT,           // RawRGB32F
     GL_FLOAT,           // RawRGBA32F
     0xffffffff,         // RawRGBE8888
@@ -212,7 +214,7 @@ void Ren::Texture2D::InitFromRAWData(const void *data, const Texture2DParams &p)
     }
 
     if (p.filter == Trilinear || p.filter == Bilinear) {
-        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+        //glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 

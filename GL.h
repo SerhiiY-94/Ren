@@ -45,6 +45,7 @@ extern void (APIENTRY *glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, GLuint
 
 #define GL_NUM_EXTENSIONS                   0x821D
 #define GL_DEBUG_OUTPUT                     0x92E0
+#define GL_DEBUG_OUTPUT_SYNCHRONOUS         0x8242
 
 #define GL_DEBUG_SEVERITY_HIGH              0x9146
 #define GL_DEBUG_SEVERITY_MEDIUM            0x9147
