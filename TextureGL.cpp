@@ -144,7 +144,9 @@ void Ren::Texture2D::Init(const char *name, const void *data[6], const int size[
         cubemap_ready_ = 0;
         if (load_status) *load_status = TexCreatedDefault;
     } else {
-        if (strstr(name, ".tga") != 0 || strstr(name, ".TGA") != 0) {
+        if (strstr(name, ".tga_rgbe") != 0 || strstr(name, ".TGA_RGBE") != 0) {
+            InitFromTGA_RGBEFile(data, p);
+        } else if (strstr(name, ".tga") != 0 || strstr(name, ".TGA") != 0) {
             InitFromTGAFile(data, p);
         } else {
             InitFromRAWData(data, p);
@@ -240,85 +242,12 @@ void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data, const Texture2DParam
     eTexColorFormat format = Undefined;
     auto image_data = ReadTGAFile(data, w, h, format);
 
+    std::unique_ptr<int16_t[]> fp_data = ConvertRGBE_to_RGB16F(image_data.get(), w, h);
+
     Texture2DParams _p = p;
     _p.w = w;
     _p.h = h;
     _p.format = RawRGB16F;
-
-    std::unique_ptr<int16_t[]> fp_data(new int16_t[_p.w * _p.h * 3]);
-
-    auto f32_to_f16 = [](float value) -> int16_t {
-        int32_t i;
-        memcpy(&i, &value, sizeof(float));
-
-        int32_t s = (i >> 16) & 0x00008000;
-        int32_t e = ((i >> 23) & 0x000000ff) - (127 - 15);
-        int32_t m = i & 0x007fffff;
-        if (e <= 0) {
-            if (e < -10) {
-                return reinterpret_cast<const uint16_t &>(s);
-            }
-
-            m = (m | 0x00800000) >> (1 - e);
-
-            if (m & 0x00001000)
-                m += 0x00002000;
-
-            s = s | (m >> 13);
-            uint16_t ret;
-            memcpy(&ret, &s, sizeof(uint16_t));
-            return ret;
-        } else if (e == 0xff - (127 - 15)) {
-            if (m == 0) {
-                s = s | 0x7c00;
-                uint16_t ret;
-                memcpy(&ret, &s, sizeof(uint16_t));
-                return ret;
-            } else {
-                m >>= 13;
-
-                s = s | 0x7c00 | m | (m == 0);
-                uint16_t ret;
-                memcpy(&ret, &s, sizeof(uint16_t));
-                return ret;
-            }
-        } else {
-            if (m & 0x00001000) {
-                m += 0x00002000;
-
-                if (m & 0x00800000) {
-                    m = 0;     // overflow in significand,
-                    e += 1;     // adjust exponent
-                }
-            }
-
-            if (e > 30) {
-                s = s | 0x7c00;
-                uint16_t ret;
-                memcpy(&ret, &s, sizeof(uint16_t));
-                return ret;
-            }
-
-            s = s | (e << 10) | (m >> 13);
-            uint16_t ret;
-            memcpy(&ret, &s, sizeof(uint16_t));
-            return ret;
-        }
-    };
-
-    for (int i = 0; i < w * h; i++) {
-        uint8_t r = image_data[4 * i + 0];
-        uint8_t g = image_data[4 * i + 1];
-        uint8_t b = image_data[4 * i + 2];
-        uint8_t a = image_data[4 * i + 3];
-
-        float f = std::exp2(float(a) - 128.0f);
-        float k = 1.0f / 255;
-
-        fp_data[3 * i + 0] = f32_to_f16(k * r * f);
-        fp_data[3 * i + 1] = f32_to_f16(k * g * f);
-        fp_data[3 * i + 2] = f32_to_f16(k * b * f);
-    }
 
     InitFromRAWData(fp_data.get(), _p);
 }
@@ -375,6 +304,8 @@ void Ren::Texture2D::InitFromRAWData(const void *data[6], const Texture2DParams 
             glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data[i]);
         } else if (params_.format == RawLUM8) {
             glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_LUMINANCE, w, h, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data[i]);
+        } else if (params_.format == RawRGB16F) {
+            glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_RGB, w, h, 0, GL_RGB, GL_HALF_FLOAT, data[i]);
         }
     }
 
@@ -421,6 +352,26 @@ void Ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams 
     _p.w = w;
     _p.h = h;
     _p.format = format;
+
+    InitFromRAWData(_image_data, _p);
+}
+
+void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data[6], const Texture2DParams &p) {
+    std::unique_ptr<int16_t[]> image_data[6];
+    const void *_image_data[6] = {};
+    int w = p.w, h = p.h;
+    eTexColorFormat format = Undefined;
+    for (int i = 0; i < 6; i++) {
+        if (data[i]) {
+            image_data[i] = ConvertRGBE_to_RGB16F((const uint8_t *)data[i], w, h);
+            _image_data[i] = image_data[i].get();
+        }
+    }
+
+    Texture2DParams _p = p;
+    _p.w = w;
+    _p.h = h;
+    _p.format = Ren::RawRGB16F;
 
     InitFromRAWData(_image_data, _p);
 }

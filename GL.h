@@ -79,6 +79,11 @@ extern void (APIENTRY *glGetQueryObjectui64vEXT)(GLuint id, GLenum pname, GLuint
 #define GL_GENERATE_MIPMAP_HINT             0x8192
 
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_X      0x8515
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X      0x8516
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y      0x8517
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y      0x8518
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z      0x8519
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z      0x851A
 #define GL_TEXTURE_WRAP_R                   0x8072
 
 #define GL_ARRAY_BUFFER                     0x8892
