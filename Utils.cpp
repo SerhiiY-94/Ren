@@ -434,12 +434,27 @@ void Ren::ComputeTextureBasis(std::vector<vertex_t> &vertices, std::vector<uint3
         Vec2f dt1 = MakeVec2(v1->t[0]) - MakeVec2(v0->t[0]);
         Vec2f dt2 = MakeVec2(v2->t[0]) - MakeVec2(v0->t[0]);
 
-        float det = dt1[0] * dt2[1] - dt1[1] * dt2[0];
-        float inv_det = std::abs(det) > flt_eps ? 1.0f / det : 0;
-        Vec3f tangent = (dp1 * dt2[1] - dp2 * dt1[1]) * inv_det;
-        Vec3f binormal = (dp2 * dt1[0] - dp1 * dt2[0]) * inv_det;
+        Vec3f tangent, binormal;
 
-        int i1 = v0->b[0] * tangent[0] + v0->b[1] * tangent[1] + v0->b[2] * tangent[2] < 0;
+        float det = dt1[0] * dt2[1] - dt1[1] * dt2[0];
+        if (std::abs(det) > flt_eps) {
+            float inv_det = 1.0f / det;
+            tangent = (dp1 * dt2[1] - dp2 * dt1[1]) * inv_det;
+            binormal = (dp2 * dt1[0] - dp1 * dt2[0]) * inv_det;
+        } else {
+            Vec3f plane_N = Cross(dp1, dp2);
+            tangent = Vec3f{ 0.0f, 1.0f, 0.0f };
+            if (std::abs(plane_N[0]) <= std::abs(plane_N[1]) && std::abs(plane_N[0]) <= std::abs(plane_N[2])) {
+                tangent = Vec3f{ 1.0f, 0.0f, 0.0f };
+            } else if (std::abs(plane_N[2]) <= std::abs(plane_N[0]) && std::abs(plane_N[2]) <= std::abs(plane_N[1])) {
+                tangent = Vec3f{ 0.0f, 0.0f, 1.0f };
+            }
+
+            binormal = Normalize(Cross(Vec3f(plane_N), tangent));
+            tangent = Normalize(Cross(Vec3f(plane_N), binormal));
+        }
+
+        int i1 = (v0->b[0] * tangent[0] + v0->b[1] * tangent[1] + v0->b[2] * tangent[2]) < 0;
         int i2 = 2 * (b0[0] * binormal[0] + b0[1] * binormal[1] + b0[2] * binormal[2] < 0);
 
         if (i1 || i2) {
@@ -515,8 +530,12 @@ void Ren::ComputeTextureBasis(std::vector<vertex_t> &vertices, std::vector<uint3
     for (auto &v : vertices) {
         if (std::abs(v.b[0]) > flt_eps || std::abs(v.b[1]) > flt_eps || std::abs(v.b[2]) > flt_eps) {
             Vec3f tangent = MakeVec3(v.b);
-            Vec3f binormal = Normalize(Cross(MakeVec3(v.n), tangent));
-            memcpy(&v.b[0], &binormal[0], 3 * sizeof(float));
+            Vec3f binormal = Cross(MakeVec3(v.n), tangent);
+            float l = Length(binormal);
+            if (l > flt_eps) {
+                binormal /= l;
+                memcpy(&v.b[0], &binormal[0], 3 * sizeof(float));
+            }
         }
     }
 }
