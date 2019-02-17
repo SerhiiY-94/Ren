@@ -233,7 +233,6 @@ void Ren::Texture2D::InitFromTGAFile(const void *data, const Texture2DParams &p)
     _p.h = h;
     _p.format = format;
 
-
     InitFromRAWData(image_data.get(), _p);
 }
 
@@ -242,7 +241,7 @@ void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data, const Texture2DParam
     eTexColorFormat format = Undefined;
     auto image_data = ReadTGAFile(data, w, h, format);
 
-    std::unique_ptr<int16_t[]> fp_data = ConvertRGBE_to_RGB16F(image_data.get(), w, h);
+    std::unique_ptr<uint16_t[]> fp_data = ConvertRGBE_to_RGB16F(image_data.get(), w, h);
 
     Texture2DParams _p = p;
     _p.w = w;
@@ -357,7 +356,7 @@ void Ren::Texture2D::InitFromTGAFile(const void *data[6], const Texture2DParams 
 }
 
 void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data[6], const Texture2DParams &p) {
-    std::unique_ptr<int16_t[]> image_data[6];
+    std::unique_ptr<uint16_t[]> image_data[6];
     const void *_image_data[6] = {};
     int w = p.w, h = p.h;
     eTexColorFormat format = Undefined;

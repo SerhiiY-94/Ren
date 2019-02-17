@@ -4,6 +4,69 @@
 
 #include "Texture.h"
 
+namespace Ren {
+    uint16_t f32_to_f16(float value) {
+        int32_t i;
+        memcpy(&i, &value, sizeof(float));
+
+        int32_t s = (i >> 16) & 0x00008000;
+        int32_t e = ((i >> 23) & 0x000000ff) - (127 - 15);
+        int32_t m = i & 0x007fffff;
+        if (e <= 0) {
+            if (e < -10) {
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
+            }
+
+            m = (m | 0x00800000) >> (1 - e);
+
+            if (m & 0x00001000)
+                m += 0x00002000;
+
+            s = s | (m >> 13);
+            uint16_t ret;
+            memcpy(&ret, &s, sizeof(uint16_t));
+            return ret;
+        } else if (e == 0xff - (127 - 15)) {
+            if (m == 0) {
+                s = s | 0x7c00;
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
+            } else {
+                m >>= 13;
+
+                s = s | 0x7c00 | m | (m == 0);
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
+            }
+        } else {
+            if (m & 0x00001000) {
+                m += 0x00002000;
+
+                if (m & 0x00800000) {
+                    m = 0;     // overflow in significand,
+                    e += 1;     // adjust exponent
+                }
+            }
+
+            if (e > 30) {
+                s = s | 0x7c00;
+                uint16_t ret;
+                memcpy(&ret, &s, sizeof(uint16_t));
+                return ret;
+            }
+
+            s = s | (e << 10) | (m >> 13);
+            uint16_t ret;
+            memcpy(&ret, &s, sizeof(uint16_t));
+            return ret;
+        }
+    }
+}
+
 std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eTexColorFormat &format) {
     uint8_t tga_header[12] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     const uint8_t *tga_compare = (const uint8_t *)data;
@@ -98,67 +161,8 @@ std::unique_ptr<uint8_t[]> Ren::ReadTGAFile(const void *data, int &w, int &h, eT
     return image_ret;
 }
 
-std::unique_ptr<int16_t[]> Ren::ConvertRGBE_to_RGB16F(const uint8_t *image_data, int w, int h) {
-    std::unique_ptr<int16_t[]> fp_data(new int16_t[w * h * 3]);
-
-    auto f32_to_f16 = [](float value) -> int16_t {
-        int32_t i;
-        memcpy(&i, &value, sizeof(float));
-
-        int32_t s = (i >> 16) & 0x00008000;
-        int32_t e = ((i >> 23) & 0x000000ff) - (127 - 15);
-        int32_t m = i & 0x007fffff;
-        if (e <= 0) {
-            if (e < -10) {
-                return reinterpret_cast<const uint16_t &>(s);
-            }
-
-            m = (m | 0x00800000) >> (1 - e);
-
-            if (m & 0x00001000)
-                m += 0x00002000;
-
-            s = s | (m >> 13);
-            uint16_t ret;
-            memcpy(&ret, &s, sizeof(uint16_t));
-            return ret;
-        } else if (e == 0xff - (127 - 15)) {
-            if (m == 0) {
-                s = s | 0x7c00;
-                uint16_t ret;
-                memcpy(&ret, &s, sizeof(uint16_t));
-                return ret;
-            } else {
-                m >>= 13;
-
-                s = s | 0x7c00 | m | (m == 0);
-                uint16_t ret;
-                memcpy(&ret, &s, sizeof(uint16_t));
-                return ret;
-            }
-        } else {
-            if (m & 0x00001000) {
-                m += 0x00002000;
-
-                if (m & 0x00800000) {
-                    m = 0;     // overflow in significand,
-                    e += 1;     // adjust exponent
-                }
-            }
-
-            if (e > 30) {
-                s = s | 0x7c00;
-                uint16_t ret;
-                memcpy(&ret, &s, sizeof(uint16_t));
-                return ret;
-            }
-
-            s = s | (e << 10) | (m >> 13);
-            uint16_t ret;
-            memcpy(&ret, &s, sizeof(uint16_t));
-            return ret;
-        }
-    };
+std::unique_ptr<uint16_t[]> Ren::ConvertRGBE_to_RGB16F(const uint8_t *image_data, int w, int h) {
+    std::unique_ptr<uint16_t[]> fp_data(new uint16_t[w * h * 3]);
 
     for (int i = 0; i < w * h; i++) {
         uint8_t r = image_data[4 * i + 0];
