@@ -63,7 +63,7 @@ void Ren::Program::Init(const char *name, const char *cs_source, eProgLoadStatus
     InitFromGLSL(name, { nullptr, nullptr, cs_source }, status);
 }
 
-void Ren::Program::InitFromGLSL(const char *name, const Shaders shaders, eProgLoadStatus *status) {
+void Ren::Program::InitFromGLSL(const char *name, const Shaders &shaders, eProgLoadStatus *status) {
     if ((!shaders.vs_source || !shaders.fs_source) && !shaders.cs_source) {
         if (status) *status = ProgSetToDefault;
         return;

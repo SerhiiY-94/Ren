@@ -13,7 +13,7 @@ class RingBuffer {
         return (cur + 1) % size_;
     }
 public:
-    RingBuffer(int size) : size_(size) {
+    explicit RingBuffer(int size) : size_(size) {
         head_ = 0;
         tail_ = 0;
         buf_ = new T[size];

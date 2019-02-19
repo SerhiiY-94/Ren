@@ -40,7 +40,7 @@ class Program : public RefCounter {
         const char *cs_source;
     };
 
-    void InitFromGLSL(const char *name, const Shaders shaders, eProgLoadStatus *status);
+    void InitFromGLSL(const char *name, const Shaders &shaders, eProgLoadStatus *status);
 public:
     Program() {
         name_[0] = '\0';

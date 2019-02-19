@@ -32,7 +32,7 @@ class Buffer : public RefCounter {
     bool Free_Node(int i);
 public:
     Buffer() {}
-    Buffer(uint32_t initial_size);
+    explicit Buffer(uint32_t initial_size);
     Buffer(const Buffer &rhs) = delete;
     Buffer(Buffer &&rhs) {
         *this = std::move(rhs);
