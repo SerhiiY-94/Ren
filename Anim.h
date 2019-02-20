@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <cstring>
 
-#include <istream>
+#include <iosfwd>
 #include <vector>
 
 #include "MMat.h"
