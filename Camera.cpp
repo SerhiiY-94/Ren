@@ -20,7 +20,8 @@ int Ren::Plane::ClassifyPoint(const float point[3]) const {
     return OnPlane;
 }
 
-Ren::Camera::Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up) {
+Ren::Camera::Camera(const Vec3f &center, const Vec3f &target, const Vec3f &up)
+    : is_orthographic_(false), angle_(0.0f), aspect_(0.0f), near_(0.0f), far_(0.0f) {
     SetupView(center, target, up);
 }
 

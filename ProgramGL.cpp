@@ -269,7 +269,7 @@ GLuint Ren::LoadShader(GLenum shader_type, const char *source) {
                 char *buf = (char *)malloc((size_t)infoLen);
                 if (buf) {
                     glGetShaderInfoLog(shader, infoLen, NULL, buf);
-                    fprintf(stderr, "Could not compile shader %d: %s", shader_type, buf);
+                    fprintf(stderr, "Could not compile shader %d: %s", int(shader_type), buf);
                     free(buf);
                 }
                 glDeleteShader(shader);
