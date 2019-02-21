@@ -359,7 +359,6 @@ void Ren::Texture2D::InitFromTGA_RGBEFile(const void *data[6], const Texture2DPa
     std::unique_ptr<uint16_t[]> image_data[6];
     const void *_image_data[6] = {};
     int w = p.w, h = p.h;
-    eTexColorFormat format = Undefined;
     for (int i = 0; i < 6; i++) {
         if (data[i]) {
             image_data[i] = ConvertRGBE_to_RGB16F((const uint8_t *)data[i], w, h);
