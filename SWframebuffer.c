@@ -8,11 +8,12 @@
 #include "SWzbuffer.h"
 
 void swFbufInit(SWframebuffer *f, SWenum type, SWint w, SWint h, SWint with_depth) {
-    SWuint num_bytes = 0;
     f->type = type;
     f->w = w;
     f->h = h;
-    f->pixels = f->zbuf = /*f->depth =*/ NULL;
+    f->zbuf = NULL;
+    
+    SWuint num_bytes;
     if (type == SW_BGRA8888) {
         num_bytes = (SWuint)w * h * 4;
     } else if (type == SW_FRGBA) {

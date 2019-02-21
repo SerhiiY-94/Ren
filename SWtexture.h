@@ -54,6 +54,8 @@ void swTexDestroy(SWtexture *t);
                 rgba[i] = _sw_ubyte_to_float_table[_col[i]];                    \
             }                                           \
         }break;                                         \
+        default:                                        \
+            break;                                      \
     }                                                   \
 }
 
